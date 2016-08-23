@@ -14,6 +14,7 @@ public class RestControllerExceptionHandler extends ResponseEntityExceptionHandl
     public ResponseEntity badRequest(HttpServletRequest req, Exception exception) {
         //{"timestamp":1469985829212,"status":404,"error":"Not Found","message":
         // "No message available","path":"/ProjectJava11a/getGeneralChartSelectionsList"}
+        exception.printStackTrace();
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(exception.getMessage());
