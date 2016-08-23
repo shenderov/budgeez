@@ -3,6 +3,7 @@
 app.factory('Connector', ['$http', '$q', function($http, $q){
 
     var server = "http://localhost:8080/";
+
     return {
          
     getGeneralSelectionsList: function() {
@@ -44,8 +45,8 @@ app.factory('Connector', ['$http', '$q', function($http, $q){
                 );
         },
 
-        getGeneralDataTable: function(chartSelection) {
-            return $http.post(server + 'general/getGeneralDataTable', chartSelection)
+        getGeneralDataTable: function(chartRequestWrapper) {
+            return $http.post(server + 'general/getGeneralDataTable', chartRequestWrapper)
                 .then(
                     function(response){
                         return response.data;
@@ -57,11 +58,11 @@ app.factory('Connector', ['$http', '$q', function($http, $q){
                 );
         },
 
-        getUserSelectionsList: function() {
-            return $http.get('http://localhost:8080/ProjectJava11a/getUserChartSelectionsList')
+        getUserSelectionsList: function(token) {
+            return $http.get(server + 'user/getUserChartSelectionsList', {headers: token})
                 .then(
                     function(response){
-                        return response.data.data;
+                        return response.data;
                     },
                     function(errResponse){
                         console.error('Error while fetching users');

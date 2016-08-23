@@ -2,6 +2,8 @@
 
 var app = angular.module('KamaBizbazti', ['ngRoute','ngAnimate', 'ui.bootstrap']);
 
+var TOKEN_KEY = "token";
+
 app.config(function($routeProvider) {
     console.log("Router");
     $routeProvider
@@ -24,7 +26,7 @@ app.config(['$httpProvider', function($httpProvider){
     $httpProvider.defaults.withCredentials = true;
 }])
 
-app.controller('General', function($scope, $location){
+app.controller('General', function($scope, $location, Connector){
     console.log("General");
     //console.log("General - Load cookies");
     //console.log("General - Check token");
@@ -35,7 +37,40 @@ app.controller('General', function($scope, $location){
     $scope.formats = ['dd/MM/yyyy', 'dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'];
     $scope.format = $scope.formats[0];
 
-    //Kostya
+    $scope.login = function(credentials){
+        return Connector.login(credentials)
+            .then(
+                function(result) {
+                    console.log(result.token);
+                    setToken(result.token);
+                    $scope.isAutorized = true;
+                    $location.path('/user-home');
+                },
+                function(errResponse){
+                    console.error('Error while fetching dataTable');
+                }
+            );
+    };
+
+    $scope.logout = function(){
+        $scope.isAutorized = false;
+        $location.path('/');
+        removeToken();
+    };
+
+    function setToken(token) {
+        localStorage.setItem(TOKEN_KEY, token);
+    }
+
+    function getToken() {
+        return localStorage.getItem(TOKEN_KEY);
+    }
+
+    function removeToken() {
+        localStorage.removeItem(TOKEN_KEY);
+    }
+
+
     $scope.loginKostyl = function() {
         $scope.isAutorized = true;
         $location.path('/user-home');
@@ -44,7 +79,20 @@ app.controller('General', function($scope, $location){
     $scope.logoutKostyl = function() {
         $scope.isAutorized = false;
         $location.path('/');
+        removeToken();
     }
+
+    //function setJwtToken(token) {
+    //    localStorage.setItem(TOKEN_KEY, token);
+    //}
+    //
+    //function getJwtToken() {
+    //    return localStorage.getItem(TOKEN_KEY);
+    //}
+    //
+    //function removeJwtToken() {
+    //    localStorage.removeItem(TOKEN_KEY);
+    //}
 
 });
 
@@ -82,8 +130,8 @@ app.controller('MainController', function($scope, $http, $templateCache, Connect
             )
     };
 
-    $scope.getDataTable = function(chartSelection){
-        return Connector.getGeneralDataTable(chartSelection)
+    $scope.getDataTable = function(chartRequestWrapper){
+        return Connector.getGeneralDataTable(chartRequestWrapper)
             .then(
                 function(chartWrapper) {
                     //$scope.chartWrapper = chartWrapper;
@@ -103,9 +151,17 @@ app.controller('UserHomeController', function($scope, $http, $templateCache, Con
     $scope.chartWrapper = null;
     $scope.chartSelectionsList = null;
 
+    function createAuthorizationTokenHeader() {
+        var token = localStorage.getItem(TOKEN_KEY);
+        if (token) {
+            return {"Authorization": token};
+        } else {
+            return {};
+        }
+    }
 
     $scope.getUserSelectionsList = function(){
-        Connector.getUserSelectionsList()
+        Connector.getUserSelectionsList(createAuthorizationTokenHeader())
             .then(
                 function(chartSelectionsList) {
                     $scope.chartSelectionsList = chartSelectionsList;
@@ -240,32 +296,41 @@ app.controller('RecordsController', function($scope, $http, Connector) {
 
 
 
-app.controller('LoginController', function($scope, $http, Connector, $location) {
-    console.log("LoginController");
-    $scope.login = function(credentials){
-        console.log(JSON.stringify("isAutorized " + $scope.isAutorized));
-        console.log(JSON.stringify(credentials));
-        return Connector.login(credentials)
-            .then(
-                function(result) {
-                    console.log(JSON.stringify(result));
-                    //$scope.purpose = purpose;
-                   // $scope.isAutorized = true;
-                   // $location.path('/user-home');
-                    console.log(JSON.stringify($scope.isAutorized));
-                    $scope.loginKostyl();
-                    return result;
-                },
-                function(errResponse){
-                    console.error('Error while fetching dataTable');
-                }
-            );
-    };
+//app.controller('LoginController', function($scope, $http, Connector, $location) {
+//    console.log("LoginController");
+
+    //$scope.login = function(credentials){
+    //    console.log(JSON.stringify("isAutorized " + $scope.isAutorized));
+    //    console.log(JSON.stringify(credentials));
+    //    return Connector.login(credentials)
+    //        .then(
+    //            function(result) {
+    //                console.log(result.token);
+    //                setToken(result.token);
+    //                $scope.isAutorized = true;
+    //                $location.path('/user-home');
+    //                return result;
+    //            },
+    //            function(errResponse){
+    //                console.error('Error while fetching dataTable');
+    //            }
+    //        );
+    //};
+    //
+    //function setToken(token) {
+    //    localStorage.setItem(TOKEN_KEY, token);
+    //}
+    //
+    //function getJwtToken() {
+    //    return localStorage.getItem(TOKEN_KEY);
+    //}
+    //
+    //function removeJwtToken() {
+    //    localStorage.removeItem(TOKEN_KEY);
+    //}
 
 
-
-
-});
+//});
 
 
 
