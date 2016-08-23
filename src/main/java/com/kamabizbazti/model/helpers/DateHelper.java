@@ -11,6 +11,11 @@ import java.time.temporal.ChronoUnit;
 
 public class DateHelper implements IDateHelper{
 private static final SimpleDateFormat sdf = new SimpleDateFormat("MMMM");
+private static final SimpleDateFormat SDF_MONTH_FULL = new SimpleDateFormat("MMMM");
+private static final SimpleDateFormat SDF_MONTH_SHORT = new SimpleDateFormat("MMM");
+private static final SimpleDateFormat SDF_MONTH_FULL_WEEK = new SimpleDateFormat("MMMM'/W'W");
+private static final SimpleDateFormat SDF_MONTH_SHORT_WEEK = new SimpleDateFormat("MMM'/W'W");
+private static final SimpleDateFormat SDF_YEAR = new SimpleDateFormat("YYYY");
 
     @Override
     public long getFirstDayOfCurrentMonth() {
@@ -89,4 +94,24 @@ private static final SimpleDateFormat sdf = new SimpleDateFormat("MMMM");
 		    LocalDateTime eDate = LocalDateTime.ofInstant(d2i, ZoneId.systemDefault());
 		    return ChronoUnit.YEARS.between(sDate, eDate);
  }
+ 
+ 	public String getFullMonthName(long date){
+		return SDF_MONTH_FULL.format(date);
+	}
+	
+	public String getShortMonthName(long date){
+		return SDF_MONTH_SHORT.format(date);
+	}
+	
+	public String getFullMonthWeek(long date){
+		return SDF_MONTH_FULL_WEEK.format(date);
+	}
+	
+	public String getShortMonthWeek(long date){
+		return SDF_MONTH_SHORT_WEEK.format(date);
+	}
+	
+	public String getYear(long date){
+		return SDF_YEAR.format(date);
+	}
 }
