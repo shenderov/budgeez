@@ -1,0 +1,25 @@
+<div class="login-block">
+        <h2 class="form-signin-heading text-center">Please Log In</h2>
+		<form class="form-signin">
+		<p class="bg-danger" ng-show="alertError" ng-init="alertError=false"><strong>Wrong e-mail or password</strong></p>
+		<div class="form-group">
+        <label for="inputEmail">Email:</label>
+        <input type="text" id="inputEmail" class="form-control" placeholder="Enter email" required ng-model="credentials.username">
+		</div>
+		<div class="form-group">
+        <label for="inputPassword">Password:</label>
+        <input type="password" id="inputPassword" class="form-control" placeholder="Enter password" required ng-model="credentials.password">
+		</div>
+		<!--<div class="checkbox">-->
+            <!--<label>-->
+                <!--<input type="checkbox" value="remember-me" ng-model="credentials.keepSession"> Remember me-->
+            <!--</label>-->
+        <!--</div>-->
+        <button class="btn btn-lg btn-primary btn-block" type="submit" ng-click="login(credentials)">Sign in</button>
+		<br>
+		<div class="row">
+			<div class="col-sm-6"><p class="text-left"><a ng-click="">Remind Password</a></p></div>
+			<div class="col-sm-6"><p class="text-right"><a ng-click="">Login Without Password</a></p></div>
+		</div>
+    </form>
+</div>

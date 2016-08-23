@@ -1,0 +1,33 @@
+<!-- CHANGE CONTROLLER!!!!!!! -->
+<div class="add-record-module" ng-controller="RecordsController">
+    <h2 class="form-signin-heading text-center">Add New Record</h2>
+    <form class="form-add-record" ng-model="record">
+        <p class="bg-danger" ng-show="alertError" ng-init="alertError=false"><strong>Wrong e-mail or password</strong>
+        </p>
+        <div class="form-group">
+            <label for="inputName">Name:</label>
+            <input type="text" id="inputName" class="form-control" placeholder="Enter name" required ng-model="record.name">
+        </div>
+        <div class="form-group">
+            <label for="inputAmount">Amount:</label>
+            <input type="number" id="inputAmount" class="form-control" placeholder="Enter amount" required ng-model="record.amount">
+        </div>
+        <div class="form-group">
+            <label for="inputPurpose">Purpose:</label>
+            <select class="form-control" id="inputPurpose" required ng-model="record.purpose">
+
+                <option ng-repeat="purpose in purposesList" value="purpose.purposeId">{{purpose.name}}</option>
+                <option value="addNewPurpose">Add new...</option>
+            </select>
+        </div>
+        <div class="form-group" ng-show="record.purpose == 'addNewPurpose'">
+            <label for="inputNewPurpose">New Purpose Name:</label>
+            <input type="text" id="inputNewPurpose" class="form-control" placeholder="Enter Purpose Name" ng-model="purposeName">
+        </div>
+        <div class="form-group">
+            <label for="inputDate">Record Date:</label>
+            <input type="date" id="inputDate" class="form-control" required ng-model="record.date">
+        </div>
+        <button class="btn btn-lg btn-primary btn-block" type="submit" ng-click="addRecord(record, purposeName)">Add Record</button>
+    </form>
+</div>

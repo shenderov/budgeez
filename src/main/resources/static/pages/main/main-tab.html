@@ -1,0 +1,13 @@
+<div ng-include="'pages/framework/ad/full-width-carousel.html'"></div>
+<div class="container-fluid main-container" id="main-tab-container">
+  <div class="row main-container-row" id="main-tab-container-row">
+	<div class="col-sm-8 main-container-left-block" id="main-container-left-block">
+		<h3 class="main-container-header" id="main-container-header">Statistics by Our Users</h3>
+		<div ng-include="'pages/framework/statistics/charts-view-module.html'"></div>
+	</div>
+    <div class="col-sm-4 main-container-right-block" id="main-container-right-block">
+		<div ng-if="!isAutorized" ng-include="'pages/framework/auth/login-signup-module.html'"></div>
+		<div ng-if="isAutorized" ng-include="'pages/framework/statistics/add-record-block.html'"></div>
+	</div>
+  </div>
+</div>

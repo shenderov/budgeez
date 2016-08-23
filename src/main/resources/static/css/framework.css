@@ -1,0 +1,40 @@
+/* section visibility */
+body > section:not(.active) { display:none; }
+
+body {
+    /* Margin bottom by footer height */
+    margin-bottom: 80px;
+    padding-top: 50px;
+
+}
+
+html {
+    position: relative;
+    min-height: 100%;
+}
+
+.footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    /* Set the fixed height of the footer here */
+    height: 80px;
+    background-color: #2f2f2f;
+    color: #ffffff;
+}
+
+.login-block{
+    padding: 20%;
+}
+
+.chart{
+    height: 500px;
+    width: 900px;
+}
+
+.prototype{
+	background-color: #ffccff;
+	height: 100%;
+    width: 100%;
+	z-index: 99999;
+}

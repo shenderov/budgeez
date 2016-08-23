@@ -1,0 +1,23 @@
+<nav class="navbar navbar-default navbar-inverse navbar-fixed-top" role="navigation" id="navbar">
+    <div class="navbar-header" id="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="#/" id="navbar-brand">Kama Bizbazti?</a>
+    </div>
+
+    <div class="collapse navbar-collapse navbar-ex1-collapse">
+        <ul class="nav navbar-nav">
+            <li><a href="#/user-home" ng-if="isAutorized">Home</a></li>
+            <li><a href="#/settings" ng-if="isAutorized">Settings</a></li>
+        </ul>
+
+        <ul class="nav navbar-nav navbar-right">
+            <li ng-if="!isAutorized"><a href="#">English | Russian | Hebrew</a></li>
+            <li ng-if="isAutorized"><a ng-click="logout()">Log Out</a></li>
+        </ul>
+    </div>
+</nav>
