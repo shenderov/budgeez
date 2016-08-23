@@ -11,4 +11,7 @@ public interface IDateHelper {
     long getLastDayOfPreviousMonth();
     long getLastDayOfNMonthAgo(int monthAgo);
     String getMonthNameByDate(long startDate);
+    long weeksBetweenTwoDates(long startDate, long endDate);
+    long monthssBetweenTwoDates(long startDate, long endDate);
+    long yearsBetweenTwoDates(long startDate, long endDate);
 }
