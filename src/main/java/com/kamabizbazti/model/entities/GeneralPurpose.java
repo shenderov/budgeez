@@ -21,8 +21,8 @@ public class GeneralPurpose {
 	@GeneratedValue(strategy=GenerationType.AUTO, generator="purpose_seq_gen")
 	@SequenceGenerator(name="purpose_seq_gen", sequenceName="PURPOSE_SEQ")
 	@Column(name = "purposeId", nullable = false)
-	private int purposeId;
-	
+	private long purposeId;
+
 	@Column(name = "type", nullable = false)
 	@Enumerated(EnumType.STRING)
 	private PurposeType type;
@@ -39,7 +39,7 @@ public class GeneralPurpose {
 		this.type = PurposeType.GENERAL;
 		this.name = name;
 	}
-	
+
 	public GeneralPurpose(String name, PurposeType type) {
 		super();
 		this.type = type;
@@ -54,7 +54,7 @@ public class GeneralPurpose {
 		this.name = name;
 	}
 
-	public int getPurposeId() {
+	public long getPurposeId() {
 		return purposeId;
 	}
 
