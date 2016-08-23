@@ -14,4 +14,9 @@ public interface IDateHelper {
     long weeksBetweenTwoDates(long startDate, long endDate);
     long monthssBetweenTwoDates(long startDate, long endDate);
     long yearsBetweenTwoDates(long startDate, long endDate);
+    public String getFullMonthName(long date);
+    public String getShortMonthName(long date);
+    public String getFullMonthWeek(long date);
+    public String getShortMonthWeek(long date);
+    public String getYear(long date);
 }
