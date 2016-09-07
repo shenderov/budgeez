@@ -62,6 +62,10 @@ public class GeneralPurpose {
 		return type;
 	}
 
+	public void setType(PurposeType type) {
+		this.type = type;
+	}
+
 	@Override
 	public String toString() {
 		return "GeneralPurpose [purposeId=" + purposeId + ", type=" + type + ", name=" + name + "]";
