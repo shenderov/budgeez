@@ -41,6 +41,23 @@ html {
 background-color: #e4b9b9;
 }
 
+.green{
+    background-color: greenyellow;
+    border: solid 2px red;
+}
+
+.date-picker{
+    margin-top: 0px;
+    margin-bottom: 0px;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.selector-container{
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
 .prototype{
 	background-color: #ffccff;
 	height: 100%;
