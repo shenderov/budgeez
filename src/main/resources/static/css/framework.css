@@ -28,8 +28,17 @@ html {
 }
 
 .chart{
-    height: 500px;
-    width: 900px;
+    height: 100%;
+    min-height: 500px;
+    width: 100%;
+}
+
+.chart-block{
+
+}
+
+.pink{
+background-color: #e4b9b9;
 }
 
 .prototype{
@@ -37,4 +46,12 @@ html {
 	height: 100%;
     width: 100%;
 	z-index: 99999;
+}
+
+@media only screen and (max-width: 768px) {
+    /* For mobile phones: */
+    [class*="chart"] {
+        width: 100vw;
+        height: 50vh;
+    }
 }
