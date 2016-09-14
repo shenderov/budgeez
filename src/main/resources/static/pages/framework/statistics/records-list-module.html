@@ -1,106 +1,114 @@
 <div ng-controller="RecordListController" id="records-list-module">
-<div id="records-list-period-selector-container">
-<div class="container">
-  <form class="form-inline" role="form" class="pink">
-<div class="form-group"><strong>Period</strong></div>
-
-      <div class="form-group">
-          <label for="records-list-datePicker-startDate-input" >From:</label>
-          <p class="input-group">
-              <input type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="startDate"
-                     is-open="popupStart.opened" datepicker-options="dateOptionsStart" ng-required="true"
-                     close-text="Close" ng-change="setStartDate(startDate)" id="records-list-datePicker-startDate-input"/>
+    <div id="records-list-period-selector-container" class="selector-container">
+        <form class="form-inline" role="form">
+            <div class="input-group">
+                <label class="no-margin" for="records-list-datePicker-startDate-input">Period From:</label>
+                <p class="input-group date-picker">
+                    <input type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="startDate"
+                           is-open="popupStart.opened" datepicker-options="dateOptionsStart" ng-required="true"
+                           close-text="Close" ng-change="setStartDate(startDate)"
+                           id="records-list-datePicker-startDate-input"/>
               <span class="input-group-btn">
-            <button type="button" class="btn btn-default" ng-click="openStart()" id="charts-selector-datePicker-startDate-openButton"><i class="glyphicon glyphicon-calendar"></i></button>
+            <button type="button" class="btn btn-default" ng-click="openStart()"
+                    id="charts-selector-datePicker-startDate-openButton"><i class="glyphicon glyphicon-calendar"></i>
+            </button>
           </span>
-          </p>
+                </p>
             </div>
 
-      <div class="form-group">
-          <label for="records-list-datePicker-endDate-input">To:</label>
-          <p class="input-group">
-              <input type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="endDate"
-                     is-open="popupEnd.opened" datepicker-options="dateOptionsEnd" ng-required="true"
-                     close-text="Close" ng-change="setEndDate(endDate)" id="records-list-datePicker-endDate-input"/>
+            <div class="form-group">
+                <label class="no-margin" for="records-list-datePicker-endDate-input">To:</label>
+                <p class="input-group date-picker">
+                    <input type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="endDate"
+                           is-open="popupEnd.opened" datepicker-options="dateOptionsEnd" ng-required="true"
+                           close-text="Close" ng-change="setEndDate(endDate)"
+                           id="records-list-datePicker-endDate-input"/>
               <span class="input-group-btn">
-            <button type="button" class="btn btn-default" ng-click="openEnd()" id="charts-selector-datePicker-endDate-openButton"><i class="glyphicon glyphicon-calendar"></i></button>
+            <button type="button" class="btn btn-default" ng-click="openEnd()"
+                    id="charts-selector-datePicker-endDate-openButton"><i class="glyphicon glyphicon-calendar"></i>
+            </button>
           </span>
-          </p>
-      </div>
-    <button type="submit" class="btn btn-default" ng-click="getRecordsList(startDate.getTime(), endDate.getTime())">Search</button>
-  </form>
-</div>
-</div>
+                </p>
+            </div>
+            <div class="form-group"><button type="submit" class="btn btn-default" ng-click="getRecordsList(startDate.getTime(), endDate.getTime())">Search</button></div>
+
+        </form>
+
+    </div>
 
 
-
-<!--<div id="records-list-fiter-container" class="form-inline">-->
+    <!--<div id="records-list-fiter-container" class="form-inline">-->
 
 
     <!--<span ng-dropdown-multiselect="" options="actualPurposesList" selected-model="selectedPurposes" extra-settings="purposeMultiselectSettings" translation-texts="purposeMultiselectButtonText"></span>-->
 
     <!--<div class="form-group">-->
-        <!--<label for="minAmount">Amount:</label>-->
-      <!--<input type="number" class="form-control input-sm" id="minAmount" ng-model="minAmount">-->
-        <!--<label for="maxAmount">-</label>-->
-	  <!--<input type="number" class="form-control input-sm" id="maxAmount" ng-model="maxAmount">-->
+    <!--<label for="minAmount">Amount:</label>-->
+    <!--<input type="number" class="form-control input-sm" id="minAmount" ng-model="minAmount">-->
+    <!--<label for="maxAmount">-</label>-->
+    <!--<input type="number" class="form-control input-sm" id="maxAmount" ng-model="maxAmount">-->
     <!--</div>-->
 
     <!--<span  ng-show="visible">-->
-        <!--<rzslider-->
-                <!--rz-slider-model="minAmount"-->
-                <!--rz-slider-high="maxAmount"-->
-                <!--rz-slider-options="rangeSlider.options" onpageshow="refreshSlider()"-->
-        <!--&gt;</rzslider>-->
+    <!--<rzslider-->
+    <!--rz-slider-model="minAmount"-->
+    <!--rz-slider-high="maxAmount"-->
+    <!--rz-slider-options="rangeSlider.options" onpageshow="refreshSlider()"-->
+    <!--&gt;</rzslider>-->
 
     <!--</span>-->
-	<!--</div>-->
+    <!--</div>-->
     <!--<button ng-click="toggle()">{{ visible ? 'Hide' : 'Show' }}</button>-->
     <!--<button ng-click="refreshSlider()">Show</button>-->
     <!--<div ng-show="visible">-->
     <!--<rzslider-->
-            <!--rz-slider-model="minAmount"-->
-            <!--rz-slider-high="maxAmount"-->
-            <!--rz-slider-options="rangeSlider.options" onpageshow="refreshSlider()"-->
+    <!--rz-slider-model="minAmount"-->
+    <!--rz-slider-high="maxAmount"-->
+    <!--rz-slider-options="rangeSlider.options" onpageshow="refreshSlider()"-->
     <!--&gt;</rzslider>-->
-<!--</div>-->
+    <!--</div>-->
     <!--<div range-slider min="demo2.range.min" max="demo2.range.max" model-min="demo2.minPrice"-->
-         <!--model-max="demo2.maxPrice" filter="currency:'$'" step="100"></div>-->
+    <!--model-max="demo2.maxPrice" filter="currency:'$'" step="100"></div>-->
 
 
-<div id="records-list-table-container">
-  <!--<table class="table table-hover table-striped table-bordered table-condensed table-responsive">-->
-    <div uib-alert ng-repeat="alert in alerts" ng-class="'alert-' + (alert.type || 'warning')"
-         close="closeAlert($index)" dismiss-on-timeout="4000">{{alert.msg}}</div>
-    <table class="table table-hover table-striped table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Date</th>
-        <th>Purpose</th>
-        <th>Amount</th>
-        <th></th>
-      </tr>
-    </thead>
-    <tbody>
-      <!--<tr ng-repeat="r in recordsList | filter: filterInRange('amount', minAmount, maxAmount) | actual:selectedPurposes:'purpose'" uib-tooltip="Comment: {{r.comment}}" tooltip-enable="r.comment!=null" tooltip-append-to-body="true">-->
-      <tr ng-repeat="r in recordsList" uib-tooltip="Comment: {{r.comment}}" tooltip-enable="r.comment!=null" tooltip-append-to-body="true">
+    <div id="records-list-table-container">
+        <!--<table class="table table-hover table-striped table-bordered table-condensed table-responsive">-->
+        <div uib-alert ng-repeat="alert in alerts" ng-class="'alert-' + (alert.type || 'warning')"
+             close="closeAlert($index)" dismiss-on-timeout="4000">{{alert.msg}}
+        </div>
+        <table class="table table-hover table-striped table-bordered table-condensed">
+            <thead>
+            <tr>
+                <th>Date</th>
+                <th>Purpose</th>
+                <th>Amount</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <!--<tr ng-repeat="r in recordsList | filter: filterInRange('amount', minAmount, maxAmount) | actual:selectedPurposes:'purpose'" uib-tooltip="Comment: {{r.comment}}" tooltip-enable="r.comment!=null" tooltip-append-to-body="true">-->
+            <tr ng-repeat="r in recordsList" uib-tooltip="Comment: {{r.comment}}" tooltip-enable="r.comment!=null"
+                tooltip-append-to-body="true">
 
-      <td>{{r.date | date: format}}</td>
-        <td>{{r.purpose.name}}</td>
-        <td>{{r.amount | number: 2}}</td>
-<td>
-    <button type="button" class="btn btn-info btn-xs glyphicon glyphicon-pencil" ng-click="openUpdateModal(r, $index)"></button>
-    <button type="button" class="btn btn-danger btn-xs glyphicon glyphicon-trash" ng-click="deleteRecord(r.recordId, $index)"></button>
-</td>
-      </tr>
-    </tbody>
-  </table>
+                <td>{{r.date | date: format}}</td>
+                <td>{{r.purpose.name}}</td>
+                <td>{{r.amount | number: 2}}</td>
+                <td>
+                    <button type="button" class="btn btn-info btn-xs glyphicon glyphicon-pencil"
+                            ng-click="openUpdateModal(r, $index)"></button>
+                    <button type="button" class="btn btn-danger btn-xs glyphicon glyphicon-trash"
+                            ng-click="deleteRecord(r.recordId, $index)"></button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
 
 
-</div>
+    </div>
     <script type="text/ng-template" id="dropdown.html">
         <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="button-template-url">
-            <li role="menuitem" ng-repeat="pps in purposesList"><input type="checkbox" value="pps.name">{{pps.name}}</li>
+            <li role="menuitem" ng-repeat="pps in purposesList"><input type="checkbox" value="pps.name">{{pps.name}}
+            </li>
 
         </ul>
     </script>
