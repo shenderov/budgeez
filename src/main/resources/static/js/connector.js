@@ -32,8 +32,8 @@ app.factory('Connector', ['$http', '$q', function($http, $q){
                 );
         },
 
-        getUserDefaultDataTable: function() {
-            return $http.get(server + 'getUserDefaultDataTable')
+        getUserDefaultDataTable: function(token) {
+            return $http.get(server + 'user/getUserDefaultDataTable', {headers: token})
                 .then(
                     function(response){
                         return response.data;
@@ -58,8 +58,8 @@ app.factory('Connector', ['$http', '$q', function($http, $q){
                 );
         },
 
-        getUserSelectionsList: function(token) {
-            return $http.get(server + 'user/getUserChartSelectionsList', {headers: token})
+        getUserSelectionsList: function() {
+            return $http.get(server + 'general/getUserChartSelectionsList')
                 .then(
                     function(response){
                         return response.data;
@@ -71,8 +71,8 @@ app.factory('Connector', ['$http', '$q', function($http, $q){
                 );
         },
 
-        getPurposesList: function() {
-            return $http.get('http://localhost:8080/ProjectJava11a/getPurposesList')
+        getPurposesList: function(token) {
+            return $http.get(server + 'user/getPurposesList', {headers: token})
                 .then(
                     function(response){
                         return response.data;
@@ -84,8 +84,8 @@ app.factory('Connector', ['$http', '$q', function($http, $q){
                 );
         },
 
-        getUserDataTable: function(chartSelection) {
-            return $http.post('http://localhost:8080/ProjectJava11a/getUserDataTable', chartSelection)
+        getUserDataTable: function(chartRequestWrapper, token) {
+            return $http.post(server + 'user/getUserDataTable', chartRequestWrapper, {headers: token})
                 .then(
                     function(response){
                         return response.data;
@@ -97,8 +97,8 @@ app.factory('Connector', ['$http', '$q', function($http, $q){
                 );
         },
 
-        addCustomPurpose: function(purpose) {
-            return $http.post('http://localhost:8080/ProjectJava11a/addCustomPurpose', purpose)
+        addCustomPurpose: function(purpose, token) {
+            return $http.post(server + 'user/addCustomPurpose', purpose, {headers: token})
                 .then(
                     function(response){
                         return response.data;
@@ -110,8 +110,47 @@ app.factory('Connector', ['$http', '$q', function($http, $q){
                 );
         },
 
-        addRecord: function(record) {
-            return $http.post('http://localhost:8080/ProjectJava11a/addRecord', record)
+        addRecord: function(record, token) {
+            return $http.post(server + 'user/addRecord', record, {headers: token})
+                .then(
+                    function(response){
+                        return response.data;
+                    },
+                    function(errResponse){
+                        console.error('Error while fetching users');
+                        return $q.reject(errResponse);
+                    }
+                );
+        },
+
+        getRecordsList: function(datePicker, token) {
+            return $http.post(server + 'user/getRecordsList', datePicker, {headers: token})
+                .then(
+                    function(response){
+                        return response.data;
+                    },
+                    function(errResponse){
+                        console.error('Error while fetching users');
+                        return $q.reject(errResponse);
+                    }
+                );
+        },
+
+        deleteRecord: function(recordId, token) {
+            return $http.post(server + 'user/deleteRecord', recordId, {headers: token})
+                .then(
+                    function(response){
+                        return response.data;
+                    },
+                    function(errResponse){
+                        console.error('Error while fetching users');
+                        return $q.reject(errResponse);
+                    }
+                );
+        },
+
+        editRecord: function(record, token) {
+            return $http.post(server + 'user/editRecord', record, {headers: token})
                 .then(
                     function(response){
                         return response.data;
@@ -136,6 +175,18 @@ app.factory('Connector', ['$http', '$q', function($http, $q){
                 );
         },
 
+        signup: function(userDetails) {
+            return $http.post('http://localhost:8080/signup', userDetails)
+                .then(
+                    function(result){
+                        return result.data;
+                    },
+                    function(errResponse){
+                        console.error('Error while fetching users');
+                        return $q.reject(errResponse);
+                    }
+                );
+        },
 
 
      

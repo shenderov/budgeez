@@ -24,7 +24,7 @@ app.controller('ChartsController', function($scope, $http, $q, $rootScope, Conne
                 $scope.drawChart(chartWrapper);
             }
         )
-    }
+    };
 	
     $scope.drawInitiateChart = function(){
         $scope.getDefaultDataTable().then(
@@ -32,11 +32,12 @@ app.controller('ChartsController', function($scope, $http, $q, $rootScope, Conne
                 $scope.drawChart(defaultChartWrapper);
             }
         )
-    }
+    };
     if(isChartsLoaded){
         $scope.drawInitiateChart();
     }
 
+    $scope.wrapper = null;
     $scope.drawChart = function(chartWrapper){
         var chartype = null;
         var options = null;
@@ -58,14 +59,19 @@ app.controller('ChartsController', function($scope, $http, $q, $rootScope, Conne
                 isStacked: true
             };
         }
-            var wrapper = new google.visualization.ChartWrapper({
+            $scope.wrapper = new google.visualization.ChartWrapper({
                 chartType: chartype,
                 dataTable: chartWrapper.dataTable,
                 options: options,
                 containerId: $scope.containerId
         });
-        wrapper.draw();
-    }
+        $scope.wrapper.draw();
+    };
+
+    $scope.redrawChart = function () {
+        console.log("redraw");
+        $scope.wrapper.draw();
+    };
 	
     $scope.selector = function(chartSelection){
         $scope.activeChartSelection = chartSelection;
@@ -80,7 +86,7 @@ app.controller('ChartsController', function($scope, $http, $q, $rootScope, Conne
         //     $scope.startDate = null;
         //     $scope.endDate = null;
         // }
-    }
+    };
 
     $scope.dateOptionsStart = {
         formatYear: 'yy',
@@ -100,13 +106,13 @@ app.controller('ChartsController', function($scope, $http, $q, $rootScope, Conne
         $scope.startDate = $scope.checkDateInput(startDate);
         $scope.setMaxDate();
         $scope.dateOptionsEnd.minDate = $scope.startDate;
-    }
+    };
 
     $scope.setEndDate = function(endDate){
         $scope.endDate = $scope.checkDateInput(endDate);
         $scope.setMaxDate();
         $scope.dateOptionsStart.maxDate = $scope.endDate;
-    }
+    };
 
     $scope.setMaxDate = function(){
         if($scope.startDate > $scope.endDate){
@@ -114,14 +120,14 @@ app.controller('ChartsController', function($scope, $http, $q, $rootScope, Conne
             $scope.dateOptionsStart.maxDate = $scope.endDate;
             $scope.dateOptionsEnd.maxDate = $scope.endDate;
         }
-    }
+    };
 
     $scope.checkDateInput = function(date){
         if(date > new Date()){
             date = new Date();
         }
         return date;
-    }
+    };
 
     $scope.openStart = function() {
         $scope.popupStart.opened = true;
