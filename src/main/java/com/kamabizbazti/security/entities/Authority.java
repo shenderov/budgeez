@@ -20,7 +20,7 @@ public class Authority {
     private AuthorityName name;
 
     @ManyToMany(mappedBy = "authorities", fetch = FetchType.LAZY)
-    private List <User> users;
+    private List<User> users;
 
     public Long getId() {
         return id;

@@ -3,9 +3,11 @@ package com.kamabizbazti.security.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.kamabizbazti.model.entities.Currency;
 import com.kamabizbazti.model.entities.Language;
+import com.kamabizbazti.model.exceptions.FieldSizeIsTooShortOrTooLong;
+import com.kamabizbazti.security.exceptions.InvalidEmailFormat;
+import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Range;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -24,19 +26,21 @@ public class User {
     @JsonIgnore
     private Long id;
 
-    @Column(name = "username", length = 50, unique = true)
+    @Column(name = "username", length = 254, unique = true)
     @NotNull
-    @Size(min = 4, max = 50)
+    @Email(message = InvalidEmailFormat.message)
+    @Size(min = 4, max = 254, message = FieldSizeIsTooShortOrTooLong.message)
     private String username;
 
-    @Column(name = "password", length = 100)
+    @Column(name = "password", length = 128)
     @NotNull
-    @Size(min = 4, max = 100)
+    @JsonIgnore
+    @Size(min = 6, max = 128, message = FieldSizeIsTooShortOrTooLong.message)
     private String password;
 
-    @Column(name = "name", length = 50)
+    @Column(name = "name", length = 70)
     @NotNull
-    @Size(min = 4, max = 50)
+    @Size(min = 2, max = 70, message = FieldSizeIsTooShortOrTooLong.message)
     private String name;
 
     @Column(name = "enabled")
@@ -59,16 +63,16 @@ public class User {
     private List<Authority> authorities;
 
     @ManyToOne(optional = false)
-    @JoinColumn(name="languageCode")
+    @JoinColumn(name = "languageCode")
     @JsonIgnore
     private Language language;
 
     @ManyToOne(optional = false)
-    @JoinColumn(name="currencyCode")
+    @JoinColumn(name = "currencyCode")
     @JsonIgnore
     private Currency currency;
 
-    @Range(min=1, max=31, message="Start day must be in range between 1 and 31")
+    @Range(min = 1, max = 31, message = "Start day must be in range between 1 and 31")
     @Column(name = "startCay", nullable = false)
     @JsonIgnore
     private int startDay;
@@ -187,5 +191,23 @@ public class User {
 
     public void setActivated(boolean activated) {
         isActivated = activated;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", name='" + name + '\'' +
+                ", enabled=" + enabled +
+                ", lastPasswordResetDate=" + lastPasswordResetDate +
+                ", authorities=" + authorities +
+                ", language=" + language +
+                ", currency=" + currency +
+                ", startDay=" + startDay +
+                ", isActivated=" + isActivated +
+                ", creationDate=" + creationDate +
+                '}';
     }
 }
