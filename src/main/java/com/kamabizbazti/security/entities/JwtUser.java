@@ -1,4 +1,4 @@
-package com.kamabizbazti.security;
+package com.kamabizbazti.security.entities;
 
 import java.util.Collection;
 import java.util.Date;

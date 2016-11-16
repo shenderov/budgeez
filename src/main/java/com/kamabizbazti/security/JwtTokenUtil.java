@@ -1,5 +1,6 @@
 package com.kamabizbazti.security;
 
+import com.kamabizbazti.security.entities.JwtUser;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;

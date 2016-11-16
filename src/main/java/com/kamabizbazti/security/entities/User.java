@@ -3,8 +3,6 @@ package com.kamabizbazti.security.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.kamabizbazti.model.entities.Currency;
 import com.kamabizbazti.model.entities.Language;
-import com.kamabizbazti.model.exceptions.FieldSizeIsTooShortOrTooLong;
-import com.kamabizbazti.security.exceptions.InvalidEmailFormat;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Range;
 
@@ -28,19 +26,19 @@ public class User {
 
     @Column(name = "username", length = 254, unique = true)
     @NotNull
-    @Email(message = InvalidEmailFormat.message)
-    @Size(min = 4, max = 254, message = FieldSizeIsTooShortOrTooLong.message)
+    @Email
+    @Size(min = 4, max = 254)
     private String username;
 
     @Column(name = "password", length = 128)
     @NotNull
     @JsonIgnore
-    @Size(min = 6, max = 128, message = FieldSizeIsTooShortOrTooLong.message)
+    @Size(min = 6, max = 128)
     private String password;
 
     @Column(name = "name", length = 70)
     @NotNull
-    @Size(min = 2, max = 70, message = FieldSizeIsTooShortOrTooLong.message)
+    @Size(min = 2, max = 70)
     private String name;
 
     @Column(name = "enabled")

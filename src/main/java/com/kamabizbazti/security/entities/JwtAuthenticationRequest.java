@@ -1,8 +1,10 @@
-package com.kamabizbazti.security;
+package com.kamabizbazti.security.entities;
 
+import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 
 public class JwtAuthenticationRequest implements Serializable {
@@ -11,10 +13,13 @@ public class JwtAuthenticationRequest implements Serializable {
 
     @NotNull
     @NotBlank
+    @Email
+    @Size(min = 4, max = 254)
     private String username;
 
     @NotNull
     @NotBlank
+    @Size(min = 6, max = 128)
     private String password;
 
     public JwtAuthenticationRequest() {

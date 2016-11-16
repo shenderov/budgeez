@@ -3,6 +3,7 @@ package com.kamabizbazti.security;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.kamabizbazti.security.entities.JwtUser;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import com.kamabizbazti.security.entities.Authority;
