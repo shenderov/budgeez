@@ -14,60 +14,72 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 @Entity
-@Table(name = "Purpose", uniqueConstraints = @UniqueConstraint(columnNames = {"purposeId"}))
-@Inheritance(strategy=InheritanceType.SINGLE_TABLE)
+@Table(name = "Purpose", uniqueConstraints = @UniqueConstraint(columnNames = {"name", "uId", "type"}))
+
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public class GeneralPurpose {
-	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO, generator="purpose_seq_gen")
-	@SequenceGenerator(name="purpose_seq_gen", sequenceName="PURPOSE_SEQ")
-	@Column(name = "purposeId", nullable = false)
-	private long purposeId;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "purpose_seq_gen")
+    @SequenceGenerator(name = "purpose_seq_gen", sequenceName = "PURPOSE_SEQ")
+    @Column(name = "purposeId", nullable = false, unique = true)
+    private long purposeId;
 
-	@Column(name = "type", nullable = false)
-	@Enumerated(EnumType.STRING)
-	private PurposeType type;
+    @Column(name = "type", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private PurposeType type;
 
-	@Column(name = "name", nullable = false)
-	private String name;
+    @Column(name = "name", nullable = false)
+    private String name;
 
-	public GeneralPurpose() {
-		super();
-	}
+    @Column(name = "uId")
+    private long uId;
 
-	public GeneralPurpose(String name) {
-		super();
-		this.type = PurposeType.GENERAL;
-		this.name = name;
-	}
+    public GeneralPurpose() {
+        super();
+    }
 
-	public GeneralPurpose(String name, PurposeType type) {
-		super();
-		this.type = type;
-		this.name = name;
-	}
+    public GeneralPurpose(String name) {
+        super();
+        this.type = PurposeType.GENERAL;
+        this.name = name;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public GeneralPurpose(String name, PurposeType type) {
+        super();
+        this.type = type;
+        this.name = name;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public long getPurposeId() {
-		return purposeId;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public PurposeType getType() {
-		return type;
-	}
+    public long getPurposeId() {
+        return purposeId;
+    }
 
-	public void setType(PurposeType type) {
-		this.type = type;
-	}
+    public PurposeType getType() {
+        return type;
+    }
 
-	@Override
-	public String toString() {
-		return "GeneralPurpose [purposeId=" + purposeId + ", type=" + type + ", name=" + name + "]";
-	}
+    public void setType(PurposeType type) {
+        this.type = type;
+    }
+
+    public long getuId() {
+        return uId;
+    }
+
+    public void setuId(long uId) {
+        this.uId = uId;
+    }
+
+    @Override
+    public String toString() {
+        return "GeneralPurpose [purposeId=" + purposeId + ", type=" + type + ", name=" + name + "]";
+    }
 }
