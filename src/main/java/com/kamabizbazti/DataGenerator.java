@@ -13,8 +13,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -72,7 +70,7 @@ public class DataGenerator {
 		authorityUser.setName(AuthorityName.ROLE_USER);
 		authorityRepository.save(authorityAdmin);
 		authorityRepository.save(authorityUser);
-		System.out.println(String.format("GeneralPurposes loaded in %dms", System.currentTimeMillis()-start));
+		System.out.println(String.format("Authorities loaded in %dms", System.currentTimeMillis()-start));
 	}
 
 	public void insertUsers(UserRepository userRepository, LanguageRepository languageRepository, CurrencyRepository currencyRepository, AuthorityRepository authorityRepository, PasswordEncoder passwordEncoder, int count) {
@@ -123,10 +121,10 @@ public class DataGenerator {
 	public void insertCustomPurposes(UserRepository userRepository, GeneralPurposeRepository generalPurposeRepository, CustomPurposeRepository customPurposeRepository) {
 		long start = System.currentTimeMillis();
 		Iterable <User> users = userRepository.findAll();
-		List <GeneralPurpose> purposes = generalPurposeRepository.findAll();
+		//List <GeneralPurpose> purposes = generalPurposeRepository.findAll();
 		for (User u : users){
 			for(int i = 0; i < 3; i++){
-				customPurposeRepository.save(new CustomPurpose(u, getRandomPurpose(purposes).getName() + "*"));
+				customPurposeRepository.save(new CustomPurpose(u, u.getName() + " " + (i+1)));
 			}
 		}
 		System.out.println(String.format("CustomPurposes loaded in %dms", System.currentTimeMillis()-start));
@@ -150,6 +148,26 @@ public class DataGenerator {
 		chartSelectionRepository.save(selection6);
 		chartSelectionRepository.save(selection7);
 		chartSelectionRepository.save(selection8);
+		ChartSelection selection9 = new ChartSelection(ChartSelectionId.USER_CURRENT_MONTH, "Current Month", ChartType.PIECHART, false, true);
+		ChartSelection selection10 = new ChartSelection(ChartSelectionId.USER_PREV_MONTH, "Previous Month", ChartType.PIECHART, false, true);
+		ChartSelection selection11 = new ChartSelection(ChartSelectionId.USER_PREV_THREE_MONTH_AVG, "Previous 3 Month Average", ChartType.PIECHART, false, true);
+		ChartSelection selection12 = new ChartSelection(ChartSelectionId.USER_PREV_THREE_MONTH_TOTAL, "Previous 3 Month Total", ChartType.PIECHART, false, true);
+		ChartSelection selection13 = new ChartSelection(ChartSelectionId.USER_CUSTOM_PERIOD_AVG, "Custom Period Average", ChartType.PIECHART, true, true);
+		ChartSelection selection14 = new ChartSelection(ChartSelectionId.USER_CUSTOM_PERIOD_TOTAL, "Custom Period Total", ChartType.PIECHART, true, true);
+		ChartSelection selection15 = new ChartSelection(ChartSelectionId.USER_LAST_THREE_MONTH_DETAILED, "Last 3 Month Detailed", ChartType.COLUMNCHART, false, true);
+		ChartSelection selection16 = new ChartSelection(ChartSelectionId.USER_LAST_SIX_MONTH_DETAILED, "Last 6 Month Detailed", ChartType.COLUMNCHART, false, true);
+		ChartSelection selection17 = new ChartSelection(ChartSelectionId.USER_LAST_YEAR_DETAILED, "Last Year Average Detailed", ChartType.COLUMNCHART, false, true);
+		ChartSelection selection18 = new ChartSelection(ChartSelectionId.USER_CUSTOM_PERIOD_DETAILED, "Custom Periode Average Detailed", ChartType.COLUMNCHART, true, true);
+		chartSelectionRepository.save(selection9);
+		chartSelectionRepository.save(selection10);
+		chartSelectionRepository.save(selection11);
+		chartSelectionRepository.save(selection12);
+		chartSelectionRepository.save(selection13);
+		chartSelectionRepository.save(selection14);
+		chartSelectionRepository.save(selection15);
+		chartSelectionRepository.save(selection16);
+		chartSelectionRepository.save(selection17);
+		chartSelectionRepository.save(selection18);
 		System.out.println(String.format("ChartSelections loaded in %dms", System.currentTimeMillis()-start));
 	}
 
