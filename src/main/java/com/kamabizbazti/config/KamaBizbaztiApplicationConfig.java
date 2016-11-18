@@ -6,8 +6,7 @@ import com.kamabizbazti.model.handlers.GeneralStatisticsHandler;
 import com.kamabizbazti.model.handlers.UserRequestHandler;
 import com.kamabizbazti.model.handlers.UserStatisticsHandler;
 import com.kamabizbazti.model.helpers.DateHelper;
-import com.kamabizbazti.model.interfaces.IGeneralRequestHandler;
-import com.kamabizbazti.model.interfaces.IUserRequestHandler;
+import com.kamabizbazti.model.interfaces.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -20,8 +19,23 @@ public class KamaBizbaztiApplicationConfig {
     }
 
     @Bean
+    public IGeneralStatisticsHandler generalStatisticsHandler() {
+        return new GeneralStatisticsHandler();
+    }
+
+    @Bean
     public IUserRequestHandler userRequestHandler() {
         return new UserRequestHandler();
+    }
+
+    @Bean
+    public IUserStatisticsHandler userStatisticsHandler() {
+        return new UserStatisticsHandler();
+    }
+
+    @Bean
+    public IDateHelper dateHelper() {
+        return new DateHelper();
     }
 
     @Bean
@@ -29,18 +43,4 @@ public class KamaBizbaztiApplicationConfig {
         return new DataGenerator();
     }
 
-    @Bean
-    public GeneralStatisticsHandler generalStatisticsHandler() {
-        return new GeneralStatisticsHandler();
-    }
-
-    @Bean
-    public UserStatisticsHandler userStatisticsHandler() {
-        return new UserStatisticsHandler();
-    }
-
-    @Bean
-    public DateHelper dateHelper() {
-        return new DateHelper();
-    }
 }
