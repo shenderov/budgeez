@@ -9,12 +9,10 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface ChartSelectionRepository extends CrudRepository <ChartSelection, ChartSelectionId> {
-
-    @Query("select s from ChartSelection s where s.authRequired='false'")
+public interface ChartSelectionRepository extends CrudRepository<ChartSelection, ChartSelectionId> {
+    @Query("select s from ChartSelection s where s.authRequired = false")
     List<ChartSelection> findAllGeneralSelections();
 
-    @Query("select s from ChartSelection s where s.authRequired='true'")
+    @Query("select s from ChartSelection s where s.authRequired = true")
     List<ChartSelection> findAllUserSelections();
-
 }
