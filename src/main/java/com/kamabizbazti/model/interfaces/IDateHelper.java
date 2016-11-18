@@ -7,6 +7,10 @@ public interface IDateHelper {
 
     long getFirstDayOfNMonthAgo(int monthAgo);
 
+    long getFirsDayOfMonth(int monthAgo);
+
+    long getLastDayOfMonth(int monthAgo);
+
     long getFirsDayOfWeek(int weeksAgo);
 
     long getLastDayOfWeek(int weeksAgo);
