@@ -8,16 +8,37 @@ spring:
     serialization:
       INDENT_OUTPUT: true
 
-jwt:
+security:
   header: Authorization
-  secret: mySecret
+  secret: 4616f295-a89a-4e85-a308-9f8f43633147
   expiration: 604800
   route:
     authentication:
-      path: login
+      login: login
       refresh: refresh
+      signup: signup
 
-logging:
-  level:
-    org.springframework:
-      security: DEBUG
+general:
+  path: general
+  route:
+    getGeneralChartSelectionsList: getGeneralChartSelectionsList
+    getUserChartSelectionsList: getUserChartSelectionsList
+    getDefaultDataTable: getDefaultDataTable
+    getGeneralDataTable: getGeneralDataTable
+
+user:
+  path: user
+  route:
+    getPurposesList: getPurposesList
+    getUserDefaultDataTable: getUserDefaultDataTable
+    getUserDataTable: getUserDataTable
+    addRecord: addRecord
+    addCustomPurpose: addCustomPurpose
+    getRecordsList: getRecordsList
+    deleteRecord: deleteRecord
+    editRecord: editRecord
+
+#logging:
+#  level:
+#    org.springframework:
+#      security: DEBUG

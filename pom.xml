@@ -6,7 +6,7 @@
 	<groupId>com.kamabizbazti</groupId>
 	<artifactId>kamabizbazti</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<packaging>jar</packaging>
+	<packaging>war</packaging>
 
 	<name>KamaBizbaztiBoot</name>
 	<description>Kama Bizbazti</description>
@@ -22,6 +22,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.8</java.version>
+		<start-class>com.kamabizbazti.KamaBizbaztiBootApplication</start-class>
 	</properties>
 
 	<dependencies>
@@ -53,6 +54,11 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web-services</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.tomcat.embed</groupId>
+			<artifactId>tomcat-embed-jasper</artifactId>
 		</dependency>
 
 		<!--<dependency>-->
