@@ -30,23 +30,20 @@ import java.util.List;
 @RestController
 public class AuthenticationRestController {
 
-    @Value("${security.header}")
-    private String tokenHeader;
+    @Autowired
+    private JwtTokenUtil jwtTokenUtil;
 
     @Autowired
     private AuthenticationManager authenticationManager;
 
     @Autowired
-    private JwtTokenUtil jwtTokenUtil;
-
-    @Autowired
     private UserDetailsService userDetailsService;
 
     @Autowired
-    private UserRepository userRepository;
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
-    private PasswordEncoder passwordEncoder;
+    private UserRepository userRepository;
 
     @Autowired
     private LanguageRepository languageRepository;
@@ -57,6 +54,8 @@ public class AuthenticationRestController {
     @Autowired
     private AuthorityRepository authorityRepository;
 
+    @Value("${security.header}")
+    private String tokenHeader;
     private static final String DEFAULT_LANGUAGE = "ENG";
     private static final String DEFAULT_CURRENCY = "USD";
 
