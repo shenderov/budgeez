@@ -2,6 +2,7 @@
  
 app.factory('Connector', ['$http', '$q', function($http, $q){
 
+    //var server = "http://localhost:8080/kamabizbazti/";
     var server = "http://localhost:8080/";
 
     return {
@@ -101,7 +102,7 @@ app.factory('Connector', ['$http', '$q', function($http, $q){
             return $http.post(server + 'user/addCustomPurpose', purpose, {headers: token})
                 .then(
                     function(response){
-                        return response.data;
+                        return response;
                     },
                     function(errResponse){
                         console.error('Error while fetching users');
@@ -157,13 +158,14 @@ app.factory('Connector', ['$http', '$q', function($http, $q){
                     },
                     function(errResponse){
                         console.error('Error while fetching users');
+                        console.error(JSON.stringify(errResponse));
                         return $q.reject(errResponse);
                     }
                 );
         },
 
         login: function(credentials) {
-            return $http.post('http://localhost:8080/login', credentials)
+            return $http.post(server + 'login', credentials)
                 .then(
                     function(result){
                         return result.data;
@@ -176,7 +178,7 @@ app.factory('Connector', ['$http', '$q', function($http, $q){
         },
 
         signup: function(userDetails) {
-            return $http.post('http://localhost:8080/signup', userDetails)
+            return $http.post(server + 'signup', userDetails)
                 .then(
                     function(result){
                         return result.data;

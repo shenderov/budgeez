@@ -8,9 +8,5 @@ public interface IGeneralStatisticsHandler {
 
     ChartWrapper getNMonthAgoAverage(ChartRequestWrapper chartRequestWrapper, int monthAgo);
 
-    ChartWrapper getCustomPeriodAverage(ChartRequestWrapper chartRequestWrapper);
-
     ChartWrapper getLastNMonthsAverageDetailed(ChartRequestWrapper chartRequestWrapper, int monthAgo);
-
-    ChartWrapper getGeneralCustomPeriodAverageDetailed(ChartRequestWrapper chartRequestWrapper);
 }

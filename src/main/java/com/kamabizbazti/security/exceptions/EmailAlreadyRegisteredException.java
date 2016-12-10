@@ -1,14 +1,14 @@
 package com.kamabizbazti.security.exceptions;
 
-public class EmailAlreadyRegistered extends Exception {
+public class EmailAlreadyRegisteredException extends Exception {
 
     public static final String message = "EMAIL_ALREADY_REGISTERED";
 
-    public EmailAlreadyRegistered (String message){
+    public EmailAlreadyRegisteredException(String message) {
         super(message);
     }
 
-    public EmailAlreadyRegistered (){
+    public EmailAlreadyRegisteredException() {
         super(message);
     }
 }

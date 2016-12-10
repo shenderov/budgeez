@@ -1,5 +1,7 @@
 package com.kamabizbazti.model.interfaces;
 
+import java.util.List;
+
 public interface IDateHelper {
     long getFirstDayOfCurrentMonth();
 
@@ -11,9 +13,23 @@ public interface IDateHelper {
 
     long getLastDayOfMonth(int monthAgo);
 
-    long getFirsDayOfWeek(int weeksAgo);
+    long getFirsDayOfWeeksAgo(int weeksAgo);
 
-    long getLastDayOfWeek(int weeksAgo);
+    long getLastDayOfWeeksAgo(int weeksAgo);
+
+    long getFirstDayOfNWeeksAgoFromDate(long date, int weeksAgo);
+
+    long getFirstDayOfWeekByDate(long date);
+
+    long getFirstDayOfMonthByDate(long date);
+
+    long getFirstDayOfYearByDate(long date);
+
+    long getLastDayOfWeekByDate(long date);
+
+    long getLastDayOfMonthByDate(long date);
+
+    long getLastDayOfYearByDate(long date);
 
     long getLastDayOfCurrentMonth();
 
@@ -25,6 +41,10 @@ public interface IDateHelper {
 
     long monthsBetweenTwoDates(long startDate, long endDate);
 
+    long getFirstDayOfMonthAgoFromDate(long date, int monthsAgo);
+
+    long getFirstDayOfNYearsAgoFromDate(long date, int yearsAgo);
+
     long yearsBetweenTwoDates(long startDate, long endDate);
 
     String getFullMonthName(long date);
@@ -35,9 +55,17 @@ public interface IDateHelper {
 
     String getShortMonthWeek(long date);
 
+    String getFullMonthWeekYear(long date);
+
+    String getShortMonthWeekYear(long date);
+
     String getFullMonthYear(long date);
 
     String getShortMonthYear(long date);
 
     String getYear(long date);
+
+    String getFormattedMonthNameByDate(boolean isTheSameYear, long date, int monthsCount);
+
+    String getFormattedWeekNameByDate(boolean isTheSameYear, long date, int weeksCount);
 }

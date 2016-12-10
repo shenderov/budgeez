@@ -41,8 +41,8 @@
     </div>
 </div>
 <div ng-show="isChartShown" ng-init="isChartShown=true">
-<div class="chart-block" id="chart-show-block">
-    <div id="chart-canvas" class="chart" onresize="redrawChart()"></div>
+<div class="chart-block" id="chart-show-block" onresize="redrawChart()">
+    <div id="chart-canvas" class="chart"></div>
 </div>
 <div ng-show="!isChartShown" class="prototype">No data found for the chart</div>
     </div>

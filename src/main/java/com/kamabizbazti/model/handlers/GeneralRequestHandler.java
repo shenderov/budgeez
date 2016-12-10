@@ -4,6 +4,7 @@ import com.kamabizbazti.model.entities.ChartRequestWrapper;
 import com.kamabizbazti.model.entities.ChartSelection;
 import com.kamabizbazti.model.entities.ChartSelectionId;
 import com.kamabizbazti.model.entities.ChartWrapper;
+import com.kamabizbazti.model.exceptions.UnknownSelectionIdException;
 import com.kamabizbazti.model.interfaces.IGeneralRequestHandler;
 import com.kamabizbazti.model.interfaces.IGeneralStatisticsHandler;
 import com.kamabizbazti.model.repository.ChartSelectionRepository;
@@ -23,11 +24,10 @@ public class GeneralRequestHandler implements IGeneralRequestHandler {
 
     private static final ChartSelectionId DEFAULT_CHART_SELECTION = ChartSelectionId.CURRENT_MONTH_AVG;
 
-    public ChartWrapper getGeneralDatatable(ChartRequestWrapper chartRequestWrapper) {
-        ChartWrapper wrapper = null;
+    public ChartWrapper getGeneralDatatable(ChartRequestWrapper chartRequestWrapper) throws UnknownSelectionIdException {
+        ChartWrapper wrapper;
         switch (chartRequestWrapper.getChartSelection().getSelectionId()) {
             case CURRENT_MONTH_AVG:
-            default:
                 wrapper = generalStatisticsHandler.getCurrentMonthAverage(chartRequestWrapper);
                 break;
             case PREV_MONTH_AVG:
@@ -36,8 +36,8 @@ public class GeneralRequestHandler implements IGeneralRequestHandler {
             case PREV_THREE_MONTH_AVG:
                 wrapper = generalStatisticsHandler.getNMonthAgoAverage(chartRequestWrapper, 3);
                 break;
-            case CUSTOM_PERIOD_AVG:
-                wrapper = generalStatisticsHandler.getCustomPeriodAverage(chartRequestWrapper);
+            case LAST_YEAR_AVG:
+                wrapper = generalStatisticsHandler.getNMonthAgoAverage(chartRequestWrapper, 12);
                 break;
             case LAST_THREE_MONTH_AVG_DETAILED:
                 wrapper = generalStatisticsHandler.getLastNMonthsAverageDetailed(chartRequestWrapper, 3);
@@ -48,14 +48,13 @@ public class GeneralRequestHandler implements IGeneralRequestHandler {
             case LAST_YEAR_AVG_DETAILED:
                 wrapper = generalStatisticsHandler.getLastNMonthsAverageDetailed(chartRequestWrapper, 12);
                 break;
-            case CUSTOM_PERIOD_AVG_DETAILED:
-                wrapper = generalStatisticsHandler.getGeneralCustomPeriodAverageDetailed(chartRequestWrapper);
-                break;
+            default:
+                throw new UnknownSelectionIdException();
         }
         return wrapper;
     }
 
-    public ChartWrapper getDefaultDataTable() {
+    public ChartWrapper getDefaultDataTable() throws UnknownSelectionIdException {
         ChartRequestWrapper requestWrapper = new ChartRequestWrapper();
         requestWrapper.setChartSelection(chartSelectionRepository.findOne(DEFAULT_CHART_SELECTION));
         return getGeneralDatatable(requestWrapper);

@@ -1,29 +1,35 @@
 <div class="add-record-module" ng-controller="RecordsController">
     <h2 class="form-signin-heading text-center">Add New Record</h2>
-    <form class="form-add-record" ng-model="record">
-        <p class="bg-danger" ng-show="alertError" ng-init="alertError=false"><strong>Custom purpose exist</strong>
-        </p>
-        <div class="form-group">
-            <label for="inputAmount">Amount:</label>
-            <input type="number" id="inputAmount" class="form-control" placeholder="Enter amount" required ng-model="record.amount">
-        </div>
-        <div class="form-group">
-            <label for="inputPurpose">Purpose:</label>
-            <select class="form-control" id="inputPurpose" ng-options="purpose as purpose.name for purpose in purposesList" required ng-model="record.purpose"></select>
-        </div>
-        <div class="form-group" ng-show="record.purpose.type == 'ADD_NEW'">
-            <label for="inputNewPurpose">New Purpose Name:</label>
-            <input type="text" id="inputNewPurpose" class="form-control" placeholder="Enter Purpose Name" ng-model="purposeName">
-        </div>
-        <div class="form-group">
-            <label for="inputName">Comment:</label>
-            <input type="text" id="inputName" class="form-control" placeholder="Enter comment (optional)" ng-model="record.comment">
-        </div>
-        <div class="form-group">
-            <label for="records-addRecord-datePicker-recordDate-input">Record Date:</label>
-            <input ng-click="openRecordDate()" type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="recordDate" is-open="popupRecordDate.opened" datepicker-options="dateOptionsRecord" ng-required="true" close-text="Close" ng-change="setRecordDate(recordDate)" id="records-addRecord-datePicker-recordDate-input"/>
-        </div>
-    </form>
+
+    <div ng-include="'pages/framework/statistics/add-edit-record-form.html'"></div>
+
+    <!--<form class="form-add-record" ng-model="record">-->
+        <!--<p class="bg-danger" ng-show="alertError" ng-init="alertError=false"><strong>Custom purpose exist</strong>-->
+        <!--</p>-->
+        <!--<div class="form-group">-->
+            <!--<label for="inputAmount">Amount:</label>-->
+            <!--<input type="number" id="inputAmount" class="form-control" placeholder="Enter amount" required ng-model="record.amount">-->
+        <!--</div>-->
+        <!--<div class="form-group">-->
+            <!--<label for="inputPurpose">Purpose:</label>-->
+            <!--<select class="form-control" id="inputPurpose" ng-options="purpose as purpose.name for purpose in purposesList" required ng-model="record.purpose"></select>-->
+        <!--</div>-->
+        <!--<div class="form-group" ng-show="record.purpose.type == 'ADD_NEW'">-->
+            <!--<label for="inputNewPurpose">New Purpose Name:</label>-->
+            <!--<input type="text" id="inputNewPurpose" class="form-control" placeholder="Enter Purpose Name" ng-model="purposeName">-->
+        <!--</div>-->
+        <!--<div class="form-group">-->
+            <!--<label for="inputName">Comment:</label>-->
+            <!--<input type="text" id="inputName" class="form-control" placeholder="Enter comment (optional)" ng-model="record.comment">-->
+        <!--</div>-->
+        <!--<div class="form-group">-->
+            <!--<label for="records-addRecord-datePicker-recordDate-input">Record Date:</label>-->
+            <!--<input ng-click="openRecordDate()" type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="recordDate" is-open="popupRecordDate.opened" datepicker-options="dateOptionsRecord" ng-required="true" close-text="Close" ng-change="setRecordDate(recordDate)" id="records-addRecord-datePicker-recordDate-input"/>-->
+        <!--</div>-->
+    <!--</form>-->
+
+
+
     <button class="btn btn-lg btn-primary btn-block" type="submit" ng-click="addRecord(record, purposeName)">Add Record</button>
 
 </div>

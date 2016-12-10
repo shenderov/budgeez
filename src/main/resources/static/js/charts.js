@@ -44,7 +44,12 @@ app.controller('ChartsController', function($scope, $http, $q, $rootScope, Conne
         if(chartWrapper.chartType == "PIECHART"){
             chartype = "PieChart";
             options = {
-                title: chartWrapper.title
+                title: chartWrapper.title,
+                legend: {
+                  position: 'top',
+                    maxLines: 5
+                },
+                pieSliceText: 'label'
             };
         }else if (chartWrapper.chartType == "COLUMNCHART"){
             chartype = "ColumnChart";
@@ -56,7 +61,11 @@ app.controller('ChartsController', function($scope, $http, $q, $rootScope, Conne
                 hAxis: {
                     title: chartWrapper.hAxis
                 },
-                isStacked: true
+                isStacked: true,
+                legend: {
+                    position: 'top',
+                    maxLines: 5
+                }
             };
         }
             $scope.wrapper = new google.visualization.ChartWrapper({
@@ -71,6 +80,15 @@ app.controller('ChartsController', function($scope, $http, $q, $rootScope, Conne
     $scope.redrawChart = function () {
         console.log("redraw");
         $scope.wrapper.draw();
+    };
+
+    $rootScope.getAndRedrawChart = function () {
+        console.log("getAndRedrawChart");
+        $scope.getDataTable($scope.chartRequestWrapper).then(
+            function(chartWrapper){
+                $scope.drawChart(chartWrapper);
+            }
+        )
     };
 	
     $scope.selector = function(chartSelection){

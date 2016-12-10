@@ -1,5 +1,8 @@
 package com.kamabizbazti.model.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.validator.constraints.NotBlank;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -12,6 +15,8 @@ import javax.persistence.InheritanceType;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 @Entity
 @Table(name = "Purpose", uniqueConstraints = @UniqueConstraint(columnNames = {"name", "uId", "type"}))
@@ -28,10 +33,14 @@ public class GeneralPurpose {
     @Enumerated(EnumType.STRING)
     private PurposeType type;
 
-    @Column(name = "name", nullable = false)
+    @Column(name = "name")
+    @NotNull
+    @NotBlank
+    @Size(max = 30, min = 1)
     private String name;
 
     @Column(name = "uId")
+    @JsonIgnore
     private long uId;
 
     public GeneralPurpose() {

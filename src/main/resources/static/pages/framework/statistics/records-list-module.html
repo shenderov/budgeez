@@ -1,7 +1,7 @@
 <div ng-controller="RecordListController" id="records-list-module">
     <div id="records-list-period-selector-container" class="selector-container">
         <form class="form-inline" role="form">
-            <div class="input-group">
+            <div class="form-group">
                 <label class="no-margin" for="records-list-datePicker-startDate-input">Period From:</label>
                 <p class="input-group date-picker">
                     <input type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="startDate"
@@ -30,7 +30,7 @@
           </span>
                 </p>
             </div>
-            <div class="form-group"><button type="submit" class="btn btn-default" ng-click="getRecordsList(startDate.getTime(), endDate.getTime())">Search</button></div>
+            <div class="form-group date-picker"><button type="submit" class="btn btn-default" ng-click="getRecordsList(startDate.getTime(), endDate.getTime())">Search</button></div>
 
         </form>
 
@@ -73,10 +73,12 @@
 
     <div id="records-list-table-container">
         <!--<table class="table table-hover table-striped table-bordered table-condensed table-responsive">-->
-        <div uib-alert ng-repeat="alert in alerts" ng-class="'alert-' + (alert.type || 'warning')"
-             close="closeAlert($index)" dismiss-on-timeout="4000">{{alert.msg}}
+        <div uib-alert ng-repeat="alert in recordListAlerts" ng-class="'alert-' + (alert.type || 'warning')"
+             close="closeRecordListAlert($index)" dismiss-on-timeout="5000">{{alert.msg}}
         </div>
-        <table class="table table-hover table-striped table-bordered table-condensed">
+        <div ng-show="showLimitWell.show" class="well well-sm">{{showLimitWell.message}}</div>
+        <div ng-show="!showTable" class="well well-sm">No records found for requested dates.</div>
+        <table ng-show="showTable" class="table table-hover table-striped table-bordered table-condensed records-table">
             <thead>
             <tr>
                 <th>Date</th>
@@ -91,7 +93,8 @@
                 tooltip-append-to-body="true">
 
                 <td>{{r.date | date: format}}</td>
-                <td>{{r.purpose.name}}</td>
+                <!--<td>{{r.purpose.name}}</td>-->
+                <td>{{ r.purpose.name | limitTo: 20 }}{{r.purpose.name.length > 20 ? '...' : ''}}</td>
                 <td>{{r.amount | number: 2}}</td>
                 <td>
                     <button type="button" class="btn btn-info btn-xs glyphicon glyphicon-pencil"

@@ -214,7 +214,17 @@ app.controller('RecordsController', function($scope, $rootScope, $http, Connecto
     console.log("RecordsController");
     //$scope.purpose = null;
     //$scope.record = {};
-    $scope.recordDate = new Date();
+    $scope.recordDate = new Date().getTime();
+
+    $scope.addEditFormAlerts = [];
+
+    $scope.addAddEditFormAlert = function(type, msg) {
+        $scope.addEditFormAlerts.push({ type: type, msg: msg });
+    };
+
+    $scope.closeAddEditFormAlert = function(index) {
+        $scope.addEditFormAlerts.splice(index, 1);
+    };
 
     $scope.getPurposesList = function(){
         Connector.getPurposesList(createAuthorizationTokenHeader())
@@ -231,14 +241,19 @@ app.controller('RecordsController', function($scope, $rootScope, $http, Connecto
     $scope.getPurposesList();
 
     $scope.addRecord = function(record, purposeName){
-        record.date = $scope.recordDate.getTime();
+        console.log("Scope: " + JSON.stringify($scope.recordsList));
+        record.date = $scope.recordDate;
         if(record.purpose.type == 'ADD_NEW'){
             var newPurpose = $scope.addPurpose({name: purposeName});
             newPurpose.then(function(result){
-                record.purpose = result;
-                $scope.addNewRecord(record);
-            }, function(){
-                console.log("Error");
+                console.log("addRecord status: " + JSON.stringify(result));
+                if(result != null){
+                    record.purpose = result.data;
+                    console.log("Add new purpose: " + JSON.stringify(result));
+                    $scope.addNewRecord(record);
+                }
+            }, function(error){
+                console.log("addRecord record error: " + JSON.stringify(error));
             });
         }else {
             $scope.addNewRecord(record);
@@ -249,11 +264,17 @@ app.controller('RecordsController', function($scope, $rootScope, $http, Connecto
         return Connector.addRecord(record, createAuthorizationTokenHeader())
             .then(
                 function(record) {
-
                     $scope.record = {};
+                    $scope.addAddEditFormAlert("success", "Record is added");
+                    $rootScope.addRecordToRecordList(record);
+                    $rootScope.getAndRedrawChart();
+                    return record;
                 },
                 function(errResponse){
-                    console.error('Error while fetching dataTable');
+                    console.log("Add new record error: " + JSON.stringify(errResponse));
+                    //console.error('Error while fetching dataTable');
+                    $scope.addAddEditFormAlert("danger", "Can not add record");
+                    return errResponse;
                 }
             );
     };
@@ -263,10 +284,12 @@ app.controller('RecordsController', function($scope, $rootScope, $http, Connecto
             .then(
                 function(purpose) {
                     //$scope.purpose = purpose;
+                    console.log("addPurpose done: " + JSON.stringify(purpose));
                     return purpose;
                 },
                 function(errResponse){
-                    console.error('Error while fetching dataTable');
+                    console.error("addPurpose error: " + JSON.stringify(errResponse));
+                    //console.error('Error while fetching dataTable');
                 }
             );
     };
@@ -305,6 +328,7 @@ app.controller('RecordListController', function($scope, $rootScope, $http, Conne
     var date = new Date();
     $scope.startDate = new Date(date.getFullYear(), date.getMonth(), 1);
     $scope.endDate = new Date(date.getFullYear(), date.getMonth() + 1, 0, 23, 59, 59);
+    $scope.showLimitWell = {};
         $scope.getRecordsList = function(startDate, endDate){
         $scope.datePicker = {};
         if((startDate > 0) && (endDate > 0)){
@@ -314,7 +338,19 @@ app.controller('RecordListController', function($scope, $rootScope, $http, Conne
         return Connector.getRecordsList($scope.datePicker, createAuthorizationTokenHeader())
             .then(
                 function(recordsList) {
-                    $scope.recordsList = recordsList;
+                    $scope.recordsList = recordsList.content;
+                    if(!recordsList.last){
+                        $scope.showLimitWell.message = recordsList.totalElements + " records are found. Only first " + recordsList.numberOfElements + " are shown. Please, specify your request";
+                        $scope.showLimitWell.show = true;
+                        //$scope.addAlert("warning", $scope.showLimitWell.message);
+                    }else{
+                        $scope.showLimitWell.show = false;
+                    }
+                    if(recordsList.totalElements > 0)
+                        $scope.showTable = true;
+                    else
+                        $scope.showTable = false;
+
                     // $scope.actualPurposesList = _.uniq(recordsList, function (e) {
                     //     return e.purpose.purposeId;
                     // });
@@ -370,35 +406,52 @@ app.controller('RecordListController', function($scope, $rootScope, $http, Conne
 
     //Range slider config
 
-    $scope.alerts = [];
+    $scope.recordListAlerts = [];
 
-    $scope.addAlert = function(type, msg) {
-        $scope.alerts.push({ type: type, msg: msg });
+    $scope.addRecordListAlert = function(type, msg) {
+        $scope.recordListAlerts.push({ type: type, msg: msg });
     };
 
-    $scope.closeAlert = function(index) {
-        $scope.alerts.splice(index, 1);
+    $scope.closeRecordListAlert = function(index) {
+        $scope.recordListAlerts.splice(index, 1);
     };
 
+    $rootScope.addRecordToRecordList = function (record) {
+        $scope.recordsList.push(record);
+    };
+
+    $rootScope.deleteRecordFromRecordList = function ($index) {
+        $scope.recordsList.splice($index, 1);
+    };
+
+    $rootScope.updateRecordInRecordList = function (record) {
+        for(var i = 0; i < $scope.recordsList.length; i++){
+            if($scope.recordsList[i].recordId === record.recordId){
+                $scope.recordsList[i] = record;
+                break;
+            }
+        }
+        };
 
     $scope.deleteRecord = function(recordId, $index){
         return Connector.deleteRecord(recordId, createAuthorizationTokenHeader())
             .then(
                 function(result) {
                     if(result){
-                        $scope.recordsList.splice($index, 1);
-                        $scope.addAlert("success", "Record Deleted");
+                        //$scope.recordsList.splice($index, 1);
+                        $rootScope.deleteRecordFromRecordList($index);
+                        $scope.addRecordListAlert("success", "Record Deleted");
                     }
                 },
                 function(errResponse){
-                    $scope.addAlert("danger", "Error Delete Record");
+                    $scope.addRecordListAlert("danger", "Error Delete Record");
                     console.error('Error while fetching dataTable');
                 }
             );
     };
 
-    $scope.openUpdateModal = function (record, index) {
-        $scope.record = record;
+    $scope.openUpdateModal = function (recordBefore, index) {
+        $scope.recordBefore = recordBefore;
         var modalInstance = $uibModal.open({
             animation: true,
             ariaLabelledBy: 'modal-title',
@@ -407,11 +460,11 @@ app.controller('RecordListController', function($scope, $rootScope, $http, Conne
             controller: 'UpdateRecordCtrl',
             size: 'sm',
             resolve: {
-                modalRecord: function () {
-                    return angular.copy(record);
-                },
                 record: function () {
-                    return record;
+                    return angular.copy(recordBefore);
+                },
+                recordBefore: function () {
+                    return recordBefore;
                 }
                 // purposesList: function () {
                 //     return $rootScope.purposesList;
@@ -420,10 +473,11 @@ app.controller('RecordListController', function($scope, $rootScope, $http, Conne
         });
 
         modalInstance.result.then(function (record) {
-            console.log(JSON.stringify(record));
-            if(!angular.equals($scope.record, record)){
+            if((!angular.equals($scope.recordBefore, record)) && (record != null)){
                 $scope.recordsList[index] = record;
-                $scope.addAlert('success', 'Record Updated')
+                $scope.addRecordListAlert('success', 'Record Updated');
+            }else if(record == null){
+                $scope.addRecordListAlert('danger', 'Record can not be updated');
             }
         }, function () {
 
@@ -498,10 +552,21 @@ app.controller('RecordListController', function($scope, $rootScope, $http, Conne
 //     }
 // });
 
-app.controller('UpdateRecordCtrl', function($scope, $rootScope, $uibModalInstance, Connector, modalRecord, record) {
+app.controller('UpdateRecordCtrl', function($scope, $rootScope, $uibModalInstance, Connector, record, recordBefore) {
     console.log("UpdateRecordCtrl");
-    $scope.modalRecord = modalRecord;
-    $scope.recordDate = new Date($scope.modalRecord.date);
+
+    $scope.addEditFormAlerts = [];
+
+    $scope.addAddEditFormAlert = function(type, msg) {
+        $scope.addEditFormAlerts.push({ type: type, msg: msg });
+    };
+
+    $scope.closeAddEditFormAlert = function(index) {
+        $scope.addEditFormAlerts.splice(index, 1);
+    };
+
+    $scope.record = record;
+    $scope.recordDate = new Date($scope.record.date);
     $scope.dateOptionsRecord = {
         formatYear: 'yy',
         maxDate: new Date(),
@@ -527,22 +592,29 @@ app.controller('UpdateRecordCtrl', function($scope, $rootScope, $uibModalInstanc
         opened: false
     };
 
-    $scope.ok = function (modalRecord, purposeName) {
-        if(!angular.equals(modalRecord, record)){
-            modalRecord.date = $scope.recordDate.getTime();
-            if(modalRecord.purpose.type == 'ADD_NEW'){
+    $scope.ok = function (record, purposeName) {
+        if(!angular.equals(record, recordBefore)){
+            record.date = $scope.recordDate.getTime();
+            var updatedRecord;
+            if(record.purpose.type == 'ADD_NEW'){
                 var newPurpose = $scope.addPurpose({name: purposeName});
                 newPurpose.then(function(result){
-                    modalRecord.purpose = result;
-                    $scope.editRecord(modalRecord);
+                    if(result != null){
+                        record.purpose = result;
+                        updatedRecord = $scope.editRecord(record);
+                    }else
+                        updatedRecord = null;
                 }, function(){
                     console.log("Error");
                 });
             }else {
-                $scope.editRecord(modalRecord);
+                updatedRecord = $scope.editRecord(record);
             }
-        }
-        $uibModalInstance.close(modalRecord);
+            updatedRecord.then(function (record) {
+                $uibModalInstance.close(record);
+            });
+        }else
+            $uibModalInstance.close(record);
     };
 
     $scope.cancel = function () {
@@ -554,10 +626,13 @@ app.controller('UpdateRecordCtrl', function($scope, $rootScope, $uibModalInstanc
             .then(
                 function(record) {
                     console.log("updated: " + JSON.stringify(record));
+                    $rootScope.updateRecordInRecordList(record);
+                    return record;
                     //$scope.record = {};
                 },
                 function(errResponse){
                     console.error('Error while fetching dataTable');
+                    return null;
                 }
             );
     };
@@ -571,6 +646,7 @@ app.controller('UpdateRecordCtrl', function($scope, $rootScope, $uibModalInstanc
                 },
                 function(errResponse){
                     console.error('Error while fetching dataTable');
+                    return null;
                 }
             );
     };

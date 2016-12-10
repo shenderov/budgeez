@@ -3,7 +3,7 @@ package com.kamabizbazti.restcontroller;
 import com.kamabizbazti.security.entities.*;
 import com.kamabizbazti.model.repository.CurrencyRepository;
 import com.kamabizbazti.model.repository.LanguageRepository;
-import com.kamabizbazti.security.exceptions.EmailAlreadyRegistered;
+import com.kamabizbazti.security.exceptions.EmailAlreadyRegisteredException;
 import com.kamabizbazti.security.repository.AuthorityRepository;
 import com.kamabizbazti.security.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,9 +76,9 @@ public class AuthenticationRestController {
 
     @CrossOrigin(origins = "*")
     @RequestMapping(value = "${security.route.authentication.signup}", method = RequestMethod.POST)
-    public ResponseEntity<?> createUser(@RequestBody @Valid SignUpWrapper wrapper, Device device) throws EmailAlreadyRegistered {
+    public ResponseEntity<?> createUser(@RequestBody @Valid SignUpWrapper wrapper, Device device) throws EmailAlreadyRegisteredException {
         if (userRepository.findByUsername(wrapper.getEmail()) != null)
-            throw new EmailAlreadyRegistered();
+            throw new EmailAlreadyRegisteredException();
         else {
             User user = new User(wrapper.getEmail().toLowerCase(), passwordEncoder.encode(wrapper.getPassword()), wrapper.getName());
             user.setAuthorities(setUserAuthorities());

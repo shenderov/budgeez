@@ -2,9 +2,10 @@ package com.kamabizbazti.model.interfaces;
 
 import com.kamabizbazti.model.entities.ChartRequestWrapper;
 import com.kamabizbazti.model.entities.ChartWrapper;
+import com.kamabizbazti.model.exceptions.DateRangeException;
 
 public interface IUserStatisticsHandler {
-    ChartWrapper getCurrentMonth(ChartRequestWrapper chartRequestWrapper, long userId);
+    ChartWrapper getCurrentMonthTotal(ChartRequestWrapper chartRequestWrapper, long userId);
 
     ChartWrapper getPrevNMonthsAverage(ChartRequestWrapper chartRequestWrapper, long userId, int monthsAgo);
 
@@ -16,5 +17,5 @@ public interface IUserStatisticsHandler {
 
     ChartWrapper getLastNMonthsDetailed(ChartRequestWrapper chartRequestWrapper, long userId, int monthsAgo);
 
-    ChartWrapper getCustomPeriodDetailed(ChartRequestWrapper chartRequestWrapper, long userId);
+    ChartWrapper getCustomPeriodDetailed(ChartRequestWrapper chartRequestWrapper, long userId) throws DateRangeException;
 }

@@ -3,19 +3,18 @@ package com.kamabizbazti.model.repository;
 import com.kamabizbazti.model.entities.GeneralPurpose;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @Repository
 public interface CustomPurposeRepository extends CrudRepository<GeneralPurpose, Long> {
-    @Query("select p from GeneralPurpose p where p.type='GENERAL' or p.user.id=:userId")
-    List<GeneralPurpose> findAllUserSpecified(@Param("userId") Long userId);
+    @Query("select p from GeneralPurpose p where p.type='GENERAL' or p.user.id=?1")
+    List<GeneralPurpose> findAllUserSpecified(Long userId);
 
-    @Query("select p from GeneralPurpose p where p.type='GENERAL' or p.user.id=?1 and (select count (r) > 0 from Record r where r.purpose.purposeId=p.purposeId and r.date between ?2 and ?3) is true")
-    List<GeneralPurpose> getAllActualGeneralPurposes(long userId, long startDate, long endDate);
+    @Query(nativeQuery = true, value = "SELECT * FROM purpose WHERE purpose_id IN (SELECT record.purpose_id FROM record WHERE record.id=?1 AND record.date BETWEEN ?2 AND ?3 GROUP BY record.purpose_id)")
+    List<GeneralPurpose> getAllActualUserPurposesBetweenDates(long userId, long startDate, long endDate);
 
-    @Query("select p from GeneralPurpose p where p.type='GENERAL' or p.user.id=?1 and (select count (r) > 0 from Record r where r.purpose.purposeId=p.purposeId) is true")
-    List<GeneralPurpose> getAllActualGeneralPurposes(long userId);
+    @Query(nativeQuery = true, value = "SELECT * FROM purpose WHERE purpose_id IN (SELECT record.purpose_id FROM record WHERE record.id=?1 GROUP BY record.purpose_id)")
+    List<GeneralPurpose> getAllActualUserPurposes(long userId);
 }

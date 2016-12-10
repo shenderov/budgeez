@@ -1,12 +1,14 @@
 package com.kamabizbazti.restcontroller;
 
 import com.kamabizbazti.model.entities.*;
+import com.kamabizbazti.model.exceptions.*;
 import com.kamabizbazti.model.interfaces.IUserRequestHandler;
 import com.kamabizbazti.security.JwtTokenUtil;
 import com.kamabizbazti.security.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
+
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
@@ -33,14 +35,14 @@ public class UserRestController {
 
     @CrossOrigin(origins = "*")
     @RequestMapping(value = "/${user.route.getUserDefaultDataTable}", method = RequestMethod.GET)
-    public ChartWrapper getUserDefaultDataTable(HttpServletRequest request) {
+    public ChartWrapper getUserDefaultDataTable(HttpServletRequest request) throws UnknownSelectionIdException, DateRangeException {
         String username = jwtTokenUtil.getUsernameFromToken(request.getHeader("Authorization"));
         return handler.getUserDefaultDataTable(userRepository.findByUsername(username).getId());
     }
 
     @CrossOrigin(origins = "*")
     @RequestMapping(value = "/${user.route.getUserDataTable}", method = RequestMethod.POST)
-    public ChartWrapper getGeneralDataTable(@RequestBody ChartRequestWrapper chartRequestWrapper, HttpServletRequest request) {
+    public ChartWrapper getGeneralDataTable(@RequestBody ChartRequestWrapper chartRequestWrapper, HttpServletRequest request) throws UnknownSelectionIdException, DateRangeException {
         String username = jwtTokenUtil.getUsernameFromToken(request.getHeader("Authorization"));
         return handler.getUserDataTable(chartRequestWrapper, userRepository.findByUsername(username).getId());
     }
@@ -54,36 +56,28 @@ public class UserRestController {
 
     @CrossOrigin(origins = "*")
     @RequestMapping(value = "/${user.route.addCustomPurpose}", method = RequestMethod.POST)
-    public GeneralPurpose addCustomPurpose(@RequestBody CustomPurpose customPurpose, HttpServletRequest request) {
+    public GeneralPurpose addCustomPurpose(@RequestBody CustomPurpose customPurpose, HttpServletRequest request) throws CustomPurposeAlreadyExistException, InvalidParameterException {
         String username = jwtTokenUtil.getUsernameFromToken(request.getHeader("Authorization"));
         return handler.addCustomPurpose(customPurpose, userRepository.findByUsername(username));
     }
 
     @RequestMapping(value = "/${user.route.getRecordsList}", method = RequestMethod.POST)
-    public Page <Record> getRecordsList(@RequestBody DatePicker datePicker, HttpServletRequest request) {
+    public Page<Record> getRecordsList(@RequestBody DatePicker datePicker, HttpServletRequest request) {
         String username = jwtTokenUtil.getUsernameFromToken(request.getHeader("Authorization"));
         return handler.getRecordsList(datePicker, userRepository.findByUsername(username).getId());
     }
 
     @CrossOrigin(origins = "*")
     @RequestMapping(value = "/${user.route.deleteRecord}", method = RequestMethod.POST)
-    public boolean deleteRecord(@RequestBody long recordId, HttpServletRequest request) {
+    public boolean deleteRecord(@RequestBody long recordId, HttpServletRequest request) throws RecordDoesNotExistException {
         String username = jwtTokenUtil.getUsernameFromToken(request.getHeader("Authorization"));
         return handler.deleteRecord(recordId, userRepository.findByUsername(username).getId());
     }
 
     @CrossOrigin(origins = "*")
     @RequestMapping(value = "/${user.route.editRecord}", method = RequestMethod.POST)
-    public Record editRecord(@RequestBody Record record, HttpServletRequest request) {
+    public Record editRecord(@RequestBody Record record, HttpServletRequest request) throws RecordDoesNotExistException, InvalidParameterException {
         String username = jwtTokenUtil.getUsernameFromToken(request.getHeader("Authorization"));
         return handler.editRecord(record, userRepository.findByUsername(username).getId());
-    }
-
-    @CrossOrigin(origins = "*")
-    @RequestMapping(value = "/test", method = RequestMethod.GET)
-    public String test(HttpServletRequest request) {
-        String username = jwtTokenUtil.getUsernameFromToken(request.getHeader("Authorization"));
-        System.out.println(userRepository.findByUsername(username).getId());
-        return "Test";
     }
 }

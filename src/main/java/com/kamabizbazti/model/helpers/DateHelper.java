@@ -15,6 +15,8 @@ public class DateHelper implements IDateHelper {
     private static final SimpleDateFormat SDF_MONTH_SHORT = new SimpleDateFormat("MMM");
     private static final SimpleDateFormat SDF_MONTH_FULL_WEEK = new SimpleDateFormat("MMMM'/W'W");
     private static final SimpleDateFormat SDF_MONTH_SHORT_WEEK = new SimpleDateFormat("MMM'/W'W");
+    private static final SimpleDateFormat SDF_MONTH_FULL_WEEK_YEAR = new SimpleDateFormat("MMMM'/W'W YYYY");
+    private static final SimpleDateFormat SDF_MONTH_SHORT_WEEK_YEAR = new SimpleDateFormat("MMM'/W'W YY");
     private static final SimpleDateFormat SDF_MONTH_FULL_YEAR = new SimpleDateFormat("MMMM YYYY");
     private static final SimpleDateFormat SDF_MONTH_SHORT_YEAR = new SimpleDateFormat("MMM YY");
     private static final SimpleDateFormat SDF_YEAR = new SimpleDateFormat("YYYY");
@@ -64,25 +66,116 @@ public class DateHelper implements IDateHelper {
         return c.getTimeInMillis();
     }
 
-    public long getFirsDayOfWeek(int weeksAgo) {
+    public long getFirsDayOfWeeksAgo(int weeksAgo) {
         Calendar c = Calendar.getInstance();
         c.add(Calendar.WEEK_OF_YEAR, -weeksAgo);
-        c.set(Calendar.WEEK_OF_MONTH, c.getActualMinimum(Calendar.WEEK_OF_MONTH));
+        c.set(Calendar.DAY_OF_WEEK, c.getActualMinimum(Calendar.DAY_OF_WEEK));
         c.set(Calendar.HOUR_OF_DAY, 0);
         c.set(Calendar.MINUTE, 0);
         c.set(Calendar.SECOND, 0);
-        System.out.println("getFirsDayOfWeek " + c.getTime());
         return c.getTimeInMillis();
     }
 
-    public long getLastDayOfWeek(int weeksAgo) {
+    public long getLastDayOfWeeksAgo(int weeksAgo) {
         Calendar c = Calendar.getInstance();
         c.add(Calendar.WEEK_OF_YEAR, -weeksAgo);
-        c.set(Calendar.WEEK_OF_MONTH, c.getActualMaximum(Calendar.WEEK_OF_MONTH));
+        c.set(Calendar.DAY_OF_WEEK, c.getActualMaximum(Calendar.DAY_OF_WEEK));
         c.set(Calendar.HOUR_OF_DAY, 23);
         c.set(Calendar.MINUTE, 59);
         c.set(Calendar.SECOND, 59);
-        System.out.println("getLastDayOfWeek " + c.getTime());
+        return c.getTimeInMillis();
+    }
+
+    public long getFirstDayOfWeekByDate(long date) {
+        Calendar c = Calendar.getInstance();
+        c.setTimeInMillis(date);
+        c.set(Calendar.DAY_OF_WEEK, c.getActualMinimum(Calendar.DAY_OF_WEEK));
+        c.set(Calendar.HOUR_OF_DAY, 0);
+        c.set(Calendar.MINUTE, 0);
+        c.set(Calendar.SECOND, 0);
+        return c.getTimeInMillis();
+    }
+
+    public long getFirstDayOfMonthByDate(long date) {
+        Calendar c = Calendar.getInstance();
+        c.setTimeInMillis(date);
+        c.set(Calendar.DAY_OF_MONTH, c.getActualMinimum(Calendar.DAY_OF_MONTH));
+        c.set(Calendar.HOUR_OF_DAY, 0);
+        c.set(Calendar.MINUTE, 0);
+        c.set(Calendar.SECOND, 0);
+        return c.getTimeInMillis();
+    }
+
+    public long getFirstDayOfYearByDate(long date) {
+        Calendar c = Calendar.getInstance();
+        c.setTimeInMillis(date);
+        c.set(Calendar.DAY_OF_YEAR, c.getActualMinimum(Calendar.DAY_OF_YEAR));
+        c.set(Calendar.HOUR_OF_DAY, 0);
+        c.set(Calendar.MINUTE, 0);
+        c.set(Calendar.SECOND, 0);
+        return c.getTimeInMillis();
+    }
+
+    public long getLastDayOfWeekByDate(long date) {
+        Calendar c = Calendar.getInstance();
+        c.setTimeInMillis(date);
+        c.set(Calendar.DAY_OF_WEEK, c.getActualMaximum(Calendar.DAY_OF_WEEK));
+        c.set(Calendar.HOUR_OF_DAY, 23);
+        c.set(Calendar.MINUTE, 59);
+        c.set(Calendar.SECOND, 59);
+        return c.getTimeInMillis();
+    }
+
+    public long getLastDayOfMonthByDate(long date) {
+        Calendar c = Calendar.getInstance();
+        c.setTimeInMillis(date);
+        c.set(Calendar.DAY_OF_MONTH, c.getActualMaximum(Calendar.DAY_OF_MONTH));
+        c.set(Calendar.HOUR_OF_DAY, 23);
+        c.set(Calendar.MINUTE, 59);
+        c.set(Calendar.SECOND, 59);
+        return c.getTimeInMillis();
+    }
+
+    public long getLastDayOfYearByDate(long date) {
+        Calendar c = Calendar.getInstance();
+        c.setTimeInMillis(date);
+        c.set(Calendar.DAY_OF_YEAR, c.getActualMaximum(Calendar.DAY_OF_YEAR));
+        c.set(Calendar.HOUR_OF_DAY, 23);
+        c.set(Calendar.MINUTE, 59);
+        c.set(Calendar.SECOND, 59);
+        return c.getTimeInMillis();
+    }
+
+    public long getFirstDayOfNWeeksAgoFromDate(long date, int weeksAgo) {
+        Calendar c = Calendar.getInstance();
+        c.setTimeInMillis(date);
+        c.add(Calendar.WEEK_OF_YEAR, -weeksAgo);
+        c.set(Calendar.DAY_OF_WEEK, c.getActualMinimum(Calendar.DAY_OF_WEEK));
+        c.set(Calendar.HOUR_OF_DAY, 0);
+        c.set(Calendar.MINUTE, 0);
+        c.set(Calendar.SECOND, 0);
+        return c.getTimeInMillis();
+    }
+
+    public long getFirstDayOfMonthAgoFromDate(long date, int monthsAgo) {
+        Calendar c = Calendar.getInstance();
+        c.setTimeInMillis(date);
+        c.add(Calendar.MONTH, -monthsAgo);
+        c.set(Calendar.DAY_OF_MONTH, c.getActualMinimum(Calendar.DAY_OF_MONTH));
+        c.set(Calendar.HOUR_OF_DAY, 0);
+        c.set(Calendar.MINUTE, 0);
+        c.set(Calendar.SECOND, 0);
+        return c.getTimeInMillis();
+    }
+
+    public long getFirstDayOfNYearsAgoFromDate(long date, int yearsAgo) {
+        Calendar c = Calendar.getInstance();
+        c.setTimeInMillis(date);
+        c.add(Calendar.YEAR, -yearsAgo);
+        c.set(Calendar.DAY_OF_YEAR, c.getActualMinimum(Calendar.DAY_OF_YEAR));
+        c.set(Calendar.HOUR_OF_DAY, 0);
+        c.set(Calendar.MINUTE, 0);
+        c.set(Calendar.SECOND, 0);
         return c.getTimeInMillis();
     }
 
@@ -126,6 +219,14 @@ public class DateHelper implements IDateHelper {
         return SDF_MONTH_SHORT_WEEK.format(date);
     }
 
+    public String getFullMonthWeekYear(long date) {
+        return SDF_MONTH_FULL_WEEK_YEAR.format(date);
+    }
+
+    public String getShortMonthWeekYear(long date) {
+        return SDF_MONTH_SHORT_WEEK_YEAR.format(date);
+    }
+
     public String getYear(long date) {
         return SDF_YEAR.format(date);
     }
@@ -137,4 +238,31 @@ public class DateHelper implements IDateHelper {
     public String getShortMonthYear(long date) {
         return SDF_MONTH_SHORT_YEAR.format(date);
     }
+
+    public String getFormattedMonthNameByDate(boolean isTheSameYear, long date, int monthsCount) {
+        String month;
+        if (isTheSameYear && (monthsCount > 6))
+            month = getShortMonthName(date);
+        else if (!isTheSameYear && (monthsCount <= 6))
+            month = getFullMonthYear(date);
+        else if (!isTheSameYear && (monthsCount > 6))
+            month = getShortMonthYear(date);
+        else
+            month = getFullMonthName(date);
+        return month;
+    }
+
+    public String getFormattedWeekNameByDate(boolean isTheSameYear, long date, int weeksCount) {
+        String week;
+        if (isTheSameYear && (weeksCount > 6))
+            week = getShortMonthWeek(date);
+        else if (!isTheSameYear && (weeksCount <= 6))
+            week = getFullMonthWeekYear(date);
+        else if (!isTheSameYear && (weeksCount > 6))
+            week = getShortMonthWeekYear(date);
+        else
+            week = getFullMonthWeek(date);
+        return week;
+    }
+
 }

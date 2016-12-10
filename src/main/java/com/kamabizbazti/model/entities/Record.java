@@ -12,7 +12,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.kamabizbazti.security.entities.User;
@@ -36,26 +36,26 @@ public class Record {
     @JoinColumn(name = "purposeId")
     private GeneralPurpose purpose;
 
-    @Column(name = "purposeType", nullable = false)
+    @Column(name = "purposeType")
     @Enumerated(EnumType.STRING)
     @JsonIgnore
     private PurposeType purposeType;
 
-    @Column(name = "amount")
-    @NotNull
-    private double amount;
+    @Column(name = "amount", nullable = false)
+    private Double amount;
 
     @Column(name = "comment")
+    @Size(max = 100)
     private String comment;
 
     @Column(name = "date", nullable = false)
-    private long date;
+    private Long date;
 
     public Record() {
         super();
     }
 
-    public Record(User userId, GeneralPurpose purpose, double amount, long date) {
+    public Record(User userId, GeneralPurpose purpose, Double amount, Long date) {
         super();
         this.userId = userId;
         this.purpose = purpose;
@@ -78,19 +78,19 @@ public class Record {
         this.userId = userId;
     }
 
-    public double getAmount() {
+    public Double getAmount() {
         return amount;
     }
 
-    public void setAmount(double amount) {
+    public void setAmount(Double amount) {
         this.amount = amount;
     }
 
-    public long getDate() {
+    public Long getDate() {
         return date;
     }
 
-    public void setDate(long date) {
+    public void setDate(Long date) {
         this.date = date;
     }
 

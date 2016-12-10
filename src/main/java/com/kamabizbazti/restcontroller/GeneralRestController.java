@@ -3,9 +3,11 @@ package com.kamabizbazti.restcontroller;
 import com.kamabizbazti.model.entities.ChartRequestWrapper;
 import com.kamabizbazti.model.entities.ChartSelection;
 import com.kamabizbazti.model.entities.ChartWrapper;
+import com.kamabizbazti.model.exceptions.UnknownSelectionIdException;
 import com.kamabizbazti.model.interfaces.IGeneralRequestHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 @RequestMapping(path = "${general.path}")
@@ -36,7 +38,7 @@ public class GeneralRestController {
 
     @CrossOrigin(origins = "*")
     @RequestMapping(value = "/${general.route.getGeneralDataTable}", method = RequestMethod.POST)
-    public ChartWrapper getGeneralDataTable(@RequestBody ChartRequestWrapper chartRequestWrapper) {
+    public ChartWrapper getGeneralDataTable(@RequestBody ChartRequestWrapper chartRequestWrapper) throws UnknownSelectionIdException {
         return handler.getGeneralDatatable(chartRequestWrapper);
     }
 }

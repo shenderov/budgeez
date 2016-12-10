@@ -1,24 +1,35 @@
-<form class="form-add-record" ng-model="record">
+<div uib-alert ng-repeat="alert in $parent.addEditFormAlerts" ng-class="'alert-' + (alert.type || 'warning')"
+     close="$parent.closeAddEditFormAlert($index)" dismiss-on-timeout="5000">{{alert.msg}}
+</div>
+<form class="form-add-record" ng-model="$parent.record">
     <p class="bg-danger" ng-show="alertError" ng-init="alertError=false"><strong>Custom purpose exist</strong>
     </p>
     <div class="form-group">
         <label for="inputAmount">Amount:</label>
-        <input type="number" id="inputAmount" class="form-control" placeholder="Enter amount" required ng-model="record.amount">
+        <input type="number" id="inputAmount" class="form-control" placeholder="Enter amount" required
+               ng-model="$parent.record.amount">
     </div>
     <div class="form-group">
         <label for="inputPurpose">Purpose:</label>
-        <select class="form-control" id="inputPurpose" ng-options="purpose as purpose.name for purpose in purposesList" required ng-model="record.purpose"></select>
+        <select class="form-control" id="inputPurpose"
+                ng-options="purpose as purpose.name for purpose in $parent.purposesList  track by purpose.purposeId"
+                required ng-model="$parent.record.purpose"></select>
     </div>
-    <div class="form-group" ng-show="record.purpose.type == 'ADD_NEW'">
+    <div class="form-group" ng-show="$parent.record.purpose.type == 'ADD_NEW'">
         <label for="inputNewPurpose">New Purpose Name:</label>
-        <input type="text" id="inputNewPurpose" class="form-control" placeholder="Enter Purpose Name" ng-model="purposeName">
+        <input type="text" id="inputNewPurpose" class="form-control" placeholder="Enter Purpose Name"
+               ng-model="$parent.purposeName" maxlength="20" size="20">
     </div>
     <div class="form-group">
         <label for="inputName">Comment:</label>
-        <input type="text" id="inputName" class="form-control" placeholder="Enter comment (optional)" ng-model="record.comment">
+        <input type="text" id="inputName" class="form-control" placeholder="Enter comment (optional)"
+               ng-model="$parent.record.comment">
     </div>
     <div class="form-group">
         <label for="records-addRecord-datePicker-recordDate-input">Record Date:</label>
-        <input ng-click="openRecordDate()" type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="recordDate" is-open="popupRecordDate.opened" datepicker-options="dateOptionsRecord" ng-required="true" close-text="Close" ng-change="setRecordDate(recordDate)" id="records-addRecord-datePicker-recordDate-input"/>
+        <input ng-click="$parent.openRecordDate()" type="text" class="form-control" uib-datepicker-popup="{{format}}"
+               ng-model="$parent.recordDate" is-open="$parent.popupRecordDate.opened"
+               datepicker-options="$parent.dateOptionsRecord" ng-required="true" close-text="Close"
+               ng-change="$parent.setRecordDate(recordDate)" id="records-addRecord-datePicker-recordDate-input"/>
     </div>
 </form>

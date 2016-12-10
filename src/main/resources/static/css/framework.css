@@ -65,6 +65,54 @@ background-color: #e4b9b9;
 	z-index: 99999;
 }
 
+.records-table td {
+    white-space: nowrap;
+}
+
+.well-sm{
+    margin-bottom: 5px;
+    padding: 5px;
+}
+
+.alert {
+    padding: 5px;
+    margin-bottom: 5px;
+}
+
+ a, button, input{
+    outline: none !important;
+}
+
+textarea:hover,
+input:hover,
+textarea:active,
+input:active,
+textarea:focus,
+input:focus,
+button:focus,
+button:active,
+button:hover,
+label:focus,
+.btn:active,
+.btn.active
+{
+    outline:none !important;
+    -webkit-appearance:none;
+    box-shadow: none;
+    -moz-box-shadow: none;
+    -webkit-box-shadow: none;
+}
+
+.form-control:focus{
+    border-color: #cccccc;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
+
+.uib-daypicker{
+     outline: none !important;
+ }
+
 @media only screen and (max-width: 768px) {
     /* For mobile phones: */
     [class*="chart"] {
