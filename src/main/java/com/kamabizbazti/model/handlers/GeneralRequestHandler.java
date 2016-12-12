@@ -22,7 +22,7 @@ public class GeneralRequestHandler implements IGeneralRequestHandler {
     @Autowired
     private IGeneralStatisticsHandler generalStatisticsHandler;
 
-    private static final ChartSelectionId DEFAULT_CHART_SELECTION = ChartSelectionId.CURRENT_MONTH_AVG;
+    public static final ChartSelectionId DEFAULT_CHART_SELECTION = ChartSelectionId.CURRENT_MONTH_AVG;
 
     public ChartWrapper getGeneralDatatable(ChartRequestWrapper chartRequestWrapper) throws UnknownSelectionIdException {
         ChartWrapper wrapper;
