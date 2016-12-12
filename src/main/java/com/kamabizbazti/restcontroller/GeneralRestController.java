@@ -5,6 +5,7 @@ import com.kamabizbazti.model.entities.ChartSelection;
 import com.kamabizbazti.model.entities.ChartWrapper;
 import com.kamabizbazti.model.exceptions.UnknownSelectionIdException;
 import com.kamabizbazti.model.interfaces.IGeneralRequestHandler;
+import com.kamabizbazti.model.interfaces.IGeneralRestController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,7 +14,7 @@ import java.util.List;
 @RequestMapping(path = "${general.path}")
 @RestController
 @CrossOrigin(origins = "*")
-public class GeneralRestController {
+public class GeneralRestController implements IGeneralRestController {
 
     @Autowired
     private IGeneralRequestHandler handler;
