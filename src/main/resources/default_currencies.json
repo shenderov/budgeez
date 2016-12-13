@@ -1,0 +1,14 @@
+[
+  {
+    "currencyCode": "ILS",
+    "currencyName": "Israeli New Sheqel"
+  },
+  {
+    "currencyCode": "RUB",
+    "currencyName": "Russian Ruble"
+  },
+  {
+    "currencyCode": "USD",
+    "currencyName": "US Dollar"
+  }
+]

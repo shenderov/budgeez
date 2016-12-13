@@ -1,0 +1,121 @@
+[
+  {
+    "selectionId": "CURRENT_MONTH_AVG",
+    "title": "Current Month Average",
+    "chartType": "PIECHART",
+    "datePicker": false,
+    "authRequired":false
+  },
+  {
+    "selectionId": "LAST_SIX_MONTH_AVG_DETAILED",
+    "title": "Last 6 Month Average Detailed",
+    "chartType": "COLUMNCHART",
+    "datePicker": false,
+    "authRequired":false
+  },
+  {
+    "selectionId": "LAST_THREE_MONTH_AVG_DETAILED",
+    "title": "Last 3 Month Average Detailed",
+    "chartType": "COLUMNCHART",
+    "datePicker": false,
+    "authRequired":false
+  },
+  {
+    "selectionId": "LAST_YEAR_AVG",
+    "title": "Last Year Average",
+    "chartType": "PIECHART",
+    "datePicker": false,
+    "authRequired":false
+  },
+  {
+    "selectionId": "LAST_YEAR_AVG_DETAILED",
+    "title": "Last Year Average Detailed",
+    "chartType": "COLUMNCHART",
+    "datePicker": false,
+    "authRequired":false
+  },
+  {
+    "selectionId": "PREV_MONTH_AVG",
+    "title": "Previous Month Average",
+    "chartType": "PIECHART",
+    "datePicker": false,
+    "authRequired":false
+  },
+  {
+    "selectionId": "PREV_THREE_MONTH_AVG",
+    "title": "Previous 3 Month Average",
+    "chartType": "PIECHART",
+    "datePicker": false,
+    "authRequired":false
+  },
+  {
+    "selectionId": "USER_CURRENT_MONTH",
+    "title": "Current Month",
+    "chartType": "PIECHART",
+    "datePicker": false,
+    "authRequired":true
+  },
+  {
+    "selectionId": "USER_CUSTOM_PERIOD_AVG",
+    "title": "Custom Period Average",
+    "chartType": "PIECHART",
+    "datePicker": true,
+    "authRequired":true
+  },
+  {
+    "selectionId": "USER_CUSTOM_PERIOD_DETAILED",
+    "title": "Custom Period Average Detailed",
+    "chartType": "COLUMNCHART",
+    "datePicker": true,
+    "authRequired":true
+  },
+  {
+    "selectionId": "USER_CUSTOM_PERIOD_TOTAL",
+    "title": "Custom Period Total",
+    "chartType": "PIECHART",
+    "datePicker": true,
+    "authRequired":true
+  },
+  {
+    "selectionId": "USER_LAST_SIX_MONTH_DETAILED",
+    "title": "Last 6 Month Average Detailed",
+    "chartType": "COLUMNCHART",
+    "datePicker": false,
+    "authRequired":true
+  },
+  {
+    "selectionId": "USER_LAST_THREE_MONTH_DETAILED",
+    "title": "Last 3 Month Average Detailed",
+    "chartType": "COLUMNCHART",
+    "datePicker": false,
+    "authRequired":true
+  },
+  {
+    "selectionId": "USER_LAST_YEAR_DETAILED",
+    "title": "Last Year Average Detailed",
+    "chartType": "COLUMNCHART",
+    "datePicker": false,
+    "authRequired":true
+  },
+  {
+    "selectionId": "USER_PREV_MONTH",
+    "title": "Previous Month",
+    "chartType": "PIECHART",
+    "datePicker": false,
+    "authRequired":true
+  },
+  {
+    "selectionId": "USER_PREV_THREE_MONTH_AVG",
+    "title": "Previous 3 Month Average",
+    "chartType": "PIECHART",
+    "datePicker": false,
+    "authRequired":true
+  },
+  {
+    "selectionId": "USER_PREV_THREE_MONTH_TOTAL",
+    "title": "Previous 3 Month Total",
+    "chartType": "PIECHART",
+    "datePicker": false,
+    "authRequired":true
+  }
+]

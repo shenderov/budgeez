@@ -1,7 +1,5 @@
 package com.kamabizbazti.model.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import javax.persistence.*;
 
 @Entity
@@ -24,7 +22,6 @@ public class ChartSelection {
     private boolean datePicker;
 
     @Column(name = "authRequired", nullable = false)
-    @JsonIgnore
     private boolean authRequired;
 
     public ChartSelection() {

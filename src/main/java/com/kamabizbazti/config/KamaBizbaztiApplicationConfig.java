@@ -14,6 +14,11 @@ import org.springframework.context.annotation.Configuration;
 public class KamaBizbaztiApplicationConfig {
 
     @Bean
+    public DataInitializer dataInitializer() {
+        return new DataInitializer();
+    }
+
+    @Bean
     public IGeneralRequestHandler handler() {
         return new GeneralRequestHandler();
     }
@@ -42,5 +47,4 @@ public class KamaBizbaztiApplicationConfig {
     public DataGenerator dataGenerator() {
         return new DataGenerator();
     }
-
 }

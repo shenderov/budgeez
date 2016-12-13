@@ -1,0 +1,42 @@
+[
+  {
+    "type": "GENERAL",
+    "name": "Food"
+  },
+  {
+    "type": "GENERAL",
+    "name": "Car"
+  },
+  {
+    "type": "GENERAL",
+    "name": "Gas"
+  },
+  {
+    "type": "GENERAL",
+    "name": "Beer"
+  },
+  {
+    "type": "GENERAL",
+    "name": "Bills"
+  },
+  {
+    "type": "GENERAL",
+    "name": "Internet"
+  },
+  {
+    "type": "GENERAL",
+    "name": "Travel"
+  },
+  {
+    "type": "GENERAL",
+    "name": "Vodka"
+  },
+  {
+    "type": "GENERAL",
+    "name": "Transportation"
+  },
+  {
+    "type": "GENERAL",
+    "name": "Pubs"
+  }
+]
