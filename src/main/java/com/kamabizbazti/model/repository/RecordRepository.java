@@ -56,7 +56,7 @@ public interface RecordRepository extends CrudRepository<Record, Long> {
     @Query("delete from Record r where r.userId.id=?2 and r.recordId=?1")
     void deleteRecord(long recordId, long userId);
 
-    @Modifying
+    @Modifying(clearAutomatically = true)
     @Transactional
     @Query("update Record r set r.purpose=?1, r.purposeType=?2, r.amount=?3, r.comment=?4, r.date=?5 where r.userId.id=?7 and r.recordId=?6")
     void updateRecord(GeneralPurpose purpose, PurposeType purposeType, double amount, String comment, long date, long recordId, long userId);
