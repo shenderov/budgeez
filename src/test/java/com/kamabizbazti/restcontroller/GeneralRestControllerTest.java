@@ -7,8 +7,10 @@ import com.kamabizbazti.model.entities.ChartWrapper;
 import com.kamabizbazti.model.handlers.GeneralRequestHandler;
 import com.kamabizbazti.model.repository.ChartSelectionRepository;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.embedded.LocalServerPort;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import org.junit.Test;
@@ -16,14 +18,22 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
 
-@SpringBootTest
 @RunWith(SpringRunner.class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class GeneralRestControllerTest {
 
     @Autowired
     private ChartSelectionRepository chartSelectionRepository;
 
-    private HttpConnectorGeneral connector = new HttpConnectorGeneral();
+    @LocalServerPort
+    private int port;
+
+    private HttpConnectorGeneral connector;
+
+    @Before
+    public void setup() {
+        connector = new HttpConnectorGeneral(port);
+    }
 
     @Test
     public void testGetGeneralChartSelectionsList() throws Exception {

@@ -1,8 +1,8 @@
 package com.kamabizbazti.common;
 
 public class TestConfiguration {
-    public static final String BASE_URI = "http://10.10.10.2:8080/kamabizbazti";
-    public static final String BASE_GENERAL_PATH = "/general";
+    public static final String BASE_URI = "http://localhost";
+    public static final String BASE_GENERAL_PATH = "/kamabizbazti/general";
 
     //General URLs
     public static final String GET_GENERAL_CHART_SELECTIONS_LIST = "/getGeneralChartSelectionsList";

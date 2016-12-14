@@ -20,8 +20,9 @@ import static com.jayway.restassured.RestAssured.given;
 import static com.jayway.restassured.RestAssured.when;
 
 public class HttpConnectorGeneral implements IGeneralRestController {
-    public HttpConnectorGeneral() {
+    public HttpConnectorGeneral(int port) {
         RestAssured.baseURI = TestConfiguration.BASE_URI;
+        RestAssured.port = port;
         RestAssured.basePath = TestConfiguration.BASE_GENERAL_PATH;
     }
 
