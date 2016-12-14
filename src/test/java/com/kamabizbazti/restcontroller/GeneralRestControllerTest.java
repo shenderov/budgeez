@@ -2,12 +2,12 @@ package com.kamabizbazti.restcontroller;
 
 import com.kamabizbazti.KamaBizbaztiBootApplication;
 import com.kamabizbazti.common.http.HttpConnectorGeneral;
+import com.kamabizbazti.config.KamaBizbaztiApplicationConfig;
 import com.kamabizbazti.model.entities.ChartRequestWrapper;
 import com.kamabizbazti.model.entities.ChartSelection;
 import com.kamabizbazti.model.entities.ChartWrapper;
 import com.kamabizbazti.model.handlers.GeneralRequestHandler;
 import com.kamabizbazti.model.repository.ChartSelectionRepository;
-import org.hibernate.engine.spi.PersistenceContext;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.runner.RunWith;
