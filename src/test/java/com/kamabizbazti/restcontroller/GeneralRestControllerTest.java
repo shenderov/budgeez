@@ -1,11 +1,13 @@
 package com.kamabizbazti.restcontroller;
 
+import com.kamabizbazti.KamaBizbaztiBootApplication;
 import com.kamabizbazti.common.http.HttpConnectorGeneral;
 import com.kamabizbazti.model.entities.ChartRequestWrapper;
 import com.kamabizbazti.model.entities.ChartSelection;
 import com.kamabizbazti.model.entities.ChartWrapper;
 import com.kamabizbazti.model.handlers.GeneralRequestHandler;
 import com.kamabizbazti.model.repository.ChartSelectionRepository;
+import org.hibernate.engine.spi.PersistenceContext;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.runner.RunWith;
@@ -14,12 +16,14 @@ import org.springframework.boot.context.embedded.LocalServerPort;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import org.junit.Test;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@ContextConfiguration(classes = {KamaBizbaztiBootApplication.class})
 public class GeneralRestControllerTest {
 
     @Autowired
