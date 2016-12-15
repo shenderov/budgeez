@@ -2,7 +2,7 @@
  
 app.factory('Connector', ['$http', '$q', function($http, $q){
 
-    var server = "http://localhost:8080/kamabizbazti/";
+    var server = "/kamabizbazti/";
 
     return {
          
