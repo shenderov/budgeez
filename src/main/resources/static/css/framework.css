@@ -5,14 +5,91 @@ body {
     /* Margin bottom by footer height */
     margin-bottom: 80px;
     padding-top: 50px;
-
 }
 
 html {
     position: relative;
     min-height: 100%;
+    min-width: 400px;
 }
 
+/* Navbar */
+
+/* Main */
+.main-container-left-block {
+    padding-top: 1vh;
+}
+
+.chart{
+    height: 60vh;
+}
+
+.date-picker{
+    margin: 0 5px;
+}
+
+.selector-container{
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+#charts-selector-dropdown-block {
+    padding-bottom: 10px;
+}
+
+.charts-selector-confirmation-button {
+    padding-left: 0;
+    padding-right: 0;
+    margin-left: 0;
+    margin-right: 0;
+}
+
+.user-main-container {
+    /*margin-top: 15px;*/
+}
+
+/* Main login and add record */
+.main-container-right-block{
+    margin-top: 10vh;
+}
+
+.login-block, .add-record-module{
+    padding: 20px 0;
+}
+
+.login-signup-tabs-heading {
+    background-color: #23c2e1;
+}
+
+.login-signup-tabs-heading > a {
+    color: #ffffff;
+}
+
+.nav-tabs.nav-justified > li > a {
+    border: none !important;
+    border-radius: 0 0 0 0 !important;
+}
+
+.nav-tabs.nav-justified > .active > a, .nav-tabs.nav-justified > .active > a:hover, .nav-tabs.nav-justified > .active > a:focus {
+    border: none !important;
+    border-radius: 0 0 0 0 !important;
+}
+
+.nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus {
+    border: none;
+}
+
+.nav-tabs {
+    border: none;
+    margin-bottom: 10px;
+}
+
+.nav-tabs > li > a {
+    border: none;
+    border-radius: 0 0 0 0 !important;
+}
+
+/* Footer */
 .footer {
     position: absolute;
     bottom: 0;
@@ -23,39 +100,27 @@ html {
     color: #ffffff;
 }
 
-.login-block{
-    padding: 20%;
-}
 
-.chart{
-    height: 100%;
-    min-height: 500px;
-    width: 100%;
-}
-
-.chart-block{
-
-}
-
+/* Testing */
 .pink{
 background-color: #e4b9b9;
 }
 
-.green{
-    background-color: greenyellow;
+.red-border{
     border: solid 2px red;
 }
 
-.date-picker{
-    margin-top: 0px;
-    margin-bottom: 0px;
-    margin-left: 5px;
-    margin-right: 5px;
+.green-border{
+    border: solid 2px green;
 }
 
-.selector-container{
-    margin-top: 5px;
-    margin-bottom: 5px;
+.blue{
+    background-color: #269abc;
+    border: solid 2px red;
+}
+
+.green{
+    background-color: greenyellow;
 }
 
 .prototype{
@@ -109,14 +174,36 @@ label:focus,
     box-shadow: none;
 }
 
+.table td.text {
+    max-width: 150px;
+}
+.table td.text span {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-block;
+    max-width: 100%;
+}
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
 .uib-daypicker{
      outline: none !important;
  }
 
-@media only screen and (max-width: 768px) {
-    /* For mobile phones: */
+@media only screen
+and (max-device-width : 992px)
+and (-webkit-min-device-pixel-ratio: 1){
     [class*="chart"] {
-        width: 100vw;
         height: 50vh;
+        margin-top: 1vh;
+    }
+    [class*="main-container-left-block"] {
+        margin-bottom: 2vh;
+        padding-top: 2vh;
     }
 }

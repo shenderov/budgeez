@@ -1,20 +1,33 @@
 <div class="login-block">
-        <h2 class="form-signin-heading text-center">Please Sign Up</h2>
-		<form class="form-signin" role="form">
-		<p class="bg-danger" ng-show="alertError" ng-init="alertError=false"><strong>Email already registered</strong></p>
-		<p class="bg-success text-center" ng-show="alertSuccess" ng-init="alertSuccess=false">Sign Up Success</p>
-		<div class="form-group">
-		<label for="inputName" autocomplete="off">Name:</label>
-        <input type="text" id="inputName" class="form-control has-error" placeholder="Enter name" required ng-model="userDetails.name" autofocus>
-		</div>
-		<div class="form-group">
-        <label for="inputEmail" autocomplete="off">Email:</label>
-        <input type="email" id="inputEmail" class="form-control" placeholder="Enter email" required ng-model="userDetails.email">
-		</div>
-		<div class="form-group">
-        <label for="inputPassword" autocomplete="off">Password:</label>
-        <input type="password" id="inputPassword" class="form-control" placeholder="Enter password" required ng-model="userDetails.password">
-		</div>
-        <button class="btn btn-lg btn-primary btn-block" type="submit" ng-click="signup(userDetails)">Sign in</button>
+    <h3 class="form-signin-heading text-center">Please Sign Up</h3>
+    <form class="form-signin" role="form" name="signUp" novalidate>
+        <div uib-alert ng-repeat="alert in authAddRecordBlockAlerts" ng-class="'alert-' + (alert.type || 'warning')"
+             close="closeAddEditFormAlert($index)" dismiss-on-timeout="5000">{{alert.msg}}
+        </div>
+        <div class="form-group"
+             ng-class="{ 'has-error has-feedback': signUp.inputName.$touched && signUp.inputName.$invalid, 'has-success has-feedback' : signUp.inputName.$touched && signUp.inputName.$valid}">
+            <label for="inputName" autocomplete="off">Name:</label>
+            <input type="text" id="inputName" class="form-control has-error" placeholder="Enter name" required
+                   ng-model="userDetails.name" maxlength="70" minlength="2" name="inputName">
+            <span ng-class="{ 'glyphicon glyphicon-remove form-control-feedback': signUp.inputName.$touched && signUp.inputName.$invalid, 'glyphicon glyphicon-ok form-control-feedback' : signUp.inputName.$touched && signUp.inputName.$valid}"></span>
+        </div>
+        <div class="form-group"
+             ng-class="{ 'has-error has-feedback': signUp.inputEmail.$touched && signUp.inputEmail.$invalid, 'has-success has-feedback' : signUp.inputEmail.$touched && signUp.inputEmail.$valid}">
+            <label for="inputEmail" autocomplete="off">Email:</label>
+            <input type="email" id="inputEmail" class="form-control invalid" placeholder="Enter email" required
+                   ng-model="userDetails.email" maxlength="254" minlength="4" name="inputEmail">
+            <span ng-class="{ 'glyphicon glyphicon-remove form-control-feedback': signUp.inputEmail.$touched && signUp.inputEmail.$invalid, 'glyphicon glyphicon-ok form-control-feedback' : signUp.inputEmail.$touched && signUp.inputEmail.$valid}"></span>
+        </div>
+        <div class="form-group"
+             ng-class="{ 'has-error has-feedback': signUp.inputPassword.$touched && signUp.inputPassword.$invalid, 'has-success has-feedback' : signUp.inputPassword.$touched && signUp.inputPassword.$valid}">
+            <label for="inputPassword" autocomplete="off">Password:</label>
+            <input type="password" id="inputPassword" class="form-control" placeholder="Enter password" required
+                   ng-model="userDetails.password" maxlength="128" minlength="6" name="inputPassword">
+            <span ng-class="{ 'glyphicon glyphicon-remove form-control-feedback': signUp.inputPassword.$touched && signUp.inputPassword.$invalid, 'glyphicon glyphicon-ok form-control-feedback' : signUp.inputPassword.$touched && signUp.inputPassword.$valid}"></span>
+        </div>
+        <button class="btn btn-lg btn-default btn-block" type="submit" ng-click="signUp.$valid && signup(userDetails)"
+                ng-disabled="(signUp.$invalid && (signUp.inputName.$touched || signUp.inputEmail.$touched || signUp.inputPassword.$touched)) || signUpSubmitButtomDisabled">
+            GET STARTED
+        </button>
     </form>
 </div>

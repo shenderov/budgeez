@@ -8,14 +8,13 @@
                            is-open="popupStart.opened" datepicker-options="dateOptionsStart" ng-required="true"
                            close-text="Close" ng-change="setStartDate(startDate)"
                            id="records-list-datePicker-startDate-input"/>
-              <span class="input-group-btn">
+                    <span class="input-group-btn">
             <button type="button" class="btn btn-default" ng-click="openStart()"
                     id="charts-selector-datePicker-startDate-openButton"><i class="glyphicon glyphicon-calendar"></i>
             </button>
           </span>
                 </p>
             </div>
-
             <div class="form-group">
                 <label class="no-margin" for="records-list-datePicker-endDate-input">To:</label>
                 <p class="input-group date-picker">
@@ -23,58 +22,23 @@
                            is-open="popupEnd.opened" datepicker-options="dateOptionsEnd" ng-required="true"
                            close-text="Close" ng-change="setEndDate(endDate)"
                            id="records-list-datePicker-endDate-input"/>
-              <span class="input-group-btn">
+                    <span class="input-group-btn">
             <button type="button" class="btn btn-default" ng-click="openEnd()"
                     id="charts-selector-datePicker-endDate-openButton"><i class="glyphicon glyphicon-calendar"></i>
             </button>
           </span>
                 </p>
             </div>
-            <div class="form-group date-picker"><button type="submit" class="btn btn-default" ng-click="getRecordsList(startDate.getTime(), endDate.getTime())">Search</button></div>
-
+            <div class="form-group date-picker">
+                <button type="submit" class="btn btn-default"
+                        ng-click="getRecordsList(startDate.getTime(), endDate.getTime())">Search
+                </button>
+            </div>
         </form>
-
     </div>
-
-
-    <!--<div id="records-list-fiter-container" class="form-inline">-->
-
-
-    <!--<span ng-dropdown-multiselect="" options="actualPurposesList" selected-model="selectedPurposes" extra-settings="purposeMultiselectSettings" translation-texts="purposeMultiselectButtonText"></span>-->
-
-    <!--<div class="form-group">-->
-    <!--<label for="minAmount">Amount:</label>-->
-    <!--<input type="number" class="form-control input-sm" id="minAmount" ng-model="minAmount">-->
-    <!--<label for="maxAmount">-</label>-->
-    <!--<input type="number" class="form-control input-sm" id="maxAmount" ng-model="maxAmount">-->
-    <!--</div>-->
-
-    <!--<span  ng-show="visible">-->
-    <!--<rzslider-->
-    <!--rz-slider-model="minAmount"-->
-    <!--rz-slider-high="maxAmount"-->
-    <!--rz-slider-options="rangeSlider.options" onpageshow="refreshSlider()"-->
-    <!--&gt;</rzslider>-->
-
-    <!--</span>-->
-    <!--</div>-->
-    <!--<button ng-click="toggle()">{{ visible ? 'Hide' : 'Show' }}</button>-->
-    <!--<button ng-click="refreshSlider()">Show</button>-->
-    <!--<div ng-show="visible">-->
-    <!--<rzslider-->
-    <!--rz-slider-model="minAmount"-->
-    <!--rz-slider-high="maxAmount"-->
-    <!--rz-slider-options="rangeSlider.options" onpageshow="refreshSlider()"-->
-    <!--&gt;</rzslider>-->
-    <!--</div>-->
-    <!--<div range-slider min="demo2.range.min" max="demo2.range.max" model-min="demo2.minPrice"-->
-    <!--model-max="demo2.maxPrice" filter="currency:'$'" step="100"></div>-->
-
-
     <div id="records-list-table-container">
-        <!--<table class="table table-hover table-striped table-bordered table-condensed table-responsive">-->
-        <div uib-alert ng-repeat="alert in recordListAlerts" ng-class="'alert-' + (alert.type || 'warning')"
-             close="closeRecordListAlert($index)" dismiss-on-timeout="5000">{{alert.msg}}
+        <div uib-alert ng-repeat="alert in mainWindowAlerts" ng-class="'alert-' + (alert.type || 'warning')"
+             close="closeMainWindowAlert($index)" dismiss-on-timeout="5000">{{alert.msg}}
         </div>
         <div ng-show="showLimitWell.show" class="well well-sm">{{showLimitWell.message}}</div>
         <div ng-show="!showTable" class="well well-sm">No records found for requested dates.</div>
@@ -88,14 +52,11 @@
             </tr>
             </thead>
             <tbody>
-            <!--<tr ng-repeat="r in recordsList | filter: filterInRange('amount', minAmount, maxAmount) | actual:selectedPurposes:'purpose'" uib-tooltip="Comment: {{r.comment}}" tooltip-enable="r.comment!=null" tooltip-append-to-body="true">-->
             <tr ng-repeat="r in recordsList" uib-tooltip="Comment: {{r.comment}}" tooltip-enable="r.comment!=null"
                 tooltip-append-to-body="true">
-
-                <td>{{r.date | date: format}}</td>
-                <!--<td>{{r.purpose.name}}</td>-->
-                <td>{{ r.purpose.name | limitTo: 20 }}{{r.purpose.name.length > 20 ? '...' : ''}}</td>
-                <td>{{r.amount | number: 2}}</td>
+                <td><span>{{r.date | date: format}}</span></td>
+                <td class="text"><span>{{r.purpose.name}}</span></td>
+                <td><span>{{r.amount | number: 2}}</span></td>
                 <td>
                     <button type="button" class="btn btn-info btn-xs glyphicon glyphicon-pencil"
                             ng-click="openUpdateModal(r, $index)"></button>
@@ -105,15 +66,6 @@
             </tr>
             </tbody>
         </table>
-
-
     </div>
-    <script type="text/ng-template" id="dropdown.html">
-        <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="button-template-url">
-            <li role="menuitem" ng-repeat="pps in purposesList"><input type="checkbox" value="pps.name">{{pps.name}}
-            </li>
-
-        </ul>
-    </script>
 </div>
 
