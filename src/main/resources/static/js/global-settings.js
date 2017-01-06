@@ -1,3 +1,3 @@
 'use strict';
 
-var serverPath = "/kamabizbazti/";
+var serverPath = "/";
