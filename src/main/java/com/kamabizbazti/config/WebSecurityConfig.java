@@ -66,13 +66,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         "/**/*.html",
                         "/**/*.css",
                         "/**/*.js",
-                        "/**/*.jpg"
+                        "/**/*.jpg",
+                        "/*.jpg"
                 ).permitAll()
                 .antMatchers("/general/**").permitAll()
                 .antMatchers("/test/**").permitAll()
                 .antMatchers("/login/**").permitAll()
                 .antMatchers("/signup/**").permitAll()
-                .antMatchers("/images/**").permitAll()
                 .anyRequest().authenticated();
 
         httpSecurity
