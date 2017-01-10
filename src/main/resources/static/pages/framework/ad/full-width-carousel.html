@@ -1,31 +1,14 @@
-<div ng-controller="Carousel" id="myCarousel" class="carousel slide" data-ride="carousel">
-    <!--<ol class="carousel-indicators">-->
-        <!--<li data-target="#myCarousel" data-slide-to="0" class="active"></li>-->
-        <!--<li data-target="#myCarousel" data-slide-to="1"></li>-->
-    <!--</ol>-->
-
+<div ng-controller="Carousel" id="carousel" class="carousel slide" data-ride="carousel">
+    <ol class="carousel-indicators">
+        <li data-target="#carousel" data-slide-to="{{$index}}" ng-class="{active:!$index}"
+            ng-repeat="slide in slides"></li>
+    </ol>
     <div class="carousel-inner" role="listbox">
-        <div class="item active">
-            <img src="../../../images/1.jpg" alt="Image">
+        <div class="item" ng-class="{active:!$index}" ng-repeat="slide in slides">
+            <img src="{{slide.url}}" alt="Image">
             <div class="carousel-caption">
-                <h3>Sell $</h3>
-                <p>Money Money.</p>
-            </div>
-        </div>
-
-        <div class="item">
-            <img src="../../../images/2.jpg" alt="Image">
-            <div class="carousel-caption">
-                <h3>More Sell $</h3>
-                <p>Lorem ipsum...</p>
-            </div>
-        </div>
-
-        <div class="item">
-            <img src="../../../images/3.jpg" alt="Image">
-            <div class="carousel-caption">
-                <h3>More Sell $</h3>
-                <p>Lorem ipsum...</p>
+                <h3>{{slide.header}}</h3>
+                <p nf-if="slide.text != null">{{slide.text}}</p>
             </div>
         </div>
     </div>
