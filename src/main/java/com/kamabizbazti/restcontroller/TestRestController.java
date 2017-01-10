@@ -12,6 +12,7 @@ import com.kamabizbazti.security.entities.Authority;
 import com.kamabizbazti.security.repository.AuthorityRepository;
 import com.kamabizbazti.security.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -70,7 +71,8 @@ public class TestRestController {
     }
 
     @RequestMapping(value = "/insertData", method = RequestMethod.GET)
-    public List<String> insertData(@RequestParam(value = "generateRecordsForAllUsers", required = false, defaultValue = "false") Boolean generateRecordsForAllUsers,
+    @Async
+    public void insertData(@RequestParam(value = "generateRecordsForAllUsers", required = false, defaultValue = "false") Boolean generateRecordsForAllUsers,
                                    @RequestParam(value = "generatePurposesForAllUsers", required = false, defaultValue = "false") Boolean generatePurposesForAllUsers,
                                    @RequestParam(value = "generateUsers", required = false, defaultValue = "false") Boolean generateUsers) {
         LinkedList<String> res = new LinkedList<>();
@@ -95,40 +97,40 @@ public class TestRestController {
         res.add("Data Import Completed");
         for (String str : res)
             System.out.println(str);
-        return res;
+       // return res;
     }
 
-    @RequestMapping(value = "/insertInitiateData", method = RequestMethod.GET)
-    public List<String> insertInitiateData() {
-        LinkedList<String> res = new LinkedList<>();
-        Iterable<Language> languages = languageRepository.findAll();
-        Iterable<Currency> currencies = currencyRepository.findAll();
-        Iterable<ChartSelection> chartSelections = chartSelectionRepository.findAll();
-        Iterable<GeneralPurpose> purposes = generalPurposeRepository.findAll();
-        Iterable<Authority> authorities = authorityRepository.findAll();
-        if (Iterables.size(languages) == 0) {
-            dataGenerator.insertLanguages(languageRepository);
-            res.add("Languages Inserted");
-        }
-        if (Iterables.size(currencies) == 0) {
-            dataGenerator.insertCurrencies(currencyRepository);
-            res.add("Currencies Inserted");
-        }
-        if (Iterables.size(chartSelections) == 0) {
-            dataGenerator.insertChartSelections(chartSelectionRepository);
-            res.add("Chart Selections Inserted");
-        }
-        if (Iterables.size(purposes) == 0) {
-            dataGenerator.insertPurposes(generalPurposeRepository);
-            res.add("General Purposes Inserted");
-        }
-        if (Iterables.size(authorities) == 0) {
-            dataGenerator.insertAuthorities(authorityRepository);
-            res.add("Authorities Inserted");
-        }
-        res.add("Initiate Data Import Completed");
-        for (String str : res)
-            System.out.println(str);
-        return res;
-    }
+//    @RequestMapping(value = "/insertInitiateData", method = RequestMethod.GET)
+//    public List<String> insertInitiateData() {
+//        LinkedList<String> res = new LinkedList<>();
+//        Iterable<Language> languages = languageRepository.findAll();
+//        Iterable<Currency> currencies = currencyRepository.findAll();
+//        Iterable<ChartSelection> chartSelections = chartSelectionRepository.findAll();
+//        Iterable<GeneralPurpose> purposes = generalPurposeRepository.findAll();
+//        Iterable<Authority> authorities = authorityRepository.findAll();
+//        if (Iterables.size(languages) == 0) {
+//            dataGenerator.insertLanguages(languageRepository);
+//            res.add("Languages Inserted");
+//        }
+//        if (Iterables.size(currencies) == 0) {
+//            dataGenerator.insertCurrencies(currencyRepository);
+//            res.add("Currencies Inserted");
+//        }
+//        if (Iterables.size(chartSelections) == 0) {
+//            dataGenerator.insertChartSelections(chartSelectionRepository);
+//            res.add("Chart Selections Inserted");
+//        }
+//        if (Iterables.size(purposes) == 0) {
+//            dataGenerator.insertPurposes(generalPurposeRepository);
+//            res.add("General Purposes Inserted");
+//        }
+//        if (Iterables.size(authorities) == 0) {
+//            dataGenerator.insertAuthorities(authorityRepository);
+//            res.add("Authorities Inserted");
+//        }
+//        res.add("Initiate Data Import Completed");
+//        for (String str : res)
+//            System.out.println(str);
+//        return res;
+//    }
 }
