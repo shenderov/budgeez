@@ -23,7 +23,8 @@ app.controller('RecordsController', function($scope, $rootScope, $http, Connecto
                 }
             );
     };
-    $scope.getPurposesList();
+    if($scope.isAutorized)
+        $scope.getPurposesList();
 
     $scope.addRecord = function(record, purposeName){
         record.date = $scope.recordDate;

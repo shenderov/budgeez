@@ -40,7 +40,6 @@ app.controller('AuthorizationController', function($scope, $rootScope, $location
         return Connector.login(credentials)
             .then(
                 function(result) {
-                    console.log(result.token);
                     setToken(result.token);
                     $scope.isAutorized = true;
                     $location.path('/user-home');
@@ -79,16 +78,23 @@ app.controller('AuthorizationController', function($scope, $rootScope, $location
         removeToken();
     };
 
-    $scope.loginKostyl = function() {
-        $scope.isAutorized = true;
-        $location.path('/user-home');
+    $scope.checkToken = function(){
+        if(getToken() != null) {
+            return Connector.refreshToken(createAuthorizationTokenHeader())
+                .then(
+                    function (result) {
+                        console.log(result.token);
+                        setToken(result.token);
+                        $scope.isAutorized = true;
+                    },
+                    function () {
+                        console.error("Invalid token!");
+                        $scope.logout();
+                    }
+                );
+        }
     };
-
-    $scope.logoutKostyl = function() {
-        $scope.isAutorized = false;
-        $location.path('/');
-        removeToken();
-    };
+    $scope.checkToken();
 
     $rootScope.addMainWindowAlert = function (type, msg) {
         $rootScope.mainWindowAlerts.push({type: type, msg: msg});
@@ -106,5 +112,11 @@ app.controller('AuthorizationController', function($scope, $rootScope, $location
         $rootScope.authAddRecordBlockAlerts.splice(index, 1);
     };
 
-
+    $rootScope.authCheck = function () {
+        if($scope.isAutorized == false) {
+            $scope.logout();
+            $rootScope.mainWindowAlerts = [];
+            $rootScope.authAddRecordBlockAlerts = [];
+        }
+    };
 });

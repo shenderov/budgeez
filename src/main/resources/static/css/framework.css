@@ -4,7 +4,6 @@ body > section:not(.active) { display:none; }
 body {
     /* Margin bottom by footer height */
     margin-bottom: 80px;
-    padding-top: 50px;
 }
 
 html {
@@ -14,6 +13,9 @@ html {
 }
 
 /* Navbar */
+.navbar {
+    margin-bottom: 0px;
+}
 
 /* Main */
 .main-container-left-block {
@@ -205,5 +207,11 @@ and (-webkit-min-device-pixel-ratio: 1){
     [class*="main-container-left-block"] {
         margin-bottom: 2vh;
         padding-top: 2vh;
+    }
+}
+
+@media (max-width: 600px) {
+    .carousel-caption {
+        display: none;
     }
 }

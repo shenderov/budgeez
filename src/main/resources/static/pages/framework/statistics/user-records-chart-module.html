@@ -1,20 +1,8 @@
-
-
-<!--<div ng-controller="UserHomeController">-->
-    <!--<uib-tabset>-->
-        <!--<uib-tab ng-repeat="tab in tabs" heading="{{tab.title}}" active="tab.active" disable="tab.disabled">-->
-            <!--<div ui-view="{{tab.route}}"></div>-->
-        <!--</uib-tab>-->
-    <!--</uib-tabset>-->
-<!--</div>-->
-
-
-<!--<uib-tabset type="tabs">-->
-    <!--<uib-tab heading="My Statistics" select="getAndRedrawChart()">-->
-        <!--<div ng-include="'pages/framework/statistics/charts-view-module.html'"></div>-->
-    <!--</uib-tab>-->
-    <!--<uib-tab heading="My Records">-->
-        <!--<div ng-include="'pages/framework/statistics/records-list-module.html'"></div>-->
-    <!--</uib-tab>-->
-<!--</uib-tabset>-->
-<div ng-include="'pages/framework/statistics/charts-view-module.html'"></div>
+<uib-tabset type="tabs">
+    <uib-tab heading="My Statistics" select="getAndRedrawChart()">
+        <div ng-include="'pages/framework/statistics/charts-view-module.html'"></div>
+    </uib-tab>
+    <uib-tab heading="My Records">
+        <div ng-include="'pages/framework/statistics/records-list-module.html'"></div>
+    </uib-tab>
+</uib-tabset>

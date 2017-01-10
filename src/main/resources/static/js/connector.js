@@ -169,6 +169,18 @@ app.factory('Connector', ['$http', '$q', function ($http, $q) {
                         return $q.reject(errResponse);
                     }
                 );
+        },
+
+        refreshToken: function (token) {
+            return $http.get(serverPath + 'refresh', {headers: token})
+                .then(
+                    function (response) {
+                        return response.data;
+                    },
+                    function (errResponse) {
+                        return $q.reject(errResponse);
+                    }
+                );
         }
     };
 }]);

@@ -1,15 +1,10 @@
 'use strict';
 
 app.controller('UserHomeController', function ($scope, $rootScope, $http, $templateCache, $location, $state, Connector) {
-    console.log("User");
-
-    // if($scope.isAutorized == false){
-    //     $location.path('/');
-    // }
-
     $scope.chartSelectionsList = null;
     $scope.activeChartSelection = {};
     $scope.chartWrapper = {};
+    $rootScope.authCheck();
 
     $scope.getUserSelectionsList = function () {
         Connector.getUserSelectionsList()
@@ -24,7 +19,8 @@ app.controller('UserHomeController', function ($scope, $rootScope, $http, $templ
                 }
             );
     };
-    $scope.getUserSelectionsList();
+    if($scope.isAutorized)
+        $scope.getUserSelectionsList();
 
     $scope.getDefaultDataTable = function () {
         return Connector.getUserDefaultDataTable(createAuthorizationTokenHeader())

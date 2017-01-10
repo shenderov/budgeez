@@ -2,7 +2,6 @@
 
 var app = angular.module('KamaBizbazti', ['ngRoute', 'ngAnimate', 'ui.bootstrap', 'ui.router', 'dialogs.main']);
 
-//app.config(function ($routeProvider) {
 app.config(function ($stateProvider) {
     var states = [
         {
@@ -15,26 +14,26 @@ app.config(function ($stateProvider) {
             name: 'user-home',
             url: '/user-home',
             templateUrl: 'pages/user-home/user-home-tab.html',
-            resolve: {
-                people: function() {
-                    console.log("user-home");
-                    return null;
-                }
-            },
+            // resolve: {
+            //     auth: function() {
+            //         console.log("ROUTER");
+            //         $rootScope.authCheck();
+            //     }
+            // },
             controller: 'UserHomeController'
         },
-        {
-            name: 'user-home.records-list',
-            url: '/records-list',
-            //templateUrl: 'pages/user-home/user-home-tab.html',
-            resolve: {
-                people: function() {
-                    console.log("user-home.records-list");
-                    return null;
-                }
-            },
-           // controller: 'RecordListController'
-        },
+        // {
+        //     name: 'user-home.records-list',
+        //     url: '/records-list',
+        //     //templateUrl: 'pages/user-home/user-home-tab.html',
+        //     resolve: {
+        //         people: function() {
+        //             console.log("user-home.records-list");
+        //             return null;
+        //         }
+        //     },
+        //    // controller: 'RecordListController'
+        // },
 
 
 
@@ -77,13 +76,5 @@ app.config(function ($stateProvider) {
 app.config(['$httpProvider', function ($httpProvider) {
     $httpProvider.defaults.withCredentials = true;
 }]);
-
-
-
-
-
-
-
-
 
 
