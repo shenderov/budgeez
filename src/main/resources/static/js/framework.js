@@ -2,77 +2,31 @@
 
 var app = angular.module('KamaBizbazti', ['ngRoute', 'ngAnimate', 'ui.bootstrap', 'ui.router', 'dialogs.main']);
 
-app.config(function ($stateProvider) {
-    var states = [
-        {
-            name: 'main',
+app.config(function ($stateProvider, $urlRouterProvider) {
+
+    $urlRouterProvider.otherwise('/');
+
+    $stateProvider
+        .state('main', {
             url: '/',
             templateUrl: 'pages/main/main-tab.html',
             controller: 'MainController'
-        },
-        {
-            name: 'user-home',
+        })
+        .state('user-home', {
+            abstract: true,
             url: '/user-home',
-            templateUrl: 'pages/user-home/user-home-tab.html',
-            // resolve: {
-            //     auth: function() {
-            //         console.log("ROUTER");
-            //         $rootScope.authCheck();
-            //     }
-            // },
+            templateUrl: 'pages/user-home/user-home-tab.html'
+        })
+        .state('user-home.chart', {
+            url: '',
+            templateUrl: 'pages/framework/statistics/charts-view-module.html',
             controller: 'UserHomeController'
-        },
-        // {
-        //     name: 'user-home.records-list',
-        //     url: '/records-list',
-        //     //templateUrl: 'pages/user-home/user-home-tab.html',
-        //     resolve: {
-        //         people: function() {
-        //             console.log("user-home.records-list");
-        //             return null;
-        //         }
-        //     },
-        //    // controller: 'RecordListController'
-        // },
-
-
-
-
-        {
-            name: 'settings',
-            url: '/settings',
-            templateUrl: 'pages/settings/settings-tab.html',
-            controller: 'SettingsController'
-        }
-    ];
-    states.forEach(function(state) {
-        $stateProvider.state(state);
-    });
-
-
-
-    // $routeProvider
-    //     .when('/', {
-    //         templateUrl: 'pages/main/main-tab.html',
-    //         controller: 'MainController'
-    //     })
-    //     .when('/user-home', {
-    //         templateUrl: 'pages/user-home/user-home-tab.html',
-    //         controller: 'UserHomeController'
-    //     })
-    //     .when('/settings', {
-    //         templateUrl: 'pages/settings/settings-tab.html',
-    //         controller: 'SettingsController'
-    //     })
-    //     .otherwise({redirectTo: '/'});
+        })
+        .state('user-home.records', {
+            url: '/records',
+            templateUrl: 'pages/framework/statistics/records-list-module.html'
+        });
 });
-
-
-
-
-
-
-
 app.config(['$httpProvider', function ($httpProvider) {
     $httpProvider.defaults.withCredentials = true;
 }]);

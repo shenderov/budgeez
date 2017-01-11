@@ -1,8 +1,5 @@
 <uib-tabset type="tabs">
-    <uib-tab heading="My Statistics" select="getAndRedrawChart()">
-        <div ng-include="'pages/framework/statistics/charts-view-module.html'"></div>
-    </uib-tab>
-    <uib-tab heading="My Records">
-        <div ng-include="'pages/framework/statistics/records-list-module.html'"></div>
-    </uib-tab>
+    <uib-tab heading="My Statistics" ui-sref=".chart"></uib-tab>
+    <uib-tab heading="My Records" ui-sref=".records"></uib-tab>
 </uib-tabset>
+<div ui-view></div>

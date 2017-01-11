@@ -1,4 +1,4 @@
-<nav class="navbar navbar-default navbar-inverse" role="navigation" id="navbar">
+<nav class="navbar navbar-default navbar-inverse navbar-static-top" role="navigation" id="navbar">
     <div class="navbar-header" id="navbar-header">
         <button ng-if="isAutorized" type="button" class="navbar-toggle" data-toggle="collapse"
                 data-target=".navbar-ex1-collapse">
@@ -7,11 +7,11 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" href="#/" id="navbar-brand">Kama Bizbazti?</a>
+        <a class="navbar-brand" ui-sref="main" id="navbar-brand">Kama Bizbazti?</a>
     </div>
     <div class="collapse navbar-collapse navbar-ex1-collapse" ng-if="isAutorized">
         <ul class="nav navbar-nav">
-            <li><a href="#/" data-toggle="collapse" data-target=".navbar-ex1-collapse">Home</a></li>
+            <li><a href="#/main" data-toggle="collapse" data-target=".navbar-ex1-collapse">Home</a></li>
             <li><a href="#/user-home" data-toggle="collapse" data-target=".navbar-ex1-collapse">User Home</a></li>
             <!--<li><a href="#/settings" ng-if="isAutorized">Settings</a></li>-->
         </ul>
