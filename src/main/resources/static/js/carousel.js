@@ -14,7 +14,7 @@ app.controller('Carousel', function ($scope) {
         },
         {
             "url": "images/carousel/slide4.jpg",
-            "header": "Stop waste money and start to save",
+            "header": "Stop to waste money and start to save",
             "text": null
         }]
 });

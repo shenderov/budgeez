@@ -5,7 +5,7 @@
     </ol>
     <div class="carousel-inner" role="listbox">
         <div class="item" ng-class="{active:!$index}" ng-repeat="slide in slides">
-            <img src="{{slide.url}}" alt="Image">
+            <img ng-src="{{slide.url}}" alt="Image">
             <div class="carousel-caption">
                 <h3>{{slide.header}}</h3>
                 <p nf-if="slide.text != null">{{slide.text}}</p>
