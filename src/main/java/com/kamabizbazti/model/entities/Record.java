@@ -16,6 +16,8 @@ import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.kamabizbazti.security.entities.User;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @Table(name = "Record")
@@ -27,8 +29,10 @@ public class Record {
     @Column(name = "recordId", nullable = false)
     private long recordId;
 
-    @ManyToOne(optional = false, cascade = CascadeType.REMOVE)
-    @JoinColumn(name = "id")
+    //@ManyToOne(optional = false, cascade = CascadeType.REMOVE)
+    //@JoinColumn(name = "id")
+    @ManyToOne()
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnore
     private User userId;
 

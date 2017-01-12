@@ -52,13 +52,12 @@ public class TestRestController {
 
     @RequestMapping(value = "/insertData", method = RequestMethod.GET)
     @Async
-    //@PreAuthorize("hasRole('TEST')")
     public void insertData(@RequestParam(value = "generateRecordsForAllUsers", required = false, defaultValue = "false") Boolean generateRecordsForAllUsers,
                                    @RequestParam(value = "generatePurposesForAllUsers", required = false, defaultValue = "false") Boolean generatePurposesForAllUsers,
                                    @RequestParam(value = "generateUsers", required = false, defaultValue = "false") Boolean generateUsers) {
         LinkedList<String> res = new LinkedList<>();
         if (generateUsers) {
-            dataGenerator.insertUsers(userRepository, languageRepository, currencyRepository, authorityRepository, passwordEncoder, 10);
+            dataGenerator.insertUsers(userRepository, languageRepository, currencyRepository, authorityRepository, passwordEncoder, 2);
             res.add("Users Inserted");
         }
         if (generatePurposesForAllUsers) {
@@ -66,13 +65,13 @@ public class TestRestController {
             res.add("Custom Purposes Inserted");
         }
         if (generateRecordsForAllUsers) {
-            dataGenerator.insertRecords(userRepository, recordRepository, customPurposeRepository, 2, 365);
+            dataGenerator.insertRecords(userRepository, recordRepository, customPurposeRepository, 2, 150);
             res.add("Records Inserted");
         }
         if (!generatePurposesForAllUsers && !generateRecordsForAllUsers && !generateUsers) {
-            dataGenerator.insertUsers(userRepository, languageRepository, currencyRepository, authorityRepository, passwordEncoder, 10);
+            dataGenerator.insertUsers(userRepository, languageRepository, currencyRepository, authorityRepository, passwordEncoder, 2);
             dataGenerator.insertCustomPurposes(userRepository, generalPurposeRepository, customPurposeRepository);
-            dataGenerator.insertRecords(userRepository, recordRepository, customPurposeRepository, 2, 365);
+            dataGenerator.insertRecords(userRepository, recordRepository, customPurposeRepository, 2, 150);
             res.add("Users, Custom Purposes and Records Inserted");
         }
         res.add("Data Import Completed");

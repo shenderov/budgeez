@@ -12,7 +12,7 @@ import javax.persistence.*;
 public class CustomPurpose extends GeneralPurpose {
 
     @ManyToOne()
-    @JoinColumn(name = "id")
+    //@JoinColumn(name = "id")
     @JsonIgnore
     @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
