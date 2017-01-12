@@ -2,6 +2,8 @@ package com.kamabizbazti.model.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.kamabizbazti.security.entities.User;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 
@@ -12,6 +14,7 @@ public class CustomPurpose extends GeneralPurpose {
     @ManyToOne()
     @JoinColumn(name = "id")
     @JsonIgnore
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
 
     public CustomPurpose() {

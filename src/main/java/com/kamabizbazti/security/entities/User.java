@@ -71,7 +71,7 @@ public class User {
     private Currency currency;
 
     @Range(min = 1, max = 31, message = "Start day must be in range between 1 and 31")
-    @Column(name = "startCay", nullable = false)
+    @Column(name = "startDay", nullable = false)
     @JsonIgnore
     private int startDay;
 
