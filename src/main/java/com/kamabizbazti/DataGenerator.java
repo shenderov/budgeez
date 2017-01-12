@@ -23,7 +23,7 @@ import java.util.concurrent.TimeUnit;
 
 
 public class DataGenerator {
-    private static final String NAMES_DATABASE = "/Users/macbookair13/Google Drive/My Java Projects/KamaBizbazti/Resources/15000NamesDatabase.txt";
+   private static final String NAMES_DATABASE = "src/test/resources/15000NamesDatabase.txt";
 
     public void insertLanguages(LanguageRepository languageRepository) {
         long start = System.currentTimeMillis();
@@ -76,6 +76,7 @@ public class DataGenerator {
 
     public void insertUsers(UserRepository userRepository, LanguageRepository languageRepository, CurrencyRepository currencyRepository, AuthorityRepository authorityRepository, PasswordEncoder passwordEncoder, int count) {
         long start = System.currentTimeMillis();
+        System.out.println(new File(NAMES_DATABASE).getAbsoluteFile());
         String[] lines = fileReader(NAMES_DATABASE);
         Set<String> set = new HashSet<>();
         Language language = languageRepository.findOne("ENG");
