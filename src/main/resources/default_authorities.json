@@ -6,5 +6,9 @@
   {
     "name": "ROLE_USER",
     "users": []
+  },
+  {
+    "name": "ROLE_TESTER",
+    "users": []
   }
 ]
