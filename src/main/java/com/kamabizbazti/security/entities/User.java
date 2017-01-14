@@ -3,26 +3,21 @@ package com.kamabizbazti.security.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.kamabizbazti.model.entities.Currency;
 import com.kamabizbazti.model.entities.Language;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Range;
 
-import java.util.Date;
-import java.util.List;
-
 import javax.persistence.*;
-import javax.persistence.Entity;
-import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.Date;
+import java.util.Set;
 
 @Entity
-@Table(name = "User", uniqueConstraints = @UniqueConstraint(columnNames = {"username"}))
+@Table(name = "User")
 public class User {
 
     @Id
-    @Column(name = "id")
+    @Column(name = "id", updatable = false)
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "user_seq")
     @SequenceGenerator(name = "user_seq", sequenceName = "USER_SEQ", allocationSize = 1)
     @JsonIgnore
@@ -56,13 +51,9 @@ public class User {
     @JsonIgnore
     private Date lastPasswordResetDate;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinTable(
-            name = "user_authority",
-            joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
-            inverseJoinColumns = {@JoinColumn(name = "authority_id", referencedColumnName = "id")})
+    @ManyToMany(fetch=FetchType.LAZY)
     @JsonIgnore
-    private List<Authority> authorities;
+    private Set<Authority> authorities;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "languageCode")
@@ -143,11 +134,11 @@ public class User {
         this.enabled = enabled;
     }
 
-    public List<Authority> getAuthorities() {
+    public Set<Authority> getAuthorities() {
         return authorities;
     }
 
-    public void setAuthorities(List<Authority> authorities) {
+    public void setAuthorities(Set<Authority> authorities) {
         this.authorities = authorities;
     }
 

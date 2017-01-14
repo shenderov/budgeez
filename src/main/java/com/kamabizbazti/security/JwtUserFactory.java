@@ -1,6 +1,7 @@
 package com.kamabizbazti.security;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.kamabizbazti.security.entities.JwtUser;
@@ -26,7 +27,7 @@ public final class JwtUserFactory {
         );
     }
 
-    private static List<GrantedAuthority> mapToGrantedAuthorities(List<Authority> authorities) {
+    private static List<GrantedAuthority> mapToGrantedAuthorities(Set<Authority> authorities) {
         return authorities.stream()
                 .map(authority -> new SimpleGrantedAuthority(authority.getName().name()))
                 .collect(Collectors.toList());

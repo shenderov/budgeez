@@ -14,9 +14,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.text.DecimalFormat;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
@@ -79,10 +76,10 @@ public class DataGenerator {
         System.out.println(new File(NAMES_DATABASE).getAbsoluteFile());
         String[] lines = fileReader(NAMES_DATABASE);
         Set<String> set = new HashSet<>();
-        Language language = languageRepository.findOne("ENG");
-        Currency currency = currencyRepository.findOne("USD");
+        Language language = languageRepository.findByLanguageCode("ENG");
+        Currency currency = currencyRepository.findByCurrencyCode("USD");
         String pass = passwordEncoder.encode("123456");
-        List<Authority> authorities = new ArrayList<>();
+        Set<Authority> authorities = new TreeSet<>();
         authorities.add(authorityRepository.findOne(Long.parseLong("2")));
         for (String str : lines)
             set.add(str);
@@ -193,9 +190,6 @@ public class DataGenerator {
     }
 
     private GeneralPurpose getRandomPurpose(List<GeneralPurpose> db) {
-//		ArrayList <GeneralPurpose> db = new ArrayList<>();
-//		for(GeneralPurpose p : pps)
-//			db.add(p);
         return db.get(getRandomInteger(0, db.size()));
     }
 

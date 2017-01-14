@@ -2,25 +2,25 @@ package com.kamabizbazti.security.entities;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.util.List;
+import java.util.Set;
 
 @Entity
-@Table(name = "Authority", uniqueConstraints = @UniqueConstraint(columnNames = {"name"}))
-public class Authority {
+@Table(name = "Authority")
+public class Authority implements Comparable<Authority> {
 
     @Id
-    @Column(name = "id")
+    @Column(name = "id", updatable = false)
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "authority_seq")
     @SequenceGenerator(name = "authority_seq", sequenceName = "AUTHORITY_SEQ", allocationSize = 1)
     private Long id;
 
-    @Column(name = "name", length = 50)
+    @Column(name = "name", length = 50, unique = true, updatable = false)
     @NotNull
     @Enumerated(EnumType.STRING)
     private AuthorityName name;
 
-    @ManyToMany(mappedBy = "authorities")
-    private List<User> users;
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "authorities")
+    private Set<User> users;
 
     public Long getId() {
         return id;
@@ -38,11 +38,21 @@ public class Authority {
         this.name = name;
     }
 
-    public List<User> getUsers() {
+    public Set<User> getUsers() {
         return users;
     }
 
-    public void setUsers(List<User> users) {
+    public void setUsers(Set<User> users) {
         this.users = users;
+    }
+
+
+    @Override
+    public int compareTo(Authority authority) {
+        if (authority.getId() > this.getId()) {
+            return 1;
+        } else {
+            return -1;
+        }
     }
 }

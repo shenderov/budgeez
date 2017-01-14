@@ -1,19 +1,15 @@
 package com.kamabizbazti.restcontroller;
 
 import com.kamabizbazti.DataGenerator;
-import com.kamabizbazti.model.entities.GeneralPurpose;
-import com.kamabizbazti.model.helpers.DateHelper;
 import com.kamabizbazti.model.repository.*;
 import com.kamabizbazti.security.repository.AuthorityRepository;
 import com.kamabizbazti.security.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.LinkedList;
-import java.util.List;
 
 @RequestMapping(path = "test")
 @RestController
@@ -78,4 +74,15 @@ public class TestRestController {
         for (String str : res)
             System.out.println(str);
     }
+
+    @RequestMapping(value = "/deleteUser", method = RequestMethod.GET)
+    public void deleteUser(@RequestParam(value = "uid") Long userId) {
+        userRepository.delete(userId);
+    }
+
+    @RequestMapping(value = "/deleteAuthority", method = RequestMethod.GET)
+    public void deleteAuthority(@RequestParam(value = "id") Long authorityId) {
+        authorityRepository.delete(authorityId);
+    }
+
 }

@@ -26,6 +26,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 @RestController
 public class AuthenticationRestController {
@@ -102,8 +104,8 @@ public class AuthenticationRestController {
         }
     }
 
-    private List<Authority> setUserAuthorities() {
-        List<Authority> userAuthorities = new ArrayList<>();
+    private Set<Authority> setUserAuthorities() {
+        Set<Authority> userAuthorities = new TreeSet<>();
         userAuthorities.add(authorityRepository.findByName(AuthorityName.ROLE_USER));
         return userAuthorities;
     }
