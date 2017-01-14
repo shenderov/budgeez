@@ -8,23 +8,22 @@ import com.kamabizbazti.model.entities.ChartSelection;
 import com.kamabizbazti.model.entities.ChartWrapper;
 import com.kamabizbazti.model.handlers.GeneralRequestHandler;
 import com.kamabizbazti.model.repository.ChartSelectionRepository;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.embedded.LocalServerPort;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import org.junit.Test;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
+import org.testng.Assert;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
 
 import java.util.List;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ContextConfiguration(classes = {KamaBizbaztiBootApplication.class, KamaBizbaztiApplicationConfig.class})
-public class GeneralRestControllerTest {
+@TestPropertySource(locations="classpath:test.properties")
+public class GeneralRestControllerTest extends AbstractTestNGSpringContextTests {
 
     @Autowired
     private ChartSelectionRepository chartSelectionRepository;
@@ -34,7 +33,7 @@ public class GeneralRestControllerTest {
 
     private HttpConnectorGeneral connector;
 
-    @Before
+    @BeforeClass
     public void setup() {
         connector = new HttpConnectorGeneral(port);
     }

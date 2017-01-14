@@ -1,16 +1,20 @@
 package com.kamabizbazti;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
+import com.kamabizbazti.config.KamaBizbaztiApplicationConfig;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
+import org.testng.annotations.Test;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest
-public class KamaBizbaztiBootApplicationTests {
+@ContextConfiguration(classes = {KamaBizbaztiBootApplication.class, KamaBizbaztiApplicationConfig.class})
+@TestPropertySource(locations="classpath:test.properties")
+public class KamaBizbaztiBootApplicationTests extends AbstractTestNGSpringContextTests {
 
 	@Test
 	public void contextLoads() {
 	}
+
+
+
 
 }
