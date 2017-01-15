@@ -29,9 +29,8 @@ public class Record {
     @Column(name = "recordId", nullable = false)
     private long recordId;
 
-    //@ManyToOne(optional = false, cascade = CascadeType.REMOVE)
-    //@JoinColumn(name = "id")
     @ManyToOne()
+    @JoinColumn(name = "id")
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnore
     private User userId;
