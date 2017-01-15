@@ -84,8 +84,8 @@ public class AuthenticationRestController {
         else {
             User user = new User(wrapper.getEmail().toLowerCase(), passwordEncoder.encode(wrapper.getPassword()), wrapper.getName());
             user.setAuthorities(setUserAuthorities());
-            user.setLanguage(languageRepository.findOne(DEFAULT_LANGUAGE));
-            user.setCurrency(currencyRepository.findOne(DEFAULT_CURRENCY));
+            user.setLanguage(languageRepository.findByLanguageCode(DEFAULT_LANGUAGE));
+            user.setCurrency(currencyRepository.findByCurrencyCode(DEFAULT_CURRENCY));
             userRepository.save(user);
         }
         return createAuthenticationToken(new JwtAuthenticationRequest(wrapper.getEmail().toLowerCase(), wrapper.getPassword()), device);
