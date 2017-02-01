@@ -7,20 +7,20 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 public class SignUpWrapper {
-    @NotNull
-    @NotBlank
-    @Size(min = 2, max = 70)
+    //@NotNull(message = "error.name.notnull")
+    @NotBlank(message = "error.name.notblank")
+    @Size(min = 2, max = 70, message = "error.name.size")
     private String name;
 
-    @NotNull
-    @NotBlank
-    @Email
-    @Size(min = 4, max = 254)
+    //@NotNull(message = "error.email.notnull")
+    @NotBlank(message = "error.email.notblank")
+    @Size(min = 4, max = 254, message = "error.email.size")
+    @Email(message = "error.email.format")
     private String email;
 
-    @NotNull
-    @NotBlank
-    @Size(min = 6, max = 128)
+    //@NotNull(message = "error.password.notnull")
+    @NotBlank(message = "error.password.notblank")
+    @Size(min = 6, max = 128, message = "error.password.size")
     private String password;
 
     public String getName() {

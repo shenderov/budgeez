@@ -2,6 +2,8 @@
 
 app.controller('RecordsController', function($scope, $rootScope, $http, Connector) {
     console.log("RecordsController");
+    $scope.chartsCtrl = {};
+    $scope.recordsListCtrl = {};
     $rootScope.purposesList = {};
     $scope.record = {};
     $scope.purposeName = null;
@@ -9,6 +11,7 @@ app.controller('RecordsController', function($scope, $rootScope, $http, Connecto
     $scope.addRecordFormHolder = {};
     $scope.addRecordFormHolder.addEditRecordForm = {};
     $scope.addRecordSubmitDisable = false;
+    $scope.controllerName = "RecordsController";
 
     $scope.getPurposesList = function(){
         Connector.getPurposesList(createAuthorizationTokenHeader())
@@ -23,8 +26,7 @@ app.controller('RecordsController', function($scope, $rootScope, $http, Connecto
                 }
             );
     };
-    if($scope.isAutorized)
-        $scope.getPurposesList();
+    $scope.getPurposesList();
 
     $scope.addRecord = function(record, purposeName){
         record.date = $scope.recordDate;
@@ -51,8 +53,9 @@ app.controller('RecordsController', function($scope, $rootScope, $http, Connecto
                 function(record) {
                     $scope.record = {};
                     $rootScope.addAuthAddRecordBlockAlert("success", "Record is added");
-                    $rootScope.addRecordToRecordList(record);
-                    $rootScope.getAndRedrawChart();
+                    $scope.$broadcast('defaultAddRecordAction', {
+                        record: record
+                    });
                     $scope.addRecordSubmitDisable = false;
                     $scope.addRecordFormHolder.addEditRecordForm.$setUntouched();
                     $scope.addRecordFormHolder.addEditRecordForm.$setPristine();
@@ -86,19 +89,11 @@ app.controller('RecordsController', function($scope, $rootScope, $http, Connecto
 
     $scope.dateOptionsRecord = {
         formatYear: 'yy',
-        maxDate: new Date(),
         startingDay: 1
     };
 
     $scope.setRecordDate = function(recordDate){
-        $scope.recordDate = $scope.checkDateInput(recordDate);
-    };
-
-    $scope.checkDateInput = function(date){
-        if(date > new Date()){
-            date = new Date();
-        }
-        return date;
+        $scope.recordDate = recordDate;
     };
 
     $scope.openRecordDate = function() {

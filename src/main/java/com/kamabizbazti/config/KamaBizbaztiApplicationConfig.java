@@ -6,9 +6,11 @@ import com.kamabizbazti.model.handlers.GeneralStatisticsHandler;
 import com.kamabizbazti.model.handlers.UserRequestHandler;
 import com.kamabizbazti.model.handlers.UserStatisticsHandler;
 import com.kamabizbazti.model.helpers.DateHelper;
+import com.kamabizbazti.model.helpers.ExceptionMessagesHelper;
 import com.kamabizbazti.model.interfaces.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 
 @Configuration
 public class KamaBizbaztiApplicationConfig {
@@ -44,7 +46,20 @@ public class KamaBizbaztiApplicationConfig {
     }
 
     @Bean
+    public IExceptionMessagesHelper exceptionMessagesHelper() {
+        return new ExceptionMessagesHelper();
+    }
+
+    @Bean
     public DataGenerator dataGenerator() {
         return new DataGenerator();
+    }
+
+    @Bean(name = "messageSource")
+    public ReloadableResourceBundleMessageSource messageSource() {
+        ReloadableResourceBundleMessageSource messageBundle = new ReloadableResourceBundleMessageSource();
+        messageBundle.setBasename("classpath:messages/messages");
+        messageBundle.setDefaultEncoding("UTF-8");
+        return messageBundle;
     }
 }

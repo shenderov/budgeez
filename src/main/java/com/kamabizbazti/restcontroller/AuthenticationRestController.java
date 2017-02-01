@@ -1,11 +1,15 @@
 package com.kamabizbazti.restcontroller;
 
-import com.kamabizbazti.security.entities.*;
+import com.kamabizbazti.model.exceptions.UserRegistrationException;
+import com.kamabizbazti.model.exceptions.codes.UserRegistrationErrorCode;
+import com.kamabizbazti.model.interfaces.IExceptionMessagesHelper;
 import com.kamabizbazti.model.repository.CurrencyRepository;
 import com.kamabizbazti.model.repository.LanguageRepository;
-import com.kamabizbazti.security.exceptions.EmailAlreadyRegisteredException;
+import com.kamabizbazti.security.JwtTokenUtil;
+import com.kamabizbazti.security.entities.*;
 import com.kamabizbazti.security.repository.AuthorityRepository;
 import com.kamabizbazti.security.repository.UserRepository;
+import com.kamabizbazti.security.service.JwtAuthenticationResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -13,14 +17,11 @@ import org.springframework.mobile.device.Device;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-import com.kamabizbazti.security.JwtTokenUtil;
-import com.kamabizbazti.security.service.JwtAuthenticationResponse;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -54,6 +55,9 @@ public class AuthenticationRestController {
     @Autowired
     private AuthorityRepository authorityRepository;
 
+    @Autowired
+    private IExceptionMessagesHelper exceptionMessagesHelper;
+
     @Value("${security.header}")
     private String tokenHeader;
     private static final String DEFAULT_LANGUAGE = "ENG";
@@ -61,7 +65,7 @@ public class AuthenticationRestController {
 
     @CrossOrigin(origins = "*")
     @RequestMapping(value = "${security.route.authentication.login}", method = RequestMethod.POST)
-    public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtAuthenticationRequest authenticationRequest, Device device) throws AuthenticationException {
+    public ResponseEntity<?> createAuthenticationToken(@RequestBody @Valid JwtAuthenticationRequest authenticationRequest, Device device) {
         final Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         authenticationRequest.getUsername(),
@@ -76,9 +80,9 @@ public class AuthenticationRestController {
 
     @CrossOrigin(origins = "*")
     @RequestMapping(value = "${security.route.authentication.signup}", method = RequestMethod.POST)
-    public ResponseEntity<?> createUser(@RequestBody @Valid SignUpWrapper wrapper, Device device) throws EmailAlreadyRegisteredException {
+    public ResponseEntity<?> createUser(@RequestBody @Valid SignUpWrapper wrapper, Device device) throws UserRegistrationException {
         if (userRepository.findByUsername(wrapper.getEmail()) != null)
-            throw new EmailAlreadyRegisteredException();
+            throw new UserRegistrationException(UserRegistrationErrorCode.EMAIL_ALREADY_REGISTERED, exceptionMessagesHelper.getLocalizedMessage("error.registration.email"));
         else {
             User user = new User(wrapper.getEmail().toLowerCase(), passwordEncoder.encode(wrapper.getPassword()), wrapper.getName());
             user.setAuthorities(setUserAuthorities());
@@ -91,15 +95,15 @@ public class AuthenticationRestController {
 
     @RequestMapping(value = "${security.route.authentication.refresh}", method = RequestMethod.GET)
     public ResponseEntity<?> refreshAndGetAuthenticationToken(HttpServletRequest request) {
-        String token = request.getHeader(tokenHeader);
-        String username = jwtTokenUtil.getUsernameFromToken(token);
-        JwtUser user = (JwtUser) userDetailsService.loadUserByUsername(username);
-        if (jwtTokenUtil.canTokenBeRefreshed(token, user.getLastPasswordResetDate())) {
-            String refreshedToken = jwtTokenUtil.refreshToken(token);
-            return ResponseEntity.ok(new JwtAuthenticationResponse(refreshedToken));
-        } else {
-            return ResponseEntity.badRequest().body(null);
-        }
+            String token = request.getHeader(tokenHeader);
+            String username = jwtTokenUtil.getUsernameFromToken(token);
+            JwtUser user = (JwtUser) userDetailsService.loadUserByUsername(username);
+            if (jwtTokenUtil.canTokenBeRefreshed(token, user.getLastPasswordResetDate())) {
+                String refreshedToken = jwtTokenUtil.refreshToken(token);
+                return ResponseEntity.ok(new JwtAuthenticationResponse(refreshedToken));
+            } else {
+                return ResponseEntity.badRequest().body(null);
+            }
     }
 
     private Set<Authority> setUserAuthorities() {

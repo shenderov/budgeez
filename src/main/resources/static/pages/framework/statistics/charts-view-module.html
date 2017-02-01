@@ -12,50 +12,16 @@
                 <ul class="dropdown-menu" uib-dropdown-menu role="menu"
                     aria-labelledby="charts-selector-dropdown-split-button" id="charts-selector-dropdown-list">
                     <li role="menuitem"
-                        ng-repeat="chartSelection in chartSelectionsList | filter: {datePicker : 'false'} | filter: {selectionId: '!'+activeChartSelection.selectionId}">
+                        ng-repeat="chartSelection in chartSelectionsList | filter: {datePicker : 'false'} | filter: {selectionId: '!'+activeChartSelection.selectionId}:true">
                         <a ng-click="getDataAndDrawChart(chartSelection)">{{chartSelection.title}}</a></li>
-                    <li class="divider"></li>
+                    <li ng-if="chartSelection | contains: datePicker: 'true'" class="divider"></li>
                     <li role="menuitem"
-                        ng-repeat="chartSelection in chartSelectionsList | filter: {datePicker : 'true'} | filter: {selectionId: '!'+activeChartSelection.selectionId}">
-                        <a ng-click="getDataAndDrawChart(chartSelection)">{{chartSelection.title}}</a></li>
+                        ng-repeat="chartSelection in chartSelectionsList | filter: {datePicker : 'true'} | filter: {selectionId: '!'+activeChartSelection.selectionId}:true">
+                        <a ng-click="setActiveChartSelection(chartSelection)">{{chartSelection.title}}</a></li>
                 </ul>
             </div>
         </div>
-        <div ng-show="activeChartSelection.datePicker" class="col-md-8" id="charts-selector-datePicker-block">
-            <div class="row" id="charts-selector-datePicker-container">
-                <div class="col-md-5" id="charts-selector-datePicker-startDate">
-                    <p class="input-group">
-                        <input type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="startDate"
-                               is-open="popupStart.opened" datepicker-options="dateOptionsStart" ng-required="true"
-                               close-text="Close" ng-change="setStartDate(startDate)"
-                               id="charts-selector-datePicker-startDate-input"/>
-                        <span class="input-group-btn">
-            <button type="button" class="btn btn-default" ng-click="openStart()"
-                    id="charts-selector-datePicker-startDate-openButton"><i
-                    class="glyphicon glyphicon-calendar"></i></button>
-          </span>
-                    </p>
-                </div>
-                <div class="col-md-5" id="charts-selector-datePicker-endDate">
-                    <p class="input-group">
-                        <input type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="endDate"
-                               is-open="popupEnd.opened" datepicker-options="dateOptionsEnd" ng-required="true"
-                               close-text="Close" ng-change="setEndDate(endDate)"
-                               id="charts-selector-datePicker-endDate-input"/>
-                        <span class="input-group-btn">
-            <button type="button" class="btn btn-default" ng-click="openEnd()"
-                    id="charts-selector-datePicker-endDate-openButton"><i
-                    class="glyphicon glyphicon-calendar"></i></button>
-          </span>
-                    </p>
-                </div>
-                <div class="col-md-2 charts-selector-confirmation-button">
-                    <button type="button" class="btn btn-primary" ng-click="getDataAndDrawChart(activeChartSelection)"
-                            id="charts-selector-confirmation-button">Get Data
-                    </button>
-                </div>
-            </div>
-        </div>
+        <div ng-if="activeChartSelection.datePicker" ng-include="'pages/framework/common/date-picker.html'" id="datePicker-block"></div>
     </div>
     <div uib-alert ng-repeat="alert in mainWindowAlerts" ng-class="'alert-' + (alert.type || 'warning')"
          close="closeRecordListAlert($index)" dismiss-on-timeout="5000">{{alert.msg}}

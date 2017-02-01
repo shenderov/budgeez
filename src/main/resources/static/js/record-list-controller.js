@@ -4,21 +4,27 @@ app.controller('RecordListController', function ($scope, $rootScope, $http, Conn
     console.log("RecordListController");
     var date = new Date();
     $scope.startDate = new Date(date.getFullYear(), date.getMonth(), 1);
-    $scope.endDate = new Date(date.getFullYear(), date.getMonth() + 1, 0, 23, 59, 59);
+    $scope.endDate = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59, 59);
     $scope.showLimitWell = {};
     $scope.recordsList = {};
-    //$scope.recordListAlerts = [];
+    $scope.datePicker = {};
+    $scope.datePicker.datePickerForm = {};
+    $scope.datePickerSubmitDisable = false;
+    $scope.datePickerSubmitButtonName = "Search";
+    $rootScope.showCarousel = false;
 
-    $scope.getRecordsList = function (startDate, endDate) {
-        $scope.datePicker = {};
+    $scope.defaultAction = function (startDate, endDate) {
+        $scope.datePickerWrapper = {};
         if ((startDate > 0) && (endDate > 0)) {
-            $scope.datePicker.startDate = startDate;
-            $scope.datePicker.endDate = endDate;
+            $scope.datePickerWrapper.startDate = startDate;
+            $scope.datePickerWrapper.endDate = endDate;
         }
-        return Connector.getRecordsList($scope.datePicker, createAuthorizationTokenHeader())
+        $scope.datePickerSubmitDisable = true;
+        return Connector.getRecordsList($scope.datePickerWrapper, createAuthorizationTokenHeader())
             .then(
                 function (recordsList) {
                     $scope.recordsList = recordsList.content;
+                    $scope.datePickerSubmitDisable = false;
                     if (!recordsList.last) {
                         //noinspection JSUnresolvedVariable
                         $scope.showLimitWell.message = recordsList.totalElements + " records are found. Only first " + recordsList.numberOfElements + " are shown. Please, specify your request";
@@ -32,12 +38,13 @@ app.controller('RecordListController', function ($scope, $rootScope, $http, Conn
                 function (errResponse) {
                     $rootScope.addMainWindowAlert("danger", errResponse.data.message);
                     console.error(JSON.stringify(errResponse));
+                    $scope.datePickerSubmitDisable = false;
                 }
             );
     };
-    $scope.getRecordsList(0, 0);
+    $scope.defaultAction(0, 0);
 
-    $rootScope.addRecordToRecordList = function (record) {
+    $scope.addRecordToRecordList = function (record) {
         $scope.recordsList.push(record);
     };
 
@@ -54,6 +61,10 @@ app.controller('RecordListController', function ($scope, $rootScope, $http, Conn
             }
         }
     };
+
+    $scope.$on('defaultAddRecordAction', function (event, data) {
+        $scope.addRecordToRecordList(data.record);
+    });
 
     $scope.deleteRecord = function (recordId, $index) {
         return Connector.deleteRecord(recordId, createAuthorizationTokenHeader())
@@ -106,7 +117,7 @@ app.controller('RecordListController', function ($scope, $rootScope, $http, Conn
 
     $scope.dateOptionsStart = {
         formatYear: 'yy',
-        minDate: new Date(2000, 1, 1),
+        maxDate: $scope.endDate,
         startingDay: 1
     };
 
@@ -116,31 +127,22 @@ app.controller('RecordListController', function ($scope, $rootScope, $http, Conn
         startingDay: 1
     };
 
-    $scope.setStartDate = function (startDate) {
-        $scope.startDate = $scope.checkDateInput(startDate);
-        $scope.setMaxDate();
+    $scope.setStartDate = function(startDate){
+        $scope.startDate = startDate;
+        $scope.validateStartBeforeEnd();
         $scope.dateOptionsEnd.minDate = $scope.startDate;
     };
 
-    $scope.setEndDate = function (endDate) {
-        $scope.endDate = $scope.checkDateInput(new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDay(), 23, 59, 59));
-        $scope.setMaxDate();
+    $scope.setEndDate = function(endDate){
+        $scope.endDate = endDate;
+        $scope.validateStartBeforeEnd();
         $scope.dateOptionsStart.maxDate = $scope.endDate;
     };
 
-    $scope.setMaxDate = function () {
-        if ($scope.startDate > $scope.endDate) {
-            $scope.endDate = $scope.startDate;
-            $scope.dateOptionsStart.maxDate = $scope.endDate;
-            $scope.dateOptionsEnd.maxDate = $scope.endDate;
+    $scope.validateStartBeforeEnd = function(){
+        if($scope.startDate > $scope.endDate){
+            $scope.endDate = new Date($scope.startDate.getFullYear(), $scope.startDate.getMonth(), $scope.startDate.getDate(), 23, 59, 59);
         }
-    };
-
-    $scope.checkDateInput = function (date) {
-        if (date > new Date()) {
-            date = new Date();
-        }
-        return date;
     };
 
     $scope.openStart = function () {

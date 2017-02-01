@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.kamabizbazti.model.entities.Currency;
 import com.kamabizbazti.model.entities.Language;
 import org.hibernate.validator.constraints.Email;
+import org.hibernate.validator.constraints.NotEmpty;
 import org.hibernate.validator.constraints.Range;
 
 import javax.persistence.*;
@@ -26,7 +27,7 @@ public class User {
     @Column(name = "username", length = 254, unique = true)
     @NotNull
     @Email
-    @Size(min = 4, max = 254)
+    //@Size(min = 4, max = 254)
     private String username;
 
     @Column(name = "password", length = 128)

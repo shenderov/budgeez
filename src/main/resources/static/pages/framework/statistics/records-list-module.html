@@ -1,42 +1,6 @@
-<div ng-controller="RecordListController" id="records-list-module">
-    <div id="records-list-period-selector-container" class="selector-container">
-        <form class="form-inline" role="form">
-            <div class="form-group">
-                <label class="no-margin" for="records-list-datePicker-startDate-input">Period From:</label>
-                <p class="input-group date-picker">
-                    <input type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="startDate"
-                           is-open="popupStart.opened" datepicker-options="dateOptionsStart" ng-required="true"
-                           close-text="Close" ng-change="setStartDate(startDate)"
-                           id="records-list-datePicker-startDate-input"/>
-                    <span class="input-group-btn">
-            <button type="button" class="btn btn-default" ng-click="openStart()"
-                    id="charts-selector-datePicker-startDate-openButton"><i class="glyphicon glyphicon-calendar"></i>
-            </button>
-          </span>
-                </p>
-            </div>
-            <div class="form-group">
-                <label class="no-margin" for="records-list-datePicker-endDate-input">To:</label>
-                <p class="input-group date-picker">
-                    <input type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="endDate"
-                           is-open="popupEnd.opened" datepicker-options="dateOptionsEnd" ng-required="true"
-                           close-text="Close" ng-change="setEndDate(endDate)"
-                           id="records-list-datePicker-endDate-input"/>
-                    <span class="input-group-btn">
-            <button type="button" class="btn btn-default" ng-click="openEnd()"
-                    id="charts-selector-datePicker-endDate-openButton"><i class="glyphicon glyphicon-calendar"></i>
-            </button>
-          </span>
-                </p>
-            </div>
-            <div class="form-group date-picker">
-                <button type="submit" class="btn btn-default"
-                        ng-click="getRecordsList(startDate.getTime(), endDate.getTime())">Search
-                </button>
-            </div>
-        </form>
-    </div>
-    <div id="records-list-table-container">
+<!--<div ng-controller="RecordListController" id="records-list-module">-->
+    <div id="records-list-module">
+        <div ng-include="'pages/framework/common/date-picker.html'" id="datePicker-block"></div>
         <div uib-alert ng-repeat="alert in mainWindowAlerts" ng-class="'alert-' + (alert.type || 'warning')"
              close="closeMainWindowAlert($index)" dismiss-on-timeout="5000">{{alert.msg}}
         </div>
@@ -66,6 +30,4 @@
             </tr>
             </tbody>
         </table>
-    </div>
 </div>
-

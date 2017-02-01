@@ -50,7 +50,7 @@ public class UserRequestHandler implements IUserRequestHandler {
     }
 
     public ChartWrapper getUserDataTable(ChartRequestWrapper chartRequestWrapper, long userId) throws UnknownSelectionIdException, DateRangeException {
-        if (chartRequestWrapper.getStartDate() > chartRequestWrapper.getEndDate())
+        if (chartRequestWrapper.getDatePicker() != null && (chartRequestWrapper.getDatePicker().getStartDate() > chartRequestWrapper.getDatePicker().getEndDate()))
             throw new DateRangeException("END_DATE_BEFORE_START_DATE");
         ChartWrapper wrapper;
         switch (chartRequestWrapper.getChartSelection().getSelectionId()) {

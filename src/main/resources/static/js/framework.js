@@ -1,6 +1,6 @@
 'use strict';
 
-var app = angular.module('KamaBizbazti', ['ngRoute', 'ngAnimate', 'ui.bootstrap', 'ui.router', 'dialogs.main']);
+var app = angular.module('KamaBizbazti', ['ngRoute', 'ngAnimate', 'ui.bootstrap', 'ui.router', 'dialogs.main', 'angular.filter']);
 
 app.config(function ($stateProvider, $urlRouterProvider) {
 
@@ -24,7 +24,8 @@ app.config(function ($stateProvider, $urlRouterProvider) {
         })
         .state('user-home.records', {
             url: '/records',
-            templateUrl: 'pages/framework/statistics/records-list-module.html'
+            templateUrl: 'pages/framework/statistics/records-list-module.html',
+            controller: 'RecordListController'
         });
 });
 app.config(['$httpProvider', function ($httpProvider) {

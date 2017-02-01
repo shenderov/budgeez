@@ -35,6 +35,23 @@ app.controller('AuthorizationController', function($scope, $rootScope, $location
     $rootScope.mainWindowAlerts = [];
     $rootScope.authAddRecordBlockAlerts = [];
 
+    $scope.checkToken = function(){
+        if(getToken() != null) {
+            return Connector.refreshToken(createAuthorizationTokenHeader())
+                .then(
+                    function (result) {
+                        setToken(result.token);
+                        $scope.isAutorized = true;
+                    },
+                    function () {
+                        console.error("Invalid token!");
+                        $scope.logout();
+                    }
+                );
+        }
+    };
+    $scope.checkToken();
+
     $scope.login = function(credentials){
         $scope.loginSubmitButtomDisabled = true;
         return Connector.login(credentials)
@@ -58,7 +75,6 @@ app.controller('AuthorizationController', function($scope, $rootScope, $location
         return Connector.signup(userDetails)
             .then(
                 function(result) {
-                    console.log(result.token);
                     setToken(result.token);
                     $scope.isAutorized = true;
                     $location.path('/user-home');
@@ -77,24 +93,6 @@ app.controller('AuthorizationController', function($scope, $rootScope, $location
         $location.path('/');
         removeToken();
     };
-
-    $scope.checkToken = function(){
-        if(getToken() != null) {
-            return Connector.refreshToken(createAuthorizationTokenHeader())
-                .then(
-                    function (result) {
-                        console.log(result.token);
-                        setToken(result.token);
-                        $scope.isAutorized = true;
-                    },
-                    function () {
-                        console.error("Invalid token!");
-                        $scope.logout();
-                    }
-                );
-        }
-    };
-    $scope.checkToken();
 
     $rootScope.addMainWindowAlert = function (type, msg) {
         $rootScope.mainWindowAlerts.push({type: type, msg: msg});

@@ -38,7 +38,7 @@ user:
     deleteRecord: deleteRecord
     editRecord: editRecord
 
-#logging:
-#  level:
-#    org.springframework:
-#      security: DEBUG
+logging:
+  level:
+    org.springframework:
+      security: DEBUG

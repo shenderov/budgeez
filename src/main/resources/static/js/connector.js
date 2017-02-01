@@ -1,7 +1,7 @@
 'use strict';
 
 app.factory('Connector', ['$http', '$q', function ($http, $q) {
-
+    console.log("Connector");
     return {
         getGeneralSelectionsList: function () {
             return $http.get(serverPath + 'general/getGeneralChartSelectionsList')

@@ -3,8 +3,7 @@ package com.kamabizbazti.model.entities;
 public class ChartRequestWrapper {
 
     private ChartSelection chartSelection;
-    private long startDate;
-    private long endDate;
+    private DatePicker datePicker;
 
     public ChartSelection getChartSelection() {
         return chartSelection;
@@ -14,19 +13,19 @@ public class ChartRequestWrapper {
         this.chartSelection = chartSelection;
     }
 
-    public long getStartDate() {
-        return startDate;
+    public DatePicker getDatePicker() {
+        return datePicker;
     }
 
-    public void setStartDate(long startDate) {
-        this.startDate = startDate;
+    public void setDatePicker(DatePicker datePicker) {
+        this.datePicker = datePicker;
     }
 
-    public long getEndDate() {
-        return endDate;
-    }
-
-    public void setEndDate(long endDate) {
-        this.endDate = endDate;
+    @Override
+    public String toString() {
+        return "ChartRequestWrapper{" +
+                "chartSelection=" + chartSelection +
+                ", datePicker=" + datePicker +
+                '}';
     }
 }

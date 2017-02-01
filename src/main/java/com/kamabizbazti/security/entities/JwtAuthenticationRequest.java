@@ -11,15 +11,15 @@ public class JwtAuthenticationRequest implements Serializable {
 
     private static final long serialVersionUID = -8445943548965154778L;
 
-    @NotNull
-    @NotBlank
-    @Email
-    @Size(min = 4, max = 254)
+    @NotNull(message = "error.email.notnull")
+    @NotBlank(message = "error.email.notblank")
+    @Email(message = "error.email.format")
+    @Size(min = 4, max = 254, message = "error.email.size")
     private String username;
 
-    @NotNull
-    @NotBlank
-    @Size(min = 6, max = 128)
+    @NotNull(message = "error.password.notnull")
+    @NotBlank(message = "error.password.notblank")
+    @Size(min = 6, max = 128, message = "error.password.size")
     private String password;
 
     public JwtAuthenticationRequest() {

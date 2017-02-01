@@ -1,0 +1,39 @@
+<div id="selector-container" class="selector-container">
+    <form class="form-inline" name="datePicker.datePickerForm" role="form">
+        <div class="form-group">
+            <label class="no-margin" for="records-list-datePicker-startDate-input">Period From:</label>
+            <p class="input-group date-picker">
+                <input type="text" class="form-control date-picker-input" uib-datepicker-popup="{{format}}" ng-model="startDate"
+                       is-open="popupStart.opened" datepicker-options="dateOptionsStart" ng-required="true"
+                       close-text="Close" ng-change="setStartDate(startDate)"
+                       id="records-list-datePicker-startDate-input"/>
+                <span class="input-group-btn">
+            <button type="button" class="btn btn-default" ng-click="openStart()"
+                    id="charts-selector-datePicker-startDate-openButton"><i class="glyphicon glyphicon-calendar"></i>
+            </button>
+          </span>
+            </p>
+        </div>
+        <div class="form-group">
+            <label class="no-margin" for="records-list-datePicker-endDate-input">To:</label>
+            <p class="input-group date-picker">
+                <input type="text" class="form-control date-picker-input" uib-datepicker-popup="{{format}}" ng-model="endDate"
+                       is-open="popupEnd.opened" datepicker-options="dateOptionsEnd" ng-required="true"
+                       close-text="Close" ng-change="setEndDate(endDate)"
+                       id="records-list-datePicker-endDate-input"/>
+                <span class="input-group-btn">
+            <button type="button" class="btn btn-default" ng-click="openEnd()"
+                    id="charts-selector-datePicker-endDate-openButton"><i class="glyphicon glyphicon-calendar"></i>
+            </button>
+          </span>
+            </p>
+        </div>
+        <div class="form-group date-picker">
+            <button type="submit" class="btn btn-default"
+                    ng-click="datePicker.datePickerForm.$valid && defaultAction(startDate.getTime(), endDate.getTime())"
+                    ng-disabled="datePicker.datePickerForm.$invalid || datePickerSubmitDisable">
+                {{datePickerSubmitButtonName}}
+            </button>
+        </div>
+    </form>
+</div>

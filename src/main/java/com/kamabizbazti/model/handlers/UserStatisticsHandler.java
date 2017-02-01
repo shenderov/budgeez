@@ -51,12 +51,12 @@ public class UserStatisticsHandler implements IUserStatisticsHandler {
     }
 
     public ChartWrapper getCustomPeriodAverage(ChartRequestWrapper chartRequestWrapper, long userId) {
-        DataTable data = new DataTable(statisticsHelper.setLabels(), recordRepository.getAverageForAllActualPurposesForUser(userId, chartRequestWrapper.getStartDate(), chartRequestWrapper.getEndDate()));
+        DataTable data = new DataTable(statisticsHelper.setLabels(), recordRepository.getAverageForAllActualPurposesForUser(userId, chartRequestWrapper.getDatePicker().getStartDate(), chartRequestWrapper.getDatePicker().getEndDate()));
         return new ChartWrapper(ChartType.PIECHART, data.getDataTableAsArray(), chartRequestWrapper.getChartSelection().getTitle());
     }
 
     public ChartWrapper getCustomPeriodTotal(ChartRequestWrapper chartRequestWrapper, long userId) {
-        DataTable data = new DataTable(statisticsHelper.setLabels(), recordRepository.getTotalForAllActualPurposesForUser(userId, chartRequestWrapper.getStartDate(), chartRequestWrapper.getEndDate()));
+        DataTable data = new DataTable(statisticsHelper.setLabels(), recordRepository.getTotalForAllActualPurposesForUser(userId, chartRequestWrapper.getDatePicker().getStartDate(), chartRequestWrapper.getDatePicker().getEndDate()));
         return new ChartWrapper(ChartType.PIECHART, data.getDataTableAsArray(), chartRequestWrapper.getChartSelection().getTitle());
     }
 
@@ -70,12 +70,12 @@ public class UserStatisticsHandler implements IUserStatisticsHandler {
     public ChartWrapper getCustomPeriodDetailed(ChartRequestWrapper chartRequestWrapper, long userId) throws DateRangeException {
         List<GeneralPurpose> purposes = customPurposeRepository.getAllActualUserPurposes(userId);
         List<Object[]> rows = null;
-        boolean isTheSameYear = dateHelper.getYear(chartRequestWrapper.getStartDate()).equals(chartRequestWrapper.getEndDate());
-        if (dateHelper.weeksBetweenTwoDates(chartRequestWrapper.getStartDate(), chartRequestWrapper.getEndDate()) + 1 <= 12) {
+        boolean isTheSameYear = dateHelper.getYear(chartRequestWrapper.getDatePicker().getStartDate()).equals(chartRequestWrapper.getDatePicker().getEndDate());
+        if (dateHelper.weeksBetweenTwoDates(chartRequestWrapper.getDatePicker().getStartDate(), chartRequestWrapper.getDatePicker().getEndDate()) + 1 <= 12) {
             rows = getGeneralAvgDetailedWeeks(purposes, userId, chartRequestWrapper, isTheSameYear);
-        } else if (dateHelper.monthsBetweenTwoDates(chartRequestWrapper.getStartDate(), chartRequestWrapper.getEndDate()) + 1 <= 12) {
+        } else if (dateHelper.monthsBetweenTwoDates(chartRequestWrapper.getDatePicker().getStartDate(), chartRequestWrapper.getDatePicker().getEndDate()) + 1 <= 12) {
             rows = getGeneralAvgDetailedMonths(purposes, userId, chartRequestWrapper, isTheSameYear);
-        } else if (dateHelper.yearsBetweenTwoDates(chartRequestWrapper.getStartDate(), chartRequestWrapper.getEndDate()) <= 12) {
+        } else if (dateHelper.yearsBetweenTwoDates(chartRequestWrapper.getDatePicker().getStartDate(), chartRequestWrapper.getDatePicker().getEndDate()) <= 12) {
             rows = getGeneralAvgDetailedYears(purposes, userId, chartRequestWrapper);
         }
         DataTable data = new DataTable(statisticsHelper.setLabelsForPurposes(purposes, false), rows);
@@ -84,13 +84,13 @@ public class UserStatisticsHandler implements IUserStatisticsHandler {
     }
 
     private List<Object[]> getGeneralAvgDetailedWeeks(List<GeneralPurpose> purposes, long userId, ChartRequestWrapper chartRequestWrapper, boolean isTheSameYear) throws DateRangeException {
-        int weeksCount = (int) dateHelper.weeksBetweenTwoDates(chartRequestWrapper.getStartDate(), chartRequestWrapper.getEndDate()) + 1;
+        int weeksCount = (int) dateHelper.weeksBetweenTwoDates(chartRequestWrapper.getDatePicker().getStartDate(), chartRequestWrapper.getDatePicker().getEndDate()) + 1;
         if (weeksCount < 2)
             throw new DateRangeException("DATE_RANGE_IS_TOO_SHORT");
         List<Object[]> rows = new ArrayList<>();
         List<Object> row = new LinkedList<>();
-        long startDate = dateHelper.getFirstDayOfWeekByDate(chartRequestWrapper.getEndDate());
-        long endDate = chartRequestWrapper.getEndDate();
+        long startDate = dateHelper.getFirstDayOfWeekByDate(chartRequestWrapper.getDatePicker().getEndDate());
+        long endDate = chartRequestWrapper.getDatePicker().getEndDate();
         row.add(dateHelper.getFormattedWeekNameByDate(isTheSameYear, startDate, weeksCount));
         row.addAll(getAvgDetailedRowsInRange(purposes, userId, startDate, endDate));
         rows.add(row.toArray());
@@ -103,7 +103,7 @@ public class UserStatisticsHandler implements IUserStatisticsHandler {
             rows.add(row.toArray());
         }
         row = new LinkedList<>();
-        startDate = chartRequestWrapper.getStartDate();
+        startDate = chartRequestWrapper.getDatePicker().getStartDate();
         endDate = dateHelper.getLastDayOfWeekByDate(startDate);
         row.add(dateHelper.getFormattedWeekNameByDate(isTheSameYear, startDate, weeksCount));
         row.addAll(getAvgDetailedRowsInRange(purposes, userId, startDate, endDate));
@@ -112,11 +112,11 @@ public class UserStatisticsHandler implements IUserStatisticsHandler {
     }
 
     private List<Object[]> getGeneralAvgDetailedMonths(List<GeneralPurpose> purposes, long userId, ChartRequestWrapper chartRequestWrapper, boolean isTheSameYear) {
-        int monthsCount = (int) dateHelper.monthsBetweenTwoDates(chartRequestWrapper.getStartDate(), chartRequestWrapper.getEndDate());
+        int monthsCount = (int) dateHelper.monthsBetweenTwoDates(chartRequestWrapper.getDatePicker().getStartDate(), chartRequestWrapper.getDatePicker().getEndDate());
         List<Object[]> rows = new ArrayList<>();
         List<Object> row = new LinkedList<>();
-        long startDate = dateHelper.getFirstDayOfMonthByDate(chartRequestWrapper.getEndDate());
-        long endDate = chartRequestWrapper.getEndDate();
+        long startDate = dateHelper.getFirstDayOfMonthByDate(chartRequestWrapper.getDatePicker().getEndDate());
+        long endDate = chartRequestWrapper.getDatePicker().getEndDate();
         row.add(dateHelper.getFormattedMonthNameByDate(isTheSameYear, startDate, monthsCount));
         row.addAll(getAvgDetailedRowsInRange(purposes, userId, startDate, endDate));
         rows.add(row.toArray());
@@ -129,7 +129,7 @@ public class UserStatisticsHandler implements IUserStatisticsHandler {
             rows.add(row.toArray());
         }
         row = new LinkedList<>();
-        startDate = chartRequestWrapper.getStartDate();
+        startDate = chartRequestWrapper.getDatePicker().getStartDate();
         endDate = dateHelper.getLastDayOfMonthByDate(startDate);
         row.add(dateHelper.getFormattedMonthNameByDate(isTheSameYear, startDate, monthsCount));
         row.addAll(getAvgDetailedRowsInRange(purposes, userId, startDate, endDate));
@@ -138,13 +138,13 @@ public class UserStatisticsHandler implements IUserStatisticsHandler {
     }
 
     private List<Object[]> getGeneralAvgDetailedYears(List<GeneralPurpose> purposes, long userId, ChartRequestWrapper chartRequestWrapper) throws DateRangeException {
-        int yearsCount = (int) dateHelper.yearsBetweenTwoDates(chartRequestWrapper.getStartDate(), chartRequestWrapper.getEndDate());
+        int yearsCount = (int) dateHelper.yearsBetweenTwoDates(chartRequestWrapper.getDatePicker().getStartDate(), chartRequestWrapper.getDatePicker().getEndDate());
         if (yearsCount >= 12)
             throw new DateRangeException("DATE_RANGE_IS_TOO_LONG");
         List<Object[]> rows = new ArrayList<>();
         List<Object> row = new LinkedList<>();
-        long startDate = dateHelper.getFirstDayOfYearByDate(chartRequestWrapper.getEndDate());
-        long endDate = chartRequestWrapper.getEndDate();
+        long startDate = dateHelper.getFirstDayOfYearByDate(chartRequestWrapper.getDatePicker().getEndDate());
+        long endDate = chartRequestWrapper.getDatePicker().getEndDate();
         row.add(dateHelper.getYear(startDate));
         row.addAll(getAvgDetailedRowsInRange(purposes, userId, startDate, endDate));
         rows.add(row.toArray());
@@ -157,7 +157,7 @@ public class UserStatisticsHandler implements IUserStatisticsHandler {
             rows.add(row.toArray());
         }
         row = new LinkedList<>();
-        startDate = chartRequestWrapper.getStartDate();
+        startDate = chartRequestWrapper.getDatePicker().getStartDate();
         endDate = dateHelper.getLastDayOfYearByDate(startDate);
         row.add(dateHelper.getYear(startDate));
         row.addAll(getAvgDetailedRowsInRange(purposes, userId, startDate, endDate));

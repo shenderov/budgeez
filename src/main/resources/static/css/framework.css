@@ -2,7 +2,7 @@
 body > section:not(.active) { display:none; }
 
 body {
-    /* Margin bottom by footer height */
+    margin-bottom: 180px;
 }
 
 html {
@@ -14,6 +14,11 @@ html {
 /* Navbar */
 .navbar {
     margin-bottom: 0px;
+}
+@media (min-width: 768px) {
+    .navbar-right {
+        margin-right: 0 !important;
+    }
 }
 
 /* Main */
@@ -36,6 +41,12 @@ html {
 
 #charts-selector-dropdown-block {
     padding-bottom: 10px;
+    padding-left: 0px;
+}
+
+.row {
+    margin-right: 0px !important;
+    margin-left: 0px !important;
 }
 
 .charts-selector-confirmation-button {
@@ -50,10 +61,6 @@ html {
 }
 
 /* Main login and add record */
-.main-container-right-block{
-    margin-top: 10vh;
-}
-
 .login-block, .add-record-module{
     padding: 20px 0;
 }
@@ -89,18 +96,6 @@ html {
     border: none;
     border-radius: 0 0 0 0 !important;
 }
-
-/* Footer */
-.footer {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    /* Set the fixed height of the footer here */
-    height: 80px;
-    background-color: #2f2f2f;
-    color: #ffffff;
-}
-
 
 /* Testing */
 .pink{
@@ -209,14 +204,27 @@ and (-webkit-min-device-pixel-ratio: 1){
     }
 }
 
+@media (min-width: 992px) {
+    .date-picker-input{
+        width: 130px !important;
+    }
+    .main-container-right-block{
+        margin-top: 10vh !important;
+    }
+}
+
 @media (max-width: 600px) {
     .carousel-caption {
         display: none;
     }
 }
 
-
 /* FOOTER */
+footer {
+    position: absolute;
+    bottom: 0;
+}
+
 .footer-distributed{
     background-color: #292c2f;
     box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.12);
@@ -226,7 +234,7 @@ and (-webkit-min-device-pixel-ratio: 1){
     font: normal 16px sans-serif;
 
     padding: 45px 50px;
-    margin-top: 10px;
+    margin-top: 80px;
 }
 
 .footer-distributed .footer-left p{
@@ -234,8 +242,6 @@ and (-webkit-min-device-pixel-ratio: 1){
     font-size: 14px;
     margin: 0;
 }
-
-/* Footer links */
 
 .footer-distributed p.footer-links{
     font-size:18px;
@@ -273,9 +279,10 @@ and (-webkit-min-device-pixel-ratio: 1){
     margin-left: 3px;
 }
 
-/* If you don't want the footer to be responsive, remove these media queries */
-
 @media (max-width: 600px) {
+    body {
+        margin-bottom: 270px;
+    }
 
     .footer-distributed .footer-left,
     .footer-distributed .footer-right{

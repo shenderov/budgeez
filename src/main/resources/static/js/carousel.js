@@ -1,6 +1,7 @@
 'use strict';
 
 app.controller('Carousel', function ($scope) {
+    console.log("Carousel");
     $scope.slides = [
         {
             "url": "images/carousel/slide1.jpg",

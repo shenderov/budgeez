@@ -6,13 +6,18 @@ google.charts.load('visualization', {'packages':['corechart']});
 google.charts.setOnLoadCallback(drawDefaultChart);
 
 var isChartsLoaded = false;
+var chartAuth = false;
 
 app.controller('ChartsController', function($scope, $http, $q, $rootScope) {
     console.log("ChartsController");
+    var date = new Date();
     $scope.containerId = "chart-canvas";
     $scope.chartRequestWrapper = {};
-    $scope.startDate = new Date();
-    $scope.endDate = new Date();
+    $scope.chartRequestWrapper.chartSelection = {};
+    $scope.chartRequestWrapper.datePicker = {};
+    $scope.datePickerSubmitButtonName = "Get Chart";
+    $scope.startDate = new Date(date.getFullYear(), date.getMonth(), 1);
+    $scope.endDate = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59, 59);
 
     $scope.drawChart = function(chartWrapper){
         var chartType;
@@ -73,7 +78,7 @@ app.controller('ChartsController', function($scope, $http, $q, $rootScope) {
             }
         )
     };
-    if(isChartsLoaded){
+    if(isChartsLoaded && chartAuth){
         $scope.drawInitiateChart();
     }
 
@@ -81,8 +86,8 @@ app.controller('ChartsController', function($scope, $http, $q, $rootScope) {
         $scope.activeChartSelection = chartSelection;
         $scope.chartRequestWrapper.chartSelection = chartSelection;
         if($scope.activeChartSelection.datePicker) {
-            $scope.chartRequestWrapper.startDate = $scope.startDate.getTime();
-            $scope.chartRequestWrapper.endDate = $scope.endDate.getTime();
+            $scope.chartRequestWrapper.datePicker.startDate = $scope.startDate.getTime();
+            $scope.chartRequestWrapper.datePicker.endDate = $scope.endDate.getTime();
         }
         $scope.getDataTable($scope.chartRequestWrapper).then(
             function(chartWrapper){
@@ -91,12 +96,23 @@ app.controller('ChartsController', function($scope, $http, $q, $rootScope) {
         )
     };
 
+    $scope.defaultAction = function () {
+        $scope.getDataAndDrawChart($scope.activeChartSelection);
+    };
+
+    $scope.$on('defaultAddRecordAction', function () {
+        $scope.defaultAction();
+    });
+
+    $scope.setActiveChartSelection = function(chartSelection){
+        $scope.activeChartSelection = chartSelection;
+    };
+
     $rootScope.getAndRedrawChart = function () {
-        console.log("getAndRedrawChart");
         $scope.chartRequestWrapper.chartSelection = $scope.activeChartSelection;
         if($scope.activeChartSelection.datePicker) {
-            $scope.chartRequestWrapper.startDate = $scope.startDate.getTime();
-            $scope.chartRequestWrapper.endDate = $scope.endDate.getTime();
+            $scope.chartRequestWrapper.datePicker.startDate = $scope.startDate.getTime();
+            $scope.chartRequestWrapper.datePicker.endDate = $scope.endDate.getTime();
         }
         $scope.getDataTable($scope.chartRequestWrapper).then(
             function(chartWrapper){
@@ -107,43 +123,32 @@ app.controller('ChartsController', function($scope, $http, $q, $rootScope) {
 
     $scope.dateOptionsStart = {
         formatYear: 'yy',
-        minDate: new Date(2000, 1, 1),
-        maxDate: new Date(),
+        maxDate: $scope.endDate,
         startingDay: 1
     };
 
     $scope.dateOptionsEnd = {
         formatYear: 'yy',
         minDate: $scope.startDate,
-        maxDate: new Date(),
         startingDay: 1
     };
 
     $scope.setStartDate = function(startDate){
-        $scope.startDate = $scope.checkDateInput(startDate);
-        $scope.setMaxDate();
+        $scope.startDate = startDate;
+        $scope.validateStartBeforeEnd();
         $scope.dateOptionsEnd.minDate = $scope.startDate;
     };
 
     $scope.setEndDate = function(endDate){
-        $scope.endDate = $scope.checkDateInput(endDate);
-        $scope.setMaxDate();
+        $scope.endDate = endDate;
+        $scope.validateStartBeforeEnd();
         $scope.dateOptionsStart.maxDate = $scope.endDate;
     };
 
-    $scope.setMaxDate = function(){
+    $scope.validateStartBeforeEnd = function(){
         if($scope.startDate > $scope.endDate){
-            $scope.endDate = $scope.startDate;
-            $scope.dateOptionsStart.maxDate = $scope.endDate;
-            $scope.dateOptionsEnd.maxDate = $scope.endDate;
+            $scope.endDate = new Date($scope.startDate.getFullYear(), $scope.startDate.getMonth(), $scope.startDate.getDate(), 23, 59, 59);
         }
-    };
-
-    $scope.checkDateInput = function(date){
-        if(date > new Date()){
-            date = new Date();
-        }
-        return date;
     };
 
     $scope.openStart = function() {
@@ -172,13 +177,15 @@ app.controller('ChartsController', function($scope, $http, $q, $rootScope) {
 });
 
 function drawDefaultChart() {
-    console.log("drawDefaultChart");
-    //noinspection JSUnresolvedVariable,JSCheckFunctionSignatures
-    var scope = angular.element(
-        document.getElementById("charts-view-module")).scope();
-    //noinspection JSUnresolvedFunction
-    scope.$apply(function () {
-        scope.drawInitiateChart();
-    });
+    if(chartAuth) {
+        console.log("drawDefaultChart");
+        //noinspection JSUnresolvedVariable,JSCheckFunctionSignatures
+        var scope = angular.element(
+            document.getElementById("charts-view-module")).scope();
+        //noinspection JSUnresolvedFunction
+        scope.$apply(function () {
+            scope.drawInitiateChart();
+        });
+    }
     isChartsLoaded = true;
 }
