@@ -13,25 +13,20 @@ app.controller('UpdateRecordCtrl', function ($scope, $rootScope, $uibModalInstan
         if (!angular.equals(record, recordBefore)) {
             //noinspection JSUnresolvedFunction
             record.date = $scope.recordDate.getTime();
-            var updatedRecord;
             if (record.purpose.type == 'ADD_NEW') {
-                var newPurpose = $scope.addPurpose({name: purposeName});
-                newPurpose.then(function (result) {
-                    if (result != null) {
-                        record.purpose = result;
-                        updatedRecord = $scope.editRecord(record);
-                    } else
-                        updatedRecord = null;
+                var newPurpose = $rootScope.addPurpose({name: purposeName});
+                newPurpose.then(function(result){
+                    if(result != null){
+                        record.purpose = result.data;
+                        $scope.editRecord(record);
+                    }
                 }, function (errResponse) {
                     $rootScope.addAuthAddRecordBlockAlert("danger", errResponse.data.message);
                     console.error(JSON.stringify(errResponse));
                 });
             } else {
-                updatedRecord = $scope.editRecord(record);
+                $scope.editRecord(record);
             }
-            updatedRecord.then(function (record) {
-                $uibModalInstance.close(record);
-            });
         } else
             $uibModalInstance.close(record);
     };
@@ -45,21 +40,8 @@ app.controller('UpdateRecordCtrl', function ($scope, $rootScope, $uibModalInstan
             .then(
                 function (record) {
                     $rootScope.updateRecordInRecordList(record);
+                    $uibModalInstance.close(record);
                     return record;
-                },
-                function (errResponse) {
-                    $rootScope.addAuthAddRecordBlockAlert("danger", errResponse.data.message);
-                    console.error(JSON.stringify(errResponse));
-                    return null;
-                }
-            );
-    };
-
-    $scope.addPurpose = function (purpose) {
-        return Connector.addCustomPurpose(purpose, createAuthorizationTokenHeader())
-            .then(
-                function (purpose) {
-                    return purpose;
                 },
                 function (errResponse) {
                     $rootScope.addAuthAddRecordBlockAlert("danger", errResponse.data.message);

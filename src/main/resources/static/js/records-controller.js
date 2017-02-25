@@ -7,6 +7,7 @@ app.controller('RecordsController', function($scope, $rootScope, $http, Connecto
     $rootScope.purposesList = {};
     $scope.record = {};
     $scope.purposeName = null;
+    $scope.addPurposeElement = {purposeId: 0, type:'ADD_NEW', name:'Add new...'};
     $scope.recordDate = new Date().getTime();
     $scope.addRecordFormHolder = {};
     $scope.addRecordFormHolder.addEditRecordForm = {};
@@ -18,7 +19,7 @@ app.controller('RecordsController', function($scope, $rootScope, $http, Connecto
             .then(
                 function(purposesList) {
                     $rootScope.purposesList = purposesList;
-                    $rootScope.purposesList.push({purposeId: 0, type:'ADD_NEW', name:'Add new...'});
+                    $rootScope.purposesList.push($scope.addPurposeElement);
                 },
                 function(errResponse){
                     $rootScope.addAuthAddRecordBlockAlert("danger", errResponse.data.message);
@@ -26,12 +27,14 @@ app.controller('RecordsController', function($scope, $rootScope, $http, Connecto
                 }
             );
     };
-    $scope.getPurposesList();
+    $scope.$on('authorized', function () {
+        $scope.getPurposesList();
+    });
 
     $scope.addRecord = function(record, purposeName){
         record.date = $scope.recordDate;
         if(record.purpose.type == 'ADD_NEW'){
-            var newPurpose = $scope.addPurpose({name: purposeName});
+            var newPurpose = $rootScope.addPurpose({name: purposeName});
             newPurpose.then(function(result){
                 if(result != null){
                     record.purpose = result.data;
@@ -72,11 +75,12 @@ app.controller('RecordsController', function($scope, $rootScope, $http, Connecto
             );
     };
 
-    $scope.addPurpose = function(purpose){
+    $rootScope.addPurpose = function(purpose){
         return Connector.addCustomPurpose(purpose, createAuthorizationTokenHeader())
             .then(
                 function(purpose) {
-                    //$scope.purpose = purpose;
+                    $rootScope.purposesList.pop();
+                    $rootScope.purposesList.push(purpose.data, $scope.addPurposeElement);
                     console.log("addPurpose done: " + JSON.stringify(purpose));
                     return purpose;
                 },

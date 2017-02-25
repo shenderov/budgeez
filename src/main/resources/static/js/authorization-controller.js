@@ -35,12 +35,17 @@ app.controller('AuthorizationController', function($scope, $rootScope, $location
     $rootScope.mainWindowAlerts = [];
     $rootScope.authAddRecordBlockAlerts = [];
 
+    $scope.setToken = function (token) {
+        setToken(token);
+        $scope.$broadcast('authorized', {});
+    };
+
     $scope.checkToken = function(){
         if(getToken() != null) {
             return Connector.refreshToken(createAuthorizationTokenHeader())
                 .then(
                     function (result) {
-                        setToken(result.token);
+                        $scope.setToken(result.token);
                         $scope.isAutorized = true;
                     },
                     function () {
@@ -57,7 +62,7 @@ app.controller('AuthorizationController', function($scope, $rootScope, $location
         return Connector.login(credentials)
             .then(
                 function(result) {
-                    setToken(result.token);
+                    $scope.setToken(result.token);
                     $scope.isAutorized = true;
                     $location.path('/user-home');
                     $scope.loginSubmitButtomDisabled = false;
@@ -75,7 +80,7 @@ app.controller('AuthorizationController', function($scope, $rootScope, $location
         return Connector.signup(userDetails)
             .then(
                 function(result) {
-                    setToken(result.token);
+                    $scope.setToken(result.token);
                     $scope.isAutorized = true;
                     $location.path('/user-home');
                     $scope.signUpSubmitButtomDisabled = false;
