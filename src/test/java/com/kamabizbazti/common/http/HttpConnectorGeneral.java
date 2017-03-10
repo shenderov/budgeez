@@ -1,80 +1,104 @@
 package com.kamabizbazti.common.http;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.http.ContentType;
 import com.jayway.restassured.response.Response;
 import com.kamabizbazti.common.TestConfiguration;
-import com.kamabizbazti.model.entities.ChartRequestWrapper;
-import com.kamabizbazti.model.entities.ChartSelection;
-import com.kamabizbazti.model.entities.ChartWrapper;
-import com.kamabizbazti.model.exceptions.UnknownSelectionIdException;
-import com.kamabizbazti.model.interfaces.IGeneralRestController;
+import com.kamabizbazti.common.TestTools;
+import com.kamabizbazti.common.entities.HttpResponse;
 
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import static com.jayway.restassured.RestAssured.given;
-import static com.jayway.restassured.RestAssured.when;
-
-public class HttpConnectorGeneral implements IGeneralRestController {
-    public HttpConnectorGeneral(int port) {
-        RestAssured.baseURI = TestConfiguration.BASE_URI;
-        RestAssured.port = port;
-        RestAssured.basePath = TestConfiguration.BASE_GENERAL_PATH;
+@SuppressWarnings({"UnusedDeclaration", "unchecked", "FieldCanBeLocal"})
+public class HttpConnectorGeneral {
+    HttpConnectorGeneral(int port) {
+        if (System.getProperty("baseURI") != null)
+            RestAssured.baseURI = System.getProperty("baseURI");
+        else
+            RestAssured.baseURI = TestConfiguration.BASE_URI;
+        if (System.getProperty("port") != null)
+            RestAssured.port = Integer.parseInt(System.getProperty("port"));
+        else
+            RestAssured.port = port;
+        if (System.getProperty("basePath") != null)
+            RestAssured.basePath = System.getProperty("basePath");
+        else
+            RestAssured.basePath = TestConfiguration.BASE_PATH;
     }
 
-    private Gson gson = new Gson();
+    protected TestTools testTools = new TestTools();
 
-    public List<ChartSelection> getGeneralChartSelectionsList() {
-        return getSelectionsList(TestConfiguration.GET_GENERAL_CHART_SELECTIONS_LIST);
+    HttpResponse sendPostRequest(String api, String request, Map<String, String> headers) {
+        Response response = sendHttpPostRequest(api, request, headers);
+        return new HttpResponse(response.asString(), response);
     }
 
-    public List<ChartSelection> getUserChartSelectionsList() {
-        return getSelectionsList(TestConfiguration.GET_USER_CHART_SELECTIONS_LIST);
+    HttpResponse sendPostRequest(String api, String request, String token) {
+        Response response = sendHttpPostRequest(api, request, testTools.setToken(token));
+        return new HttpResponse(response.asString(), response);
     }
 
-    public ChartWrapper getDefaultDataTable() throws Exception {
+    HttpResponse sendPostRequest(String api, String request) {
+        Response response = sendHttpPostRequest(api, request, new HashMap<>());
+        return new HttpResponse(response.asString(), response);
+    }
+
+    HttpResponse sendPostRequest(String api, Object request, Map<String, String> headers) {
+        Response response = sendHttpPostRequest(api, testTools.ObjectToJson(request), headers);
+        return new HttpResponse(response.asString(), response);
+    }
+
+    HttpResponse sendPostRequest(String api, Object request, String token) {
+        Response response = sendHttpPostRequest(api, testTools.ObjectToJson(request), testTools.setToken(token));
+        return new HttpResponse(response.asString(), response);
+    }
+
+    HttpResponse sendPostRequest(String api, Object request) {
+        Response response = sendHttpPostRequest(api, testTools.ObjectToJson(request), new HashMap<>());
+        return new HttpResponse(response.asString(), response);
+    }
+
+    HttpResponse sendGetRequest(String api, Map<String, String> headers) {
+        Response response = sendHttpGetRequest(api, headers);
+        return new HttpResponse(response.asString(), response);
+    }
+
+    HttpResponse sendGetRequest(String api, String token) {
+        Response response = sendHttpGetRequest(api, testTools.setToken(token));
+        return new HttpResponse(response.asString(), response);
+    }
+
+    HttpResponse sendGetRequest(String api) {
+        Response response = sendHttpGetRequest(api, new HashMap<>());
+        return new HttpResponse(response.asString(), response);
+    }
+
+    private Response sendHttpGetRequest(String api, Map<String, String> headers) {
         Response response;
-        String jsonAsString;
-        response =
-                when().
-                        get(TestConfiguration.GET_DEFAULT_DATATABLE).
-                        then().
-                        contentType(ContentType.JSON).
-                        extract().response();
-        jsonAsString = response.asString();
-        return gson.fromJson(jsonAsString, ChartWrapper.class);
-    }
-
-    public ChartWrapper getGeneralDataTable(ChartRequestWrapper chartRequestWrapper) throws UnknownSelectionIdException {
-        Response response;
-        String jsonAsString;
         response =
                 given().
-                        body(chartRequestWrapper).
-                        contentType(ContentType.JSON).
-                when().
-                        post(TestConfiguration.GET_GENERAL_DATATABLE).
+                        headers(headers).
+                        when().
+                        get(api).
                         then().
+                        contentType(ContentType.JSON).
                         extract().response();
-        jsonAsString = response.asString();
-        return gson.fromJson(jsonAsString, ChartWrapper.class);
+        return response;
     }
 
-    private List<ChartSelection> getSelectionsList(String path){
+    private Response sendHttpPostRequest(String api, Object request, Map<String, String> headers) {
         Response response;
-        String jsonAsString;
-        Type listType = new TypeToken<ArrayList<ChartSelection>>(){}.getType();
         response =
-                when().
-                        get(path).
-                        then().
+                given().
+                        body(request).
+                        headers(headers).
                         contentType(ContentType.JSON).
+                        when().
+                        post(api).
+                        then().
                         extract().response();
-        jsonAsString = response.asString();
-        return gson.fromJson(jsonAsString, listType);
+        return response;
     }
 }

@@ -1,13 +1,39 @@
 package com.kamabizbazti.common;
 
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
 public class TestConfiguration {
     public static final String BASE_URI = "http://localhost";
-    public static final String BASE_GENERAL_PATH = "/general";
+    public static final String BASE_PATH = "/";
+    static final String TOKEN_HEADER = "Authorization";
 
     //General URLs
-    public static final String GET_GENERAL_CHART_SELECTIONS_LIST = "/getGeneralChartSelectionsList";
-    public static final String GET_USER_CHART_SELECTIONS_LIST = "/getUserChartSelectionsList";
-    public static final String GET_DEFAULT_DATATABLE = "/getDefaultDataTable";
-    public static final String GET_GENERAL_DATATABLE = "/getGeneralDataTable";
+    private static final String GENERAL_PATH = "/general";
+    public static final String GET_GENERAL_CHART_SELECTIONS_LIST = GENERAL_PATH + "/getGeneralChartSelectionsList";
+    public static final String GET_USER_CHART_SELECTIONS_LIST = GENERAL_PATH + "/getUserChartSelectionsList";
+    public static final String GET_DEFAULT_DATATABLE = GENERAL_PATH + "/getDefaultDataTable";
+    public static final String GET_GENERAL_DATATABLE = GENERAL_PATH + "/getGeneralDataTable";
 
+    //Authentication URLs
+    public static final String LOGIN =  "/login";
+    public static final String SIGNUP =  "/signup";
+    public static final String REFRESH = "/refresh";
+
+    //User URLs
+    private static final String USER_PATH = "/user";
+    public static final String GET_PURPOSES_LIST = USER_PATH + "/getPurposesList";
+    public static final String GET_USER_DEFAULT_DATATABLE = USER_PATH + "/getUserDefaultDataTable";
+    public static final String GET_USER_DATATABLE = USER_PATH + "/getUserDataTable";
+    public static final String ADD_RECORD = USER_PATH + "/addRecord";
+    public static final String ADD_CUSTOM_PURPOSE = USER_PATH + "/addCustomPurpose";
+    public static final String GET_RECORDS_LIST = USER_PATH + "/getRecordsList";
+    public static final String DELETE_RECORD = USER_PATH + "/deleteRecord";
+    public static final String EDIT_RECORD = USER_PATH + "/editRecord";
+
+    @Bean
+    public TestTools testTools() {
+        return new TestTools();
+    }
 }

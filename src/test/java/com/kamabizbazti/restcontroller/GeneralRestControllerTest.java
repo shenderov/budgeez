@@ -1,12 +1,15 @@
 package com.kamabizbazti.restcontroller;
 
+import com.google.gson.JsonObject;
 import com.kamabizbazti.KamaBizbaztiBootApplication;
-import com.kamabizbazti.common.http.HttpConnectorGeneral;
+import com.kamabizbazti.common.TestTools;
+import com.kamabizbazti.common.entities.HttpResponseJson;
+import com.kamabizbazti.common.http.GeneralRestControllerConnectorHelper;
 import com.kamabizbazti.config.KamaBizbaztiApplicationConfig;
-import com.kamabizbazti.model.entities.ChartRequestWrapper;
-import com.kamabizbazti.model.entities.ChartSelection;
-import com.kamabizbazti.model.entities.ChartWrapper;
+import com.kamabizbazti.model.entities.*;
+import com.kamabizbazti.model.exceptions.codes.DataIntegrityErrorCode;
 import com.kamabizbazti.model.handlers.GeneralRequestHandler;
+import com.kamabizbazti.model.handlers.UserRequestHandler;
 import com.kamabizbazti.model.repository.ChartSelectionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.embedded.LocalServerPort;
@@ -20,28 +23,34 @@ import org.testng.annotations.Test;
 
 import java.util.List;
 
+import static org.testng.Assert.assertEquals;
+
+@SuppressWarnings({"UnusedDeclaration", "unchecked"})
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ContextConfiguration(classes = {KamaBizbaztiBootApplication.class, KamaBizbaztiApplicationConfig.class})
-@TestPropertySource(locations="classpath:test.properties")
+@TestPropertySource(locations = "classpath:test.properties")
 public class GeneralRestControllerTest extends AbstractTestNGSpringContextTests {
 
     @Autowired
     private ChartSelectionRepository chartSelectionRepository;
 
+    @Autowired
+    private TestTools testTools;
+
     @LocalServerPort
     private int port;
 
-    private HttpConnectorGeneral connector;
+    private GeneralRestControllerConnectorHelper helper;
 
     @BeforeClass
     public void setup() {
-        connector = new HttpConnectorGeneral(port);
+        helper = new GeneralRestControllerConnectorHelper(port);
     }
 
     @Test
     public void testGetGeneralChartSelectionsList() throws Exception {
         List<ChartSelection> selectionsDB = chartSelectionRepository.findAllGeneralSelections();
-        List<ChartSelection> selectionsHttp = connector.getGeneralChartSelectionsList();
+        List<ChartSelection> selectionsHttp = (List<ChartSelection>) helper.getGeneralChartSelectionsListPositive().getObject();
         Assert.assertEquals(selectionsDB.size(), selectionsHttp.size());
         for (ChartSelection c : selectionsDB)
             Assert.assertTrue(selectionsDB.contains(c));
@@ -50,7 +59,7 @@ public class GeneralRestControllerTest extends AbstractTestNGSpringContextTests 
     @Test
     public void testGetUserChartSelectionsList() throws Exception {
         List<ChartSelection> selectionsDB = chartSelectionRepository.findAllUserSelections();
-        List<ChartSelection> selectionsHttp = connector.getUserChartSelectionsList();
+        List<ChartSelection> selectionsHttp = (List<ChartSelection>) helper.getUserChartSelectionsListPositive().getObject();
         Assert.assertEquals(selectionsDB.size(), selectionsHttp.size());
         for (ChartSelection c : selectionsDB)
             Assert.assertTrue(selectionsDB.contains(c));
@@ -58,7 +67,7 @@ public class GeneralRestControllerTest extends AbstractTestNGSpringContextTests 
 
     @Test
     public void testGetDefaultDataTable() throws Exception {
-        ChartWrapper wrapper = connector.getDefaultDataTable();
+        ChartWrapper wrapper = (ChartWrapper) helper.getDefaultDataTablePositive().getObject();
         ChartSelection selection = chartSelectionRepository.findOne(GeneralRequestHandler.DEFAULT_CHART_SELECTION);
         Assert.assertNotNull(wrapper);
         Assert.assertNotNull(wrapper.getDataTable());
@@ -69,16 +78,104 @@ public class GeneralRestControllerTest extends AbstractTestNGSpringContextTests 
 
     @Test
     public void testGetGeneralDataTable() throws Exception {
-        List<ChartSelection> selections = connector.getGeneralChartSelectionsList();
+        List<ChartSelection> selections = (List<ChartSelection>) helper.getGeneralChartSelectionsListPositive().getObject();
         for (ChartSelection c : selections) {
             ChartRequestWrapper requestWrapper = new ChartRequestWrapper();
             requestWrapper.setChartSelection(c);
-            ChartWrapper wrapper = connector.getGeneralDataTable(requestWrapper);
+            ChartWrapper wrapper = (ChartWrapper) helper.getGeneralDataTablePositive(requestWrapper).getObject();
             Assert.assertNotNull(wrapper);
             Assert.assertNotNull(wrapper.getDataTable());
             Assert.assertEquals(c.getChartType(), wrapper.getChartType());
             Assert.assertEquals(c.getTitle(), wrapper.getTitle());
             Assert.assertEquals(c.getChartType(), wrapper.getChartType());
         }
+    }
+
+    //TODO ADD PROPER EXCEPTION
+    @Test
+    public void testGetGeneralDataTableWrongSelection() throws Exception {
+        String wrongSelectionId = "WRONG";
+        ChartRequestWrapper requestWrapper = new ChartRequestWrapper();
+        requestWrapper.setChartSelection(chartSelectionRepository.findOne(ChartSelectionId.PREV_MONTH_AVG));
+        JsonObject jsonObject = testTools.objectToJsonObject(requestWrapper);
+        jsonObject.get("chartSelection").getAsJsonObject().remove("selectionId");
+        jsonObject.get("chartSelection").getAsJsonObject().addProperty("selectionId", wrongSelectionId);
+        HttpResponseJson response = helper.getGeneralDataTableNegative(jsonObject.toString()).convertToHttpResponseJson();
+        assertEquals(response.getHttpStatusCode(), 500);
+        assertEquals(response.getObject().get("error").getAsString(), DataIntegrityErrorCode.INVALID_REQUEST_ENTITY.toString());
+        assertEquals(response.getObject().get("message").getAsString(), "Chart selection ID: " + wrongSelectionId + " does not exist");
+    }
+
+    //TODO ADD PROPER EXCEPTION
+    @Test
+    public void testGetGeneralDataTableWithSelectionIdOnlyIsValid() throws Exception {
+        ChartSelection selectionDB = chartSelectionRepository.findOne(ChartSelectionId.PREV_MONTH_AVG);
+        ChartSelection selection = new ChartSelection();
+        selection.setSelectionId(ChartSelectionId.PREV_MONTH_AVG);
+        ChartRequestWrapper requestWrapper = new ChartRequestWrapper();
+        requestWrapper.setChartSelection(selection);
+        ChartWrapper wrapper = (ChartWrapper) helper.getGeneralDataTablePositive(requestWrapper).getObject();
+        System.out.println(wrapper.toString());
+        Assert.assertNotNull(wrapper);
+        Assert.assertNotNull(wrapper.getDataTable());
+        Assert.assertEquals(selectionDB.getChartType(), wrapper.getChartType());
+        Assert.assertEquals(selectionDB.getTitle(), wrapper.getTitle());
+        Assert.assertEquals(selectionDB.getChartType(), wrapper.getChartType());
+    }
+
+    //TODO ADD PROPER EXCEPTION
+    @Test
+    public void testGetGeneralDataTableWithValidSelectionAndInvalidOtherFields() throws Exception {
+        ChartSelection selectionDB = chartSelectionRepository.findOne(ChartSelectionId.PREV_MONTH_AVG);
+        ChartSelection selection = new ChartSelection();
+        selection.setSelectionId(ChartSelectionId.PREV_MONTH_AVG);
+        selection.setAuthRequired(true);
+        selection.setChartType(ChartType.COLUMNCHART);
+        selection.setDatePicker(true);
+        selection.setTitle("title");
+        ChartRequestWrapper requestWrapper = new ChartRequestWrapper();
+        requestWrapper.setChartSelection(selection);
+        ChartWrapper wrapper = (ChartWrapper) helper.getGeneralDataTablePositive(requestWrapper).getObject();
+        System.out.println(wrapper.toString());
+        Assert.assertNotNull(wrapper);
+        Assert.assertNotNull(wrapper.getDataTable());
+        Assert.assertEquals(selectionDB.getChartType(), wrapper.getChartType());
+        Assert.assertEquals(selectionDB.getTitle(), wrapper.getTitle());
+        Assert.assertEquals(selectionDB.getChartType(), wrapper.getChartType());
+    }
+
+//    Expected :INVALID_REQUEST_ENTITY
+//    Actual   :GENERAL_SERVER_ERROR
+    @Test
+    public void testGetGeneralDataTableNullSelection() throws Exception {
+        ChartRequestWrapper requestWrapper = new ChartRequestWrapper();
+        requestWrapper.setChartSelection(null);
+        HttpResponseJson response = helper.getGeneralDataTableNegative(testTools.ObjectToJson(requestWrapper)).convertToHttpResponseJson();
+        assertEquals(response.getHttpStatusCode(), 500);
+        assertEquals(response.getObject().get("error").getAsString(), DataIntegrityErrorCode.INVALID_REQUEST_ENTITY.toString());
+        assertEquals(response.getObject().get("message").getAsString(), "Invalid Request Entity");
+    }
+
+//    Expected :INVALID_REQUEST_ENTITY
+//    Actual   :GENERAL_SERVER_ERROR
+    @Test
+    public void testGetGeneralDataTableWithoutSelection() throws Exception {
+        HttpResponseJson response = helper.getGeneralDataTableNegative("{}").convertToHttpResponseJson();
+        assertEquals(response.getHttpStatusCode(), 500);
+        assertEquals(response.getObject().get("error").getAsString(), DataIntegrityErrorCode.INVALID_REQUEST_ENTITY.toString());
+        assertEquals(response.getObject().get("message").getAsString(), "Invalid Request Entity");
+    }
+
+    //    Expected :INVALID_REQUEST_ENTITY
+//    Actual   :GENERAL_SERVER_ERROR
+    @Test
+    public void testGetGeneralDataTableWithUserSelection() throws Exception {
+        ChartSelection selection = chartSelectionRepository.findOne(UserRequestHandler.DEFAULT_CHART_SELECTION);
+        ChartRequestWrapper requestWrapper = new ChartRequestWrapper();
+        requestWrapper.setChartSelection(selection);
+        HttpResponseJson response = helper.getGeneralDataTableNegative(testTools.ObjectToJson(requestWrapper)).convertToHttpResponseJson();
+        assertEquals(response.getHttpStatusCode(), 500);
+        assertEquals(response.getObject().get("error").getAsString(), DataIntegrityErrorCode.INVALID_REQUEST_ENTITY.toString());
+        assertEquals(response.getObject().get("message").getAsString(), "Invalid Request Entity");
     }
 }

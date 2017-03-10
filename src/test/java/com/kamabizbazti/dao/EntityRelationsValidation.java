@@ -44,34 +44,31 @@ public class EntityRelationsValidation extends AbstractTestNGSpringContextTests 
     private static List <GeneralPurpose> generalPps;
 
     @Autowired
-    DataGenerator dataGenerator;
+    private DataGenerator dataGenerator;
 
     @Autowired
-    ChartSelectionRepository chartSelectionRepository;
+    private LanguageRepository languageRepository;
 
     @Autowired
-    LanguageRepository languageRepository;
+    private CurrencyRepository currencyRepository;
 
     @Autowired
-    CurrencyRepository currencyRepository;
+    private GeneralPurposeRepository generalPurposeRepository;
 
     @Autowired
-    GeneralPurposeRepository generalPurposeRepository;
+    private CustomPurposeRepository customPurposeRepository;
 
     @Autowired
-    CustomPurposeRepository customPurposeRepository;
+    private AuthorityRepository authorityRepository;
 
     @Autowired
-    AuthorityRepository authorityRepository;
+    private UserRepository userRepository;
 
     @Autowired
-    UserRepository userRepository;
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
-    PasswordEncoder passwordEncoder;
-
-    @Autowired
-    RecordRepository recordRepository;
+    private RecordRepository recordRepository;
 
     @BeforeClass
     public void generateData() {

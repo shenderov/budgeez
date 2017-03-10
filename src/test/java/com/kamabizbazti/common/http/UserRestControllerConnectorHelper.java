@@ -1,0 +1,92 @@
+package com.kamabizbazti.common.http;
+
+import com.google.gson.reflect.TypeToken;
+import com.kamabizbazti.common.TestConfiguration;
+import com.kamabizbazti.common.entities.HttpResponse;
+import com.kamabizbazti.common.entities.HttpResponseJson;
+import com.kamabizbazti.model.entities.*;
+
+import java.lang.reflect.Type;
+import java.util.List;
+
+public class UserRestControllerConnectorHelper extends HttpConnectorGeneral {
+
+    public UserRestControllerConnectorHelper(int port) {
+        super(port);
+    }
+
+    public HttpResponse getPurposesListPositive(String token) {
+        Type listType = new TypeToken<List<GeneralPurpose>>(){}.getType();
+        HttpResponse response = sendGetRequest(TestConfiguration.GET_PURPOSES_LIST, token);
+        response.setObject(testTools.stringToObject((String) response.getObject(), listType));
+        return response;
+    }
+
+    public HttpResponse getPurposesListNegative(String token) {
+        return sendGetRequest(TestConfiguration.GET_PURPOSES_LIST, token);
+    }
+
+    public HttpResponse getUserDefaultDataTablePositive(String token){
+        HttpResponse response = sendGetRequest(TestConfiguration.GET_USER_DEFAULT_DATATABLE, token);
+        response.setObject(testTools.stringToObject((String) response.getObject(), ChartWrapper.class));
+        return response;
+    }
+
+    public HttpResponse getUserDefaultDataTableNegative(String token){
+        return sendGetRequest(TestConfiguration.GET_USER_DEFAULT_DATATABLE, token);
+    }
+
+    public HttpResponse getGeneralDataTablePositive(ChartRequestWrapper chartRequestWrapper, String token){
+        HttpResponse response = sendPostRequest(TestConfiguration.GET_USER_DATATABLE, chartRequestWrapper, token);
+        response.setObject(testTools.stringToObject((String) response.getObject(), ChartWrapper.class));
+        return response;
+    }
+
+    public HttpResponse getGeneralDataTableNegative(String jsonString, String token){
+        return sendPostRequest(TestConfiguration.GET_USER_DATATABLE, jsonString, token);
+    }
+
+    public HttpResponse addRecordPositive(Record record, String token) {
+        HttpResponse response = sendPostRequest(TestConfiguration.ADD_RECORD, record, token);
+        response.setObject(testTools.stringToObject((String) response.getObject(), Record.class));
+        return response;
+    }
+
+    public HttpResponse addRecordNegative(String jsonString, String token) {
+        return sendPostRequest(TestConfiguration.ADD_RECORD, jsonString, token);
+    }
+
+    public HttpResponse addCustomPurposePositive(CustomPurpose customPurpose, String token) {
+        HttpResponse response = sendPostRequest(TestConfiguration.ADD_CUSTOM_PURPOSE, customPurpose, token);
+        response.setObject(testTools.stringToObject((String) response.getObject(), GeneralPurpose.class));
+        return response;
+    }
+
+    public HttpResponse addCustomPurposeNegative(String jsonString, String token) {
+        return sendPostRequest(TestConfiguration.ADD_CUSTOM_PURPOSE, jsonString, token);
+    }
+
+    public HttpResponseJson getRecordsListJson(DatePicker datePicker, String token) {
+        return sendPostRequest(TestConfiguration.GET_RECORDS_LIST, datePicker, token).convertToHttpResponseJson();
+    }
+
+    public HttpResponse deleteRecordPositive(Long recordId, String token) {
+        HttpResponse response = sendPostRequest(TestConfiguration.DELETE_RECORD, recordId, token);
+        response.setObject(testTools.stringToObject((String) response.getObject(), Boolean.class));
+        return response;
+    }
+
+    public HttpResponse deleteRecordNegative(String jsonString, String token) {
+        return sendPostRequest(TestConfiguration.DELETE_RECORD, jsonString, token);
+    }
+
+    public HttpResponse editRecordPositive(Record record, String token) {
+        HttpResponse response = sendPostRequest(TestConfiguration.EDIT_RECORD, record, token);
+        response.setObject(testTools.stringToObject((String) response.getObject(), Record.class));
+        return response;
+    }
+
+    public HttpResponse editRecordNegative(String jsonString, String token) {
+        return sendPostRequest(TestConfiguration.EDIT_RECORD, jsonString, token);
+    }
+}
