@@ -130,26 +130,4 @@ public class RestControllerExceptionHandler {
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(new ExceptionWrapper(HttpStatus.INTERNAL_SERVER_ERROR, exception, exception.getErrorCode()));
     }
-
-
-//    @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR, reason = UnknownSelectionIdException.message)
-//    @ExceptionHandler({UnknownSelectionIdException.class})
-//    public ResponseEntity badRequest(HttpServletRequest req, UnknownSelectionIdException exception) {
-//        exception.printStackTrace();
-//        return ResponseEntity
-//                .status(HttpStatus.INTERNAL_SERVER_ERROR)
-//                .body(exception.getMessage());
-//    }
-
-
-    @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR, reason = HTTP_METHOD_IS_NOT_SUPPORTED)
-    @ExceptionHandler({HttpRequestMethodNotSupportedException.class})
-    public ResponseEntity badRequest(HttpServletRequest req, HttpRequestMethodNotSupportedException exception) {
-        exception.printStackTrace();
-        return ResponseEntity
-                .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(exception.getMessage());
-    }
-
-
 }
