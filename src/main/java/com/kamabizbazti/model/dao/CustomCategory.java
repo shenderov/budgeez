@@ -1,15 +1,15 @@
-package com.kamabizbazti.model.entities;
+package com.kamabizbazti.model.dao;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.kamabizbazti.security.entities.User;
+import com.kamabizbazti.model.enumerations.CategoryType;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 
 @Entity
-@Table(name = "Purpose")
-public class CustomPurpose extends GeneralPurpose {
+@Table(name = "Category")
+public class CustomCategory extends GeneralCategory {
 
     @ManyToOne()
     //@JoinColumn(name = "id")
@@ -17,12 +17,12 @@ public class CustomPurpose extends GeneralPurpose {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
 
-    public CustomPurpose() {
+    public CustomCategory() {
         super();
     }
 
-    public CustomPurpose(User user, String name) {
-        super(name, PurposeType.CUSTOM);
+    public CustomCategory(User user, String name) {
+        super(name, CategoryType.CUSTOM);
         this.user = user;
         super.setuId(user.getId());
     }
@@ -38,12 +38,12 @@ public class CustomPurpose extends GeneralPurpose {
 
     public void setName(String name) {
         super.setName(name);
-        super.setType(PurposeType.CUSTOM);
+        super.setType(CategoryType.CUSTOM);
     }
 
     @Override
     public String toString() {
-        return "CustomPurpose [user=" + user + "]";
+        return "CustomCategory [user=" + user + "]";
     }
 
 }

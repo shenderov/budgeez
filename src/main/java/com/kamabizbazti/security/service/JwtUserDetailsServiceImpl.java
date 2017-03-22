@@ -5,7 +5,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import com.kamabizbazti.security.entities.User;
+import com.kamabizbazti.model.dao.User;
 import com.kamabizbazti.security.JwtUserFactory;
 import com.kamabizbazti.security.repository.UserRepository;
 

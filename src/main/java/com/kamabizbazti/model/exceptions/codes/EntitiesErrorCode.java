@@ -2,15 +2,15 @@ package com.kamabizbazti.model.exceptions.codes;
 
 import com.kamabizbazti.model.interfaces.IErrorCode;
 
-@SuppressWarnings({"UnusedDeclaration"})
-public enum AuthenticationErrorCode implements IErrorCode {
-    UNAUTHORIZED(201),
-    INVALID_USERNAME_OR_PASSWORD(202),
-    INVALID_TOKEN(203);
+public enum EntitiesErrorCode implements IErrorCode {
+    CUSTOM_CATEGORY_ALREADY_EXIST(501),
+    CATEGORY_DOES_NOT_EXIST(502),
+    RECORD_DOES_NOT_EXIST(503),
+    UNKNOWN_CHART_SELECTION_ID(504);
 
     private final int number;
 
-    AuthenticationErrorCode(int number) {
+    EntitiesErrorCode(int number) {
         this.number = number;
     }
 
@@ -18,5 +18,4 @@ public enum AuthenticationErrorCode implements IErrorCode {
     public int getNumber() {
         return number;
     }
-
 }

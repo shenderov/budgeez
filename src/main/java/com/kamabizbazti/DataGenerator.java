@@ -1,11 +1,13 @@
 package com.kamabizbazti;
 
-import com.kamabizbazti.model.entities.*;
-import com.kamabizbazti.model.entities.Currency;
+import com.kamabizbazti.model.dao.*;
+import com.kamabizbazti.model.dao.Currency;
+import com.kamabizbazti.model.enumerations.ChartSelectionIdEnum;
+import com.kamabizbazti.model.enumerations.ChartType;
 import com.kamabizbazti.model.repository.*;
 import com.kamabizbazti.security.entities.Authority;
 import com.kamabizbazti.security.entities.AuthorityName;
-import com.kamabizbazti.security.entities.User;
+import com.kamabizbazti.model.dao.User;
 import com.kamabizbazti.security.repository.AuthorityRepository;
 import com.kamabizbazti.security.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,7 +22,7 @@ import java.util.concurrent.TimeUnit;
 
 
 public class DataGenerator {
-   private static final String NAMES_DATABASE = "src/test/resources/15000NamesDatabase.txt";
+    private static final String NAMES_DATABASE = "src/test/resources/15000NamesDatabase.txt";
 
     public void insertLanguages(LanguageRepository languageRepository) {
         long start = System.currentTimeMillis();
@@ -44,19 +46,19 @@ public class DataGenerator {
         System.out.println(String.format("Currencies loaded in %dms", System.currentTimeMillis() - start));
     }
 
-    public void insertPurposes(GeneralPurposeRepository generalPurposeRepository) {
+    public void insertCategories(GeneralCategoryRepository generalCategoryRepository) {
         long start = System.currentTimeMillis();
-        generalPurposeRepository.save(new GeneralPurpose("Food"));
-        generalPurposeRepository.save(new GeneralPurpose("Car"));
-        generalPurposeRepository.save(new GeneralPurpose("Gas"));
-        generalPurposeRepository.save(new GeneralPurpose("Beer"));
-        generalPurposeRepository.save(new GeneralPurpose("Bills"));
-        generalPurposeRepository.save(new GeneralPurpose("Internet"));
-        generalPurposeRepository.save(new GeneralPurpose("Travel"));
-        generalPurposeRepository.save(new GeneralPurpose("Vodka"));
-        generalPurposeRepository.save(new GeneralPurpose("Transportation"));
-        generalPurposeRepository.save(new GeneralPurpose("Pubs"));
-        System.out.println(String.format("GeneralPurposes loaded in %dms", System.currentTimeMillis() - start));
+        generalCategoryRepository.save(new GeneralCategory("Food"));
+        generalCategoryRepository.save(new GeneralCategory("Car"));
+        generalCategoryRepository.save(new GeneralCategory("Gas"));
+        generalCategoryRepository.save(new GeneralCategory("Beer"));
+        generalCategoryRepository.save(new GeneralCategory("Bills"));
+        generalCategoryRepository.save(new GeneralCategory("Internet"));
+        generalCategoryRepository.save(new GeneralCategory("Travel"));
+        generalCategoryRepository.save(new GeneralCategory("Vodka"));
+        generalCategoryRepository.save(new GeneralCategory("Transportation"));
+        generalCategoryRepository.save(new GeneralCategory("Pubs"));
+        System.out.println(String.format("GeneralCategories loaded in %dms", System.currentTimeMillis() - start));
     }
 
 
@@ -97,18 +99,18 @@ public class DataGenerator {
         System.out.println(String.format("Users loaded in %dms", System.currentTimeMillis() - start));
     }
 
-    public void insertRecords(UserRepository userRepository, RecordRepository recordRepository, CustomPurposeRepository customPurposeRepository, int recordsPerDay, int days) {
+    public void insertRecords(UserRepository userRepository, RecordRepository recordRepository, CustomCategoryRepository customCategoryRepository, int recordsPerDay, int days) {
         long start = System.currentTimeMillis();
         Iterable<User> users = userRepository.findAll();
         long date;
         System.out.println(String.format("Records data prepared in %dms", System.currentTimeMillis() - start));
         for (User u : users) {
             System.out.println("Loading records for User ID: " + u.getId());
-            List<GeneralPurpose> purposes = customPurposeRepository.findAllUserSpecified(u.getId());
+            List<GeneralCategory> categories = customCategoryRepository.findAllUserSpecified(u.getId());
             date = System.currentTimeMillis();
             for (int i = 0; i < days; i++) {
                 for (int j = 0; j < recordsPerDay; j++) {
-                    Record record = new Record(u, getRandomPurpose(purposes), getRandomAmount(0.5, 199.9), date);
+                    Record record = new Record(u, getRandomCategory(categories), getRandomAmount(0.5, 199.9), date);
                     recordRepository.save(record);
                 }
                 date = date - TimeUnit.DAYS.toMillis(1);
@@ -117,27 +119,26 @@ public class DataGenerator {
         System.out.println(String.format("Records loaded in %dms", System.currentTimeMillis() - start));
     }
 
-    public void insertCustomPurposes(UserRepository userRepository, GeneralPurposeRepository generalPurposeRepository, CustomPurposeRepository customPurposeRepository) {
+    public void insertCustomCategories(UserRepository userRepository, GeneralCategoryRepository generalCategoryRepository, CustomCategoryRepository customCategoryRepository) {
         long start = System.currentTimeMillis();
         Iterable<User> users = userRepository.findAll();
-        //List <GeneralPurpose> purposes = generalPurposeRepository.findAll();
         for (User u : users) {
             for (int i = 0; i < 3; i++) {
-                customPurposeRepository.save(new CustomPurpose(u, u.getName() + " " + (i + 1)));
+                customCategoryRepository.save(new CustomCategory(u, u.getName() + " " + (i + 1)));
             }
         }
-        System.out.println(String.format("CustomPurposes loaded in %dms", System.currentTimeMillis() - start));
+        System.out.println(String.format("CustomCategories loaded in %dms", System.currentTimeMillis() - start));
     }
 
     public void insertChartSelections(ChartSelectionRepository chartSelectionRepository) {
         long start = System.currentTimeMillis();
-        ChartSelection selection1 = new ChartSelection(ChartSelectionId.CURRENT_MONTH_AVG, "Current Month Average", ChartType.PIECHART, false, false);
-        ChartSelection selection2 = new ChartSelection(ChartSelectionId.PREV_MONTH_AVG, "Previous Month Average", ChartType.PIECHART, false, false);
-        ChartSelection selection3 = new ChartSelection(ChartSelectionId.PREV_THREE_MONTH_AVG, "Previous 3 Month Average", ChartType.PIECHART, false, false);
-        ChartSelection selection4 = new ChartSelection(ChartSelectionId.LAST_YEAR_AVG, "Last Year Average", ChartType.PIECHART, false, false);
-        ChartSelection selection5 = new ChartSelection(ChartSelectionId.LAST_THREE_MONTH_AVG_DETAILED, "Last 3 Month Average Detailed", ChartType.COLUMNCHART, false, false);
-        ChartSelection selection6 = new ChartSelection(ChartSelectionId.LAST_SIX_MONTH_AVG_DETAILED, "Last 6 Month Average Detailed", ChartType.COLUMNCHART, false, false);
-        ChartSelection selection7 = new ChartSelection(ChartSelectionId.LAST_YEAR_AVG_DETAILED, "Last Year Average Detailed", ChartType.COLUMNCHART, false, false);
+        ChartSelection selection1 = new ChartSelection(ChartSelectionIdEnum.CURRENT_MONTH_AVG, "Current Month Average", ChartType.PIECHART, false, false);
+        ChartSelection selection2 = new ChartSelection(ChartSelectionIdEnum.PREV_MONTH_AVG, "Previous Month Average", ChartType.PIECHART, false, false);
+        ChartSelection selection3 = new ChartSelection(ChartSelectionIdEnum.PREV_THREE_MONTH_AVG, "Previous 3 Month Average", ChartType.PIECHART, false, false);
+        ChartSelection selection4 = new ChartSelection(ChartSelectionIdEnum.LAST_YEAR_AVG, "Last Year Average", ChartType.PIECHART, false, false);
+        ChartSelection selection5 = new ChartSelection(ChartSelectionIdEnum.LAST_THREE_MONTH_AVG_DETAILED, "Last 3 Month Average Detailed", ChartType.COLUMNCHART, false, false);
+        ChartSelection selection6 = new ChartSelection(ChartSelectionIdEnum.LAST_SIX_MONTH_AVG_DETAILED, "Last 6 Month Average Detailed", ChartType.COLUMNCHART, false, false);
+        ChartSelection selection7 = new ChartSelection(ChartSelectionIdEnum.LAST_YEAR_AVG_DETAILED, "Last Year Average Detailed", ChartType.COLUMNCHART, false, false);
         chartSelectionRepository.save(selection1);
         chartSelectionRepository.save(selection2);
         chartSelectionRepository.save(selection3);
@@ -145,17 +146,17 @@ public class DataGenerator {
         chartSelectionRepository.save(selection5);
         chartSelectionRepository.save(selection6);
         chartSelectionRepository.save(selection7);
-        ChartSelection selection9 = new ChartSelection(ChartSelectionId.USER_CURRENT_MONTH, "Current Month", ChartType.PIECHART, false, true);
-        ChartSelection selection10 = new ChartSelection(ChartSelectionId.USER_PREV_MONTH, "Previous Month", ChartType.PIECHART, false, true);
-        ChartSelection selection11 = new ChartSelection(ChartSelectionId.USER_PREV_THREE_MONTH_AVG, "Previous 3 Month Average", ChartType.PIECHART, false, true);
-        ChartSelection selection12 = new ChartSelection(ChartSelectionId.USER_PREV_THREE_MONTH_TOTAL, "Previous 3 Month Total", ChartType.PIECHART, false, true);
-        ChartSelection selection13 = new ChartSelection(ChartSelectionId.USER_CUSTOM_PERIOD_AVG, "Custom Period Average", ChartType.PIECHART, true, true);
-        ChartSelection selection14 = new ChartSelection(ChartSelectionId.USER_CUSTOM_PERIOD_TOTAL, "Custom Period Total", ChartType.PIECHART, true, true);
+        ChartSelection selection9 = new ChartSelection(ChartSelectionIdEnum.USER_CURRENT_MONTH, "Current Month", ChartType.PIECHART, false, true);
+        ChartSelection selection10 = new ChartSelection(ChartSelectionIdEnum.USER_PREV_MONTH, "Previous Month", ChartType.PIECHART, false, true);
+        ChartSelection selection11 = new ChartSelection(ChartSelectionIdEnum.USER_PREV_THREE_MONTH_AVG, "Previous 3 Month Average", ChartType.PIECHART, false, true);
+        ChartSelection selection12 = new ChartSelection(ChartSelectionIdEnum.USER_PREV_THREE_MONTH_TOTAL, "Previous 3 Month Total", ChartType.PIECHART, false, true);
+        ChartSelection selection13 = new ChartSelection(ChartSelectionIdEnum.USER_CUSTOM_PERIOD_AVG, "Custom Period Average", ChartType.PIECHART, true, true);
+        ChartSelection selection14 = new ChartSelection(ChartSelectionIdEnum.USER_CUSTOM_PERIOD_TOTAL, "Custom Period Total", ChartType.PIECHART, true, true);
 
-        ChartSelection selection15 = new ChartSelection(ChartSelectionId.USER_LAST_THREE_MONTH_DETAILED, "Last 3 Month Average Detailed", ChartType.COLUMNCHART, false, true);
-        ChartSelection selection16 = new ChartSelection(ChartSelectionId.USER_LAST_SIX_MONTH_DETAILED, "Last 6 Month Average Detailed", ChartType.COLUMNCHART, false, true);
-        ChartSelection selection17 = new ChartSelection(ChartSelectionId.USER_LAST_YEAR_DETAILED, "Last Year Average Detailed", ChartType.COLUMNCHART, false, true);
-        ChartSelection selection18 = new ChartSelection(ChartSelectionId.USER_CUSTOM_PERIOD_DETAILED, "Custom Period Average Detailed", ChartType.COLUMNCHART, true, true);
+        ChartSelection selection15 = new ChartSelection(ChartSelectionIdEnum.USER_LAST_THREE_MONTH_DETAILED, "Last 3 Month Average Detailed", ChartType.COLUMNCHART, false, true);
+        ChartSelection selection16 = new ChartSelection(ChartSelectionIdEnum.USER_LAST_SIX_MONTH_DETAILED, "Last 6 Month Average Detailed", ChartType.COLUMNCHART, false, true);
+        ChartSelection selection17 = new ChartSelection(ChartSelectionIdEnum.USER_LAST_YEAR_DETAILED, "Last Year Average Detailed", ChartType.COLUMNCHART, false, true);
+        ChartSelection selection18 = new ChartSelection(ChartSelectionIdEnum.USER_CUSTOM_PERIOD_DETAILED, "Custom Period Average Detailed", ChartType.COLUMNCHART, true, true);
         chartSelectionRepository.save(selection9);
         chartSelectionRepository.save(selection10);
         chartSelectionRepository.save(selection11);
@@ -189,7 +190,7 @@ public class DataGenerator {
         }
     }
 
-    private GeneralPurpose getRandomPurpose(List<GeneralPurpose> db) {
+    private GeneralCategory getRandomCategory(List<GeneralCategory> db) {
         return db.get(getRandomInteger(0, db.size()));
     }
 

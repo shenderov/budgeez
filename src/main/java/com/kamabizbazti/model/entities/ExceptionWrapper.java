@@ -3,6 +3,7 @@ package com.kamabizbazti.model.entities;
 import com.kamabizbazti.model.interfaces.IErrorCode;
 import org.springframework.http.HttpStatus;
 
+@SuppressWarnings({"UnusedDeclaration"})
 public class ExceptionWrapper {
 
     private long timestamp;

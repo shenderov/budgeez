@@ -1,14 +1,26 @@
 package com.kamabizbazti.model.exceptions;
 
-public class UnknownSelectionIdException extends Exception {
+import com.kamabizbazti.model.interfaces.IErrorCode;
 
-    public static final String message = "UNKNOWN_SELECTION_ID";
+public class UnknownSelectionIdException extends RuntimeException {
+
+    private IErrorCode errorCode;
 
     public UnknownSelectionIdException(String message) {
         super(message);
     }
 
-    public UnknownSelectionIdException() {
+    public UnknownSelectionIdException(IErrorCode errorCode) {
+        super();
+        this.errorCode = errorCode;
+    }
+
+    public UnknownSelectionIdException(IErrorCode errorCode, String message) {
         super(message);
+        this.errorCode = errorCode;
+    }
+
+    public IErrorCode getErrorCode() {
+        return errorCode;
     }
 }

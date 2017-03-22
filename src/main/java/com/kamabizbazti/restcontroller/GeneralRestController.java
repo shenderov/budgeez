@@ -1,7 +1,7 @@
 package com.kamabizbazti.restcontroller;
 
 import com.kamabizbazti.model.entities.ChartRequestWrapper;
-import com.kamabizbazti.model.entities.ChartSelection;
+import com.kamabizbazti.model.dao.ChartSelection;
 import com.kamabizbazti.model.entities.ChartWrapper;
 import com.kamabizbazti.model.exceptions.UnknownSelectionIdException;
 import com.kamabizbazti.model.interfaces.IGeneralRequestHandler;
@@ -40,7 +40,7 @@ public class GeneralRestController implements IGeneralRestController {
 
     @CrossOrigin(origins = "*")
     @RequestMapping(value = "/${general.route.getGeneralDataTable}", method = RequestMethod.POST)
-    public ChartWrapper getGeneralDataTable(@RequestBody ChartRequestWrapper chartRequestWrapper) throws UnknownSelectionIdException {
+    public ChartWrapper getGeneralDataTable(@RequestBody @Valid ChartRequestWrapper chartRequestWrapper) throws UnknownSelectionIdException {
         return handler.getGeneralDatatable(chartRequestWrapper);
     }
 }

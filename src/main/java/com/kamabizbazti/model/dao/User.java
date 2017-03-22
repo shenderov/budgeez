@@ -1,10 +1,8 @@
-package com.kamabizbazti.security.entities;
+package com.kamabizbazti.model.dao;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.kamabizbazti.model.entities.Currency;
-import com.kamabizbazti.model.entities.Language;
+import com.kamabizbazti.security.entities.Authority;
 import org.hibernate.validator.constraints.Email;
-import org.hibernate.validator.constraints.NotEmpty;
 import org.hibernate.validator.constraints.Range;
 
 import javax.persistence.*;
@@ -52,7 +50,7 @@ public class User {
     @JsonIgnore
     private Date lastPasswordResetDate;
 
-    @ManyToMany(fetch=FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JsonIgnore
     private Set<Authority> authorities;
 

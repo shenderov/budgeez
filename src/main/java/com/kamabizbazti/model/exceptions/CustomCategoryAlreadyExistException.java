@@ -2,20 +2,20 @@ package com.kamabizbazti.model.exceptions;
 
 import com.kamabizbazti.model.interfaces.IErrorCode;
 
-public class RecordDoesNotExistException extends RuntimeException {
+public class CustomCategoryAlreadyExistException extends RuntimeException {
 
     private IErrorCode errorCode;
 
-    public RecordDoesNotExistException(String message) {
+    public CustomCategoryAlreadyExistException(String message) {
         super(message);
     }
 
-    public RecordDoesNotExistException(IErrorCode errorCode) {
+    public CustomCategoryAlreadyExistException(IErrorCode errorCode) {
         super();
         this.errorCode = errorCode;
     }
 
-    public RecordDoesNotExistException(IErrorCode errorCode, String message) {
+    public CustomCategoryAlreadyExistException(IErrorCode errorCode, String message) {
         super(message);
         this.errorCode = errorCode;
     }

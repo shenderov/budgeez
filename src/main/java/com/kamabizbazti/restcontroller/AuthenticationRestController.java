@@ -1,7 +1,9 @@
 package com.kamabizbazti.restcontroller;
 
+import com.kamabizbazti.model.dao.User;
 import com.kamabizbazti.model.exceptions.UserRegistrationException;
 import com.kamabizbazti.model.exceptions.codes.UserRegistrationErrorCode;
+import com.kamabizbazti.model.interfaces.IAuthenticationRestController;
 import com.kamabizbazti.model.interfaces.IExceptionMessagesHelper;
 import com.kamabizbazti.model.repository.CurrencyRepository;
 import com.kamabizbazti.model.repository.LanguageRepository;
@@ -29,7 +31,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 @RestController
-public class AuthenticationRestController {
+public class AuthenticationRestController implements IAuthenticationRestController {
 
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
@@ -95,15 +97,15 @@ public class AuthenticationRestController {
 
     @RequestMapping(value = "${security.route.authentication.refresh}", method = RequestMethod.GET)
     public ResponseEntity<?> refreshAndGetAuthenticationToken(HttpServletRequest request) {
-            String token = request.getHeader(tokenHeader);
-            String username = jwtTokenUtil.getUsernameFromToken(token);
-            JwtUser user = (JwtUser) userDetailsService.loadUserByUsername(username);
-            if (jwtTokenUtil.canTokenBeRefreshed(token, user.getLastPasswordResetDate())) {
-                String refreshedToken = jwtTokenUtil.refreshToken(token);
-                return ResponseEntity.ok(new JwtAuthenticationResponse(refreshedToken));
-            } else {
-                return ResponseEntity.badRequest().body(null);
-            }
+        String token = request.getHeader(tokenHeader);
+        String username = jwtTokenUtil.getUsernameFromToken(token);
+        JwtUser user = (JwtUser) userDetailsService.loadUserByUsername(username);
+        if (jwtTokenUtil.canTokenBeRefreshed(token, user.getLastPasswordResetDate())) {
+            String refreshedToken = jwtTokenUtil.refreshToken(token);
+            return ResponseEntity.ok(new JwtAuthenticationResponse(refreshedToken));
+        } else {
+            return ResponseEntity.badRequest().body(null);
+        }
     }
 
     private Set<Authority> setUserAuthorities() {

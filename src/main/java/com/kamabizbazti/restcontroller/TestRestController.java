@@ -29,10 +29,10 @@ public class TestRestController {
     CurrencyRepository currencyRepository;
 
     @Autowired
-    GeneralPurposeRepository generalPurposeRepository;
+    GeneralCategoryRepository generalCategoryRepository;
 
     @Autowired
-    CustomPurposeRepository customPurposeRepository;
+    CustomCategoryRepository customCategoryRepository;
 
     @Autowired
     AuthorityRepository authorityRepository;
@@ -49,26 +49,26 @@ public class TestRestController {
     @RequestMapping(value = "/insertData", method = RequestMethod.GET)
     @Async
     public void insertData(@RequestParam(value = "generateRecordsForAllUsers", required = false, defaultValue = "false") Boolean generateRecordsForAllUsers,
-                                   @RequestParam(value = "generatePurposesForAllUsers", required = false, defaultValue = "false") Boolean generatePurposesForAllUsers,
-                                   @RequestParam(value = "generateUsers", required = false, defaultValue = "false") Boolean generateUsers) {
+                           @RequestParam(value = "generateCategoriesForAllUsers", required = false, defaultValue = "false") Boolean generateCategoriesForAllUsers,
+                           @RequestParam(value = "generateUsers", required = false, defaultValue = "false") Boolean generateUsers) {
         LinkedList<String> res = new LinkedList<>();
         if (generateUsers) {
             dataGenerator.insertUsers(userRepository, languageRepository, currencyRepository, authorityRepository, passwordEncoder, 2);
             res.add("Users Inserted");
         }
-        if (generatePurposesForAllUsers) {
-            dataGenerator.insertCustomPurposes(userRepository, generalPurposeRepository, customPurposeRepository);
-            res.add("Custom Purposes Inserted");
+        if (generateCategoriesForAllUsers) {
+            dataGenerator.insertCustomCategories(userRepository, generalCategoryRepository, customCategoryRepository);
+            res.add("Custom Categories Inserted");
         }
         if (generateRecordsForAllUsers) {
-            dataGenerator.insertRecords(userRepository, recordRepository, customPurposeRepository, 2, 150);
+            dataGenerator.insertRecords(userRepository, recordRepository, customCategoryRepository, 2, 150);
             res.add("Records Inserted");
         }
-        if (!generatePurposesForAllUsers && !generateRecordsForAllUsers && !generateUsers) {
+        if (!generateCategoriesForAllUsers && !generateRecordsForAllUsers && !generateUsers) {
             dataGenerator.insertUsers(userRepository, languageRepository, currencyRepository, authorityRepository, passwordEncoder, 2);
-            dataGenerator.insertCustomPurposes(userRepository, generalPurposeRepository, customPurposeRepository);
-            dataGenerator.insertRecords(userRepository, recordRepository, customPurposeRepository, 2, 150);
-            res.add("Users, Custom Purposes and Records Inserted");
+            dataGenerator.insertCustomCategories(userRepository, generalCategoryRepository, customCategoryRepository);
+            dataGenerator.insertRecords(userRepository, recordRepository, customCategoryRepository, 2, 150);
+            res.add("Users, Custom Categories and Records Inserted");
         }
         res.add("Data Import Completed");
         for (String str : res)

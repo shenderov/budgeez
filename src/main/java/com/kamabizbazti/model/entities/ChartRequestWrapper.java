@@ -1,7 +1,12 @@
 package com.kamabizbazti.model.entities;
 
+import com.kamabizbazti.model.dao.ChartSelection;
+
+import javax.validation.constraints.NotNull;
+
 public class ChartRequestWrapper {
 
+    @NotNull(message = "error.chartselection.notblank")
     private ChartSelection chartSelection;
     private DatePicker datePicker;
 

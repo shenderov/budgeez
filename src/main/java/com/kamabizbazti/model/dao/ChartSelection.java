@@ -1,7 +1,11 @@
-package com.kamabizbazti.model.entities;
+package com.kamabizbazti.model.dao;
+
+import com.kamabizbazti.model.enumerations.ChartSelectionIdEnum;
+import com.kamabizbazti.model.enumerations.ChartType;
 
 import javax.persistence.*;
 
+@SuppressWarnings({"UnusedDeclaration"})
 @Entity
 @Table(name = "Selection", uniqueConstraints = @UniqueConstraint(columnNames = {"selectionId"}))
 public class ChartSelection {
@@ -9,7 +13,7 @@ public class ChartSelection {
     @Id
     @Column(name = "selectionId", nullable = false)
     @Enumerated(EnumType.STRING)
-    private ChartSelectionId selectionId;
+    private ChartSelectionIdEnum selectionId;
 
     @Column(name = "title", nullable = false)
     private String title;
@@ -28,7 +32,7 @@ public class ChartSelection {
         super();
     }
 
-    public ChartSelection(ChartSelectionId selectionId, String title, ChartType chartType, boolean datePicker,
+    public ChartSelection(ChartSelectionIdEnum selectionId, String title, ChartType chartType, boolean datePicker,
                           boolean authRequired) {
         super();
         this.selectionId = selectionId;
@@ -38,11 +42,11 @@ public class ChartSelection {
         this.authRequired = authRequired;
     }
 
-    public ChartSelectionId getSelectionId() {
+    public ChartSelectionIdEnum getSelectionId() {
         return selectionId;
     }
 
-    public void setSelectionId(ChartSelectionId selectionId) {
+    public void setSelectionId(ChartSelectionIdEnum selectionId) {
         this.selectionId = selectionId;
     }
 
@@ -76,5 +80,29 @@ public class ChartSelection {
 
     public void setAuthRequired(boolean authRequired) {
         this.authRequired = authRequired;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ChartSelection)) return false;
+
+        ChartSelection that = (ChartSelection) o;
+
+        if (datePicker != that.datePicker) return false;
+        if (authRequired != that.authRequired) return false;
+        if (selectionId != that.selectionId) return false;
+        if (!title.equals(that.title)) return false;
+        return chartType == that.chartType;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = selectionId.hashCode();
+        result = 31 * result + title.hashCode();
+        result = 31 * result + chartType.hashCode();
+        result = 31 * result + (datePicker ? 1 : 0);
+        result = 31 * result + (authRequired ? 1 : 0);
+        return result;
     }
 }

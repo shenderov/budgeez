@@ -1,14 +1,26 @@
 package com.kamabizbazti.model.exceptions;
 
-public class DateRangeException extends Exception {
+import com.kamabizbazti.model.interfaces.IErrorCode;
 
-    public static final String message = "DATE_RANGE_TOO_SHORT_OR_END_DATE_BEFORE_START_DATE";
+public class DateRangeException extends RuntimeException {
+
+    private IErrorCode errorCode;
 
     public DateRangeException(String message) {
         super(message);
     }
 
-    public DateRangeException() {
+    public DateRangeException(IErrorCode errorCode) {
+        super();
+        this.errorCode = errorCode;
+    }
+
+    public DateRangeException(IErrorCode errorCode, String message) {
         super(message);
+        this.errorCode = errorCode;
+    }
+
+    public IErrorCode getErrorCode() {
+        return errorCode;
     }
 }

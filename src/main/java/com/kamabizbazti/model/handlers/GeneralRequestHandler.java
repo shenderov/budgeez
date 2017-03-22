@@ -1,10 +1,12 @@
 package com.kamabizbazti.model.handlers;
 
 import com.kamabizbazti.model.entities.ChartRequestWrapper;
-import com.kamabizbazti.model.entities.ChartSelection;
-import com.kamabizbazti.model.entities.ChartSelectionId;
+import com.kamabizbazti.model.dao.ChartSelection;
+import com.kamabizbazti.model.enumerations.ChartSelectionIdEnum;
 import com.kamabizbazti.model.entities.ChartWrapper;
 import com.kamabizbazti.model.exceptions.UnknownSelectionIdException;
+import com.kamabizbazti.model.exceptions.codes.EntitiesErrorCode;
+import com.kamabizbazti.model.interfaces.IExceptionMessagesHelper;
 import com.kamabizbazti.model.interfaces.IGeneralRequestHandler;
 import com.kamabizbazti.model.interfaces.IGeneralStatisticsHandler;
 import com.kamabizbazti.model.repository.ChartSelectionRepository;
@@ -22,9 +24,14 @@ public class GeneralRequestHandler implements IGeneralRequestHandler {
     @Autowired
     private IGeneralStatisticsHandler generalStatisticsHandler;
 
-    public static final ChartSelectionId DEFAULT_CHART_SELECTION = ChartSelectionId.CURRENT_MONTH_AVG;
+    @Autowired
+    private IExceptionMessagesHelper exceptionMessagesHelper;
+
+    public static final ChartSelectionIdEnum DEFAULT_CHART_SELECTION = ChartSelectionIdEnum.CURRENT_MONTH_AVG;
 
     public ChartWrapper getGeneralDatatable(ChartRequestWrapper chartRequestWrapper) throws UnknownSelectionIdException {
+        ChartSelection selection = chartSelectionRepository.findOne(chartRequestWrapper.getChartSelection().getSelectionId());
+        chartRequestWrapper.setChartSelection(selection);
         ChartWrapper wrapper;
         switch (chartRequestWrapper.getChartSelection().getSelectionId()) {
             case CURRENT_MONTH_AVG:
@@ -49,7 +56,7 @@ public class GeneralRequestHandler implements IGeneralRequestHandler {
                 wrapper = generalStatisticsHandler.getLastNMonthsAverageDetailed(chartRequestWrapper, 12);
                 break;
             default:
-                throw new UnknownSelectionIdException();
+                throw new UnknownSelectionIdException(EntitiesErrorCode.UNKNOWN_CHART_SELECTION_ID, exceptionMessagesHelper.getLocalizedMessage("error.chartselection.unknown"));
         }
         return wrapper;
     }

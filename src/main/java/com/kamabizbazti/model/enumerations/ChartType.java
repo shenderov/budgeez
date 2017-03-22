@@ -1,4 +1,4 @@
-package com.kamabizbazti.model.entities;
+package com.kamabizbazti.model.enumerations;
 
 public enum ChartType {
     PIECHART, COLUMNCHART

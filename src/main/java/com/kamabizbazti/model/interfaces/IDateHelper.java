@@ -1,7 +1,5 @@
 package com.kamabizbazti.model.interfaces;
 
-import java.util.List;
-
 public interface IDateHelper {
     long getFirstDayOfCurrentMonth();
 

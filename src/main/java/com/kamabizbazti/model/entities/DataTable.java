@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
+@SuppressWarnings({"UnusedDeclaration"})
 public class DataTable {
 
     private List<String> labels;

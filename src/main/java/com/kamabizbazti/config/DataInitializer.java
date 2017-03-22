@@ -2,10 +2,13 @@ package com.kamabizbazti.config;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.kamabizbazti.model.entities.*;
+import com.kamabizbazti.model.dao.ChartSelection;
+import com.kamabizbazti.model.dao.Currency;
+import com.kamabizbazti.model.dao.GeneralCategory;
+import com.kamabizbazti.model.dao.Language;
 import com.kamabizbazti.model.repository.ChartSelectionRepository;
 import com.kamabizbazti.model.repository.CurrencyRepository;
-import com.kamabizbazti.model.repository.GeneralPurposeRepository;
+import com.kamabizbazti.model.repository.GeneralCategoryRepository;
 import com.kamabizbazti.model.repository.LanguageRepository;
 import com.kamabizbazti.security.entities.Authority;
 import com.kamabizbazti.security.repository.AuthorityRepository;
@@ -18,7 +21,7 @@ import java.io.IOException;
 public class DataInitializer {
 
     @Autowired
-    ChartSelectionRepository chartSelectionRepository;
+    private ChartSelectionRepository chartSelectionRepository;
 
     @Autowired
     private LanguageRepository languageRepository;
@@ -30,7 +33,7 @@ public class DataInitializer {
     private AuthorityRepository authorityRepository;
 
     @Autowired
-    private GeneralPurposeRepository generalPurposeRepository;
+    private GeneralCategoryRepository generalCategoryRepository;
 
     private ObjectMapper mapper = new ObjectMapper();
     private ClassLoader classLoader = getClass().getClassLoader();
@@ -39,7 +42,7 @@ public class DataInitializer {
     private static final String DEFAULT_LANGUAGES = "default_languages.json";
     private static final String DEFAULT_CURRENCIES = "default_currencies.json";
     private static final String DEFAULT_AUTHORITIES = "default_authorities.json";
-    private static final String DEFAULT_PURPOSES = "default_purposes.json";
+    private static final String DEFAULT_CATEGORIES = "default_categories.json";
 
     @PostConstruct
     public void initiateData() throws IOException {
@@ -51,8 +54,8 @@ public class DataInitializer {
             insertCurrencies();
         if (authorityRepository.count() == 0)
             insertAuthorities();
-        if (generalPurposeRepository.count() == 0)
-            insertPurposes();
+        if (generalCategoryRepository.count() == 0)
+            insertCategories();
     }
 
     private void insertChartSelections() throws IOException {
@@ -83,10 +86,10 @@ public class DataInitializer {
             authorityRepository.save(authority);
     }
 
-    private void insertPurposes() throws IOException {
-        Iterable<GeneralPurpose> purposes = mapper.readValue(new File(classLoader.getResource(DEFAULT_PURPOSES).getFile()), new TypeReference<Iterable<GeneralPurpose>>() {
+    private void insertCategories() throws IOException {
+        Iterable<GeneralCategory> categories = mapper.readValue(new File(classLoader.getResource(DEFAULT_CATEGORIES).getFile()), new TypeReference<Iterable<GeneralCategory>>() {
         });
-        for (GeneralPurpose purpose : purposes)
-            generalPurposeRepository.save(purpose);
+        for (GeneralCategory category : categories)
+            generalCategoryRepository.save(category);
     }
 }

@@ -7,6 +7,7 @@ import com.kamabizbazti.model.handlers.UserRequestHandler;
 import com.kamabizbazti.model.handlers.UserStatisticsHandler;
 import com.kamabizbazti.model.helpers.DateHelper;
 import com.kamabizbazti.model.helpers.ExceptionMessagesHelper;
+import com.kamabizbazti.model.helpers.ValidationHelper;
 import com.kamabizbazti.model.interfaces.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -43,6 +44,11 @@ public class KamaBizbaztiApplicationConfig {
     @Bean
     public IDateHelper dateHelper() {
         return new DateHelper();
+    }
+
+    @Bean
+    public IValidationHelper validationHelper() {
+        return new ValidationHelper();
     }
 
     @Bean

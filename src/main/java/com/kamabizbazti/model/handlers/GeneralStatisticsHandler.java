@@ -1,10 +1,13 @@
 package com.kamabizbazti.model.handlers;
 
+import com.kamabizbazti.model.dao.GeneralCategory;
 import com.kamabizbazti.model.entities.*;
+import com.kamabizbazti.model.enumerations.ChartType;
 import com.kamabizbazti.model.interfaces.IDateHelper;
 import com.kamabizbazti.model.interfaces.IGeneralStatisticsHandler;
 import com.kamabizbazti.model.interfaces.IStatisticsHelper;
-import com.kamabizbazti.model.repository.GeneralPurposeRepository;
+import com.kamabizbazti.model.repository.ChartSelectionRepository;
+import com.kamabizbazti.model.repository.GeneralCategoryRepository;
 import com.kamabizbazti.model.repository.RecordRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -21,12 +24,15 @@ public class GeneralStatisticsHandler implements IGeneralStatisticsHandler {
     private IStatisticsHelper statisticsHelper;
 
     @Autowired
-    private GeneralPurposeRepository generalPurposeRepository;
+    private GeneralCategoryRepository generalCategoryRepository;
+
+    @Autowired
+    private ChartSelectionRepository chartSelectionRepository;
 
     @Autowired
     private RecordRepository recordRepository;
 
-    private static final String[] AVG_LABELS = {"Purpose", "Amount"};
+    private static final String[] AVG_LABELS = {"Category", "Amount"};
     private static final String AVG_OTHERS = "Others";
     private static final String LABEL_MONTH_WEEK = "Month/Week";
     private static final String LABEL_MONTH = "Month";
@@ -48,18 +54,18 @@ public class GeneralStatisticsHandler implements IGeneralStatisticsHandler {
 
 
     public ChartWrapper getLastNMonthsAverageDetailed(ChartRequestWrapper chartRequestWrapper, int monthAgo) {
-        List<GeneralPurpose> purposes = generalPurposeRepository.getAllActualGeneralPurposes();
+        List<GeneralCategory> categories = generalCategoryRepository.getAllActualGeneralCategories();
         boolean isCustomRecordsExist = recordRepository.averageOfCustomRecords(dateHelper.getFirstDayOfNMonthAgo(monthAgo), dateHelper.getLastDayOfPreviousMonth()) != null;
-        DataTable data = new DataTable(statisticsHelper.setLabelsForPurposes(purposes, isCustomRecordsExist), getGeneralAvgDetailedRowsNMonthAgo(purposes, monthAgo, isCustomRecordsExist));
+        DataTable data = new DataTable(statisticsHelper.setLabelsForCategories(categories, isCustomRecordsExist), getGeneralAvgDetailedRowsNMonthAgo(categories, monthAgo, isCustomRecordsExist));
         return new ChartWrapper(ChartType.COLUMNCHART, data.getDataTableAsArray(), chartRequestWrapper.getChartSelection().getTitle());
     }
 
     private List<Object[]> getGeneralAvgRows(long startDate, long endDate) {
-        List<Object[]> rows = recordRepository.getAverageForAllPurposes(startDate, endDate);
+        List<Object[]> rows = recordRepository.getAverageForAllCategories(startDate, endDate);
         return rows;
     }
 
-    private List<Object[]> getGeneralAvgDetailedRowsNMonthAgo(List<GeneralPurpose> purposes, int monthAgo, boolean others) {
+    private List<Object[]> getGeneralAvgDetailedRowsNMonthAgo(List<GeneralCategory> categories, int monthAgo, boolean others) {
         List<Object[]> rows = new ArrayList<>();
         boolean isTheSameYear = dateHelper.getYear(dateHelper.getLastDayOfPreviousMonth()).equals(dateHelper.getYear(dateHelper.getFirstDayOfNMonthAgo(monthAgo)));
         for (int i = monthAgo; i > 0; i--) {
@@ -67,8 +73,8 @@ public class GeneralStatisticsHandler implements IGeneralStatisticsHandler {
             long startDate = dateHelper.getFirstDayOfNMonthAgo(i);
             long endDate = dateHelper.getLastDayOfNMonthAgo(i);
             row.add(dateHelper.getFormattedMonthNameByDate(isTheSameYear, startDate, monthAgo));
-            for (GeneralPurpose pps : purposes) {
-                Double res = recordRepository.averageValueByPurposeId(pps.getPurposeId(), startDate, endDate);
+            for (GeneralCategory pps : categories) {
+                Double res = recordRepository.averageValueByCategoryId(pps.getCategoryId(), startDate, endDate);
                 if (res == null)
                     row.add(0);
                 else

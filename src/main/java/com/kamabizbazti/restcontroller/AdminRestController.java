@@ -1,8 +1,8 @@
 package com.kamabizbazti.restcontroller;
 
 
-import com.kamabizbazti.model.entities.Currency;
-import com.kamabizbazti.model.entities.Language;
+import com.kamabizbazti.model.dao.Currency;
+import com.kamabizbazti.model.dao.Language;
 import com.kamabizbazti.model.repository.CurrencyRepository;
 import com.kamabizbazti.model.repository.LanguageRepository;
 import com.kamabizbazti.security.entities.Authority;
@@ -43,11 +43,6 @@ public class AdminRestController {
     public Authority addLanguage(@RequestBody Authority authority) {
         return authorityRepository.save(authority);
     }
-
-
-
-
-
 
 
     @RequestMapping(value = "/test", method = RequestMethod.POST)

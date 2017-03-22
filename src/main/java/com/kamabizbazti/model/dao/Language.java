@@ -1,7 +1,8 @@
-package com.kamabizbazti.model.entities;
+package com.kamabizbazti.model.dao;
 
 import javax.persistence.*;
 
+@SuppressWarnings({"UnusedDeclaration"})
 @Entity
 @Table(name = "Language")
 public class Language {

@@ -1,5 +1,8 @@
 package com.kamabizbazti.model.entities;
 
+import com.kamabizbazti.model.enumerations.ChartType;
+
+@SuppressWarnings({"UnusedDeclaration"})
 public class ChartWrapper {
     private ChartType chartType;
     private Object dataTable;
@@ -81,5 +84,16 @@ public class ChartWrapper {
 
     public void sethAxis(String hAxis) {
         this.hAxis = hAxis;
+    }
+
+    @Override
+    public String toString() {
+        return "ChartWrapper{" +
+                "chartType=" + chartType +
+                ", dataTable=" + dataTable +
+                ", title='" + title + '\'' +
+                ", vAxis='" + vAxis + '\'' +
+                ", hAxis='" + hAxis + '\'' +
+                '}';
     }
 }

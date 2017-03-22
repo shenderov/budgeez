@@ -1,5 +1,8 @@
 package com.kamabizbazti.model.entities;
 
+import com.kamabizbazti.model.enumerations.MessageType;
+
+@SuppressWarnings({"UnusedDeclaration"})
 public class MessageDTO {
     private String message;
     private MessageType type;

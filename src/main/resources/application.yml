@@ -29,11 +29,11 @@ general:
 user:
   path: user
   route:
-    getPurposesList: getPurposesList
+    getCategoriesList: getCategoriesList
     getUserDefaultDataTable: getUserDefaultDataTable
     getUserDataTable: getUserDataTable
     addRecord: addRecord
-    addCustomPurpose: addCustomPurpose
+    addCustomCategory: addCustomCategory
     getRecordsList: getRecordsList
     deleteRecord: deleteRecord
     editRecord: editRecord
