@@ -4,7 +4,7 @@ import com.google.gson.reflect.TypeToken;
 import com.kamabizbazti.common.TestConfiguration;
 import com.kamabizbazti.common.entities.HttpResponse;
 import com.kamabizbazti.model.entities.ChartRequestWrapper;
-import com.kamabizbazti.model.entities.ChartSelection;
+import com.kamabizbazti.model.dao.ChartSelection;
 import com.kamabizbazti.model.entities.ChartWrapper;
 
 import java.lang.reflect.Type;

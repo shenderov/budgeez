@@ -46,17 +46,17 @@ public class HttpConnectorGeneral {
     }
 
     HttpResponse sendPostRequest(String api, Object request, Map<String, String> headers) {
-        Response response = sendHttpPostRequest(api, testTools.ObjectToJson(request), headers);
+        Response response = sendHttpPostRequest(api, testTools.objectToJson(request), headers);
         return new HttpResponse(response.asString(), response);
     }
 
     HttpResponse sendPostRequest(String api, Object request, String token) {
-        Response response = sendHttpPostRequest(api, testTools.ObjectToJson(request), testTools.setToken(token));
+        Response response = sendHttpPostRequest(api, testTools.objectToJson(request), testTools.setToken(token));
         return new HttpResponse(response.asString(), response);
     }
 
     HttpResponse sendPostRequest(String api, Object request) {
-        Response response = sendHttpPostRequest(api, testTools.ObjectToJson(request), new HashMap<>());
+        Response response = sendHttpPostRequest(api, testTools.objectToJson(request), new HashMap<>());
         return new HttpResponse(response.asString(), response);
     }
 

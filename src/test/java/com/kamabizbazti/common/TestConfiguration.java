@@ -23,11 +23,11 @@ public class TestConfiguration {
 
     //User URLs
     private static final String USER_PATH = "/user";
-    public static final String GET_PURPOSES_LIST = USER_PATH + "/getPurposesList";
+    public static final String GET_CATEGORIES_LIST = USER_PATH + "/getCategoriesList";
     public static final String GET_USER_DEFAULT_DATATABLE = USER_PATH + "/getUserDefaultDataTable";
     public static final String GET_USER_DATATABLE = USER_PATH + "/getUserDataTable";
     public static final String ADD_RECORD = USER_PATH + "/addRecord";
-    public static final String ADD_CUSTOM_PURPOSE = USER_PATH + "/addCustomPurpose";
+    public static final String ADD_CUSTOM_CATEGORY = USER_PATH + "/addCustomCategory";
     public static final String GET_RECORDS_LIST = USER_PATH + "/getRecordsList";
     public static final String DELETE_RECORD = USER_PATH + "/deleteRecord";
     public static final String EDIT_RECORD = USER_PATH + "/editRecord";

@@ -6,8 +6,12 @@ import com.kamabizbazti.common.TestTools;
 import com.kamabizbazti.common.entities.HttpResponseJson;
 import com.kamabizbazti.common.http.GeneralRestControllerConnectorHelper;
 import com.kamabizbazti.config.KamaBizbaztiApplicationConfig;
+import com.kamabizbazti.model.dao.ChartSelection;
 import com.kamabizbazti.model.entities.*;
+import com.kamabizbazti.model.enumerations.ChartSelectionIdEnum;
+import com.kamabizbazti.model.enumerations.ChartType;
 import com.kamabizbazti.model.exceptions.codes.DataIntegrityErrorCode;
+import com.kamabizbazti.model.exceptions.codes.EntitiesErrorCode;
 import com.kamabizbazti.model.handlers.GeneralRequestHandler;
 import com.kamabizbazti.model.handlers.UserRequestHandler;
 import com.kamabizbazti.model.repository.ChartSelectionRepository;
@@ -91,31 +95,28 @@ public class GeneralRestControllerTest extends AbstractTestNGSpringContextTests 
         }
     }
 
-    //TODO ADD PROPER EXCEPTION
     @Test
     public void testGetGeneralDataTableWrongSelection() throws Exception {
         String wrongSelectionId = "WRONG";
         ChartRequestWrapper requestWrapper = new ChartRequestWrapper();
-        requestWrapper.setChartSelection(chartSelectionRepository.findOne(ChartSelectionId.PREV_MONTH_AVG));
+        requestWrapper.setChartSelection(chartSelectionRepository.findOne(ChartSelectionIdEnum.PREV_MONTH_AVG));
         JsonObject jsonObject = testTools.objectToJsonObject(requestWrapper);
         jsonObject.get("chartSelection").getAsJsonObject().remove("selectionId");
         jsonObject.get("chartSelection").getAsJsonObject().addProperty("selectionId", wrongSelectionId);
         HttpResponseJson response = helper.getGeneralDataTableNegative(jsonObject.toString()).convertToHttpResponseJson();
         assertEquals(response.getHttpStatusCode(), 500);
         assertEquals(response.getObject().get("error").getAsString(), DataIntegrityErrorCode.INVALID_REQUEST_ENTITY.toString());
-        assertEquals(response.getObject().get("message").getAsString(), "Chart selection ID: " + wrongSelectionId + " does not exist");
+        assertEquals(response.getObject().get("message").getAsString(), "Invalid Request Entity");
     }
 
-    //TODO ADD PROPER EXCEPTION
     @Test
     public void testGetGeneralDataTableWithSelectionIdOnlyIsValid() throws Exception {
-        ChartSelection selectionDB = chartSelectionRepository.findOne(ChartSelectionId.PREV_MONTH_AVG);
+        ChartSelection selectionDB = chartSelectionRepository.findOne(ChartSelectionIdEnum.PREV_MONTH_AVG);
         ChartSelection selection = new ChartSelection();
-        selection.setSelectionId(ChartSelectionId.PREV_MONTH_AVG);
+        selection.setSelectionId(ChartSelectionIdEnum.PREV_MONTH_AVG);
         ChartRequestWrapper requestWrapper = new ChartRequestWrapper();
         requestWrapper.setChartSelection(selection);
         ChartWrapper wrapper = (ChartWrapper) helper.getGeneralDataTablePositive(requestWrapper).getObject();
-        System.out.println(wrapper.toString());
         Assert.assertNotNull(wrapper);
         Assert.assertNotNull(wrapper.getDataTable());
         Assert.assertEquals(selectionDB.getChartType(), wrapper.getChartType());
@@ -123,12 +124,11 @@ public class GeneralRestControllerTest extends AbstractTestNGSpringContextTests 
         Assert.assertEquals(selectionDB.getChartType(), wrapper.getChartType());
     }
 
-    //TODO ADD PROPER EXCEPTION
     @Test
     public void testGetGeneralDataTableWithValidSelectionAndInvalidOtherFields() throws Exception {
-        ChartSelection selectionDB = chartSelectionRepository.findOne(ChartSelectionId.PREV_MONTH_AVG);
+        ChartSelection selectionDB = chartSelectionRepository.findOne(ChartSelectionIdEnum.PREV_MONTH_AVG);
         ChartSelection selection = new ChartSelection();
-        selection.setSelectionId(ChartSelectionId.PREV_MONTH_AVG);
+        selection.setSelectionId(ChartSelectionIdEnum.PREV_MONTH_AVG);
         selection.setAuthRequired(true);
         selection.setChartType(ChartType.COLUMNCHART);
         selection.setDatePicker(true);
@@ -136,7 +136,6 @@ public class GeneralRestControllerTest extends AbstractTestNGSpringContextTests 
         ChartRequestWrapper requestWrapper = new ChartRequestWrapper();
         requestWrapper.setChartSelection(selection);
         ChartWrapper wrapper = (ChartWrapper) helper.getGeneralDataTablePositive(requestWrapper).getObject();
-        System.out.println(wrapper.toString());
         Assert.assertNotNull(wrapper);
         Assert.assertNotNull(wrapper.getDataTable());
         Assert.assertEquals(selectionDB.getChartType(), wrapper.getChartType());
@@ -144,38 +143,32 @@ public class GeneralRestControllerTest extends AbstractTestNGSpringContextTests 
         Assert.assertEquals(selectionDB.getChartType(), wrapper.getChartType());
     }
 
-//    Expected :INVALID_REQUEST_ENTITY
-//    Actual   :GENERAL_SERVER_ERROR
     @Test
     public void testGetGeneralDataTableNullSelection() throws Exception {
         ChartRequestWrapper requestWrapper = new ChartRequestWrapper();
         requestWrapper.setChartSelection(null);
-        HttpResponseJson response = helper.getGeneralDataTableNegative(testTools.ObjectToJson(requestWrapper)).convertToHttpResponseJson();
+        HttpResponseJson response = helper.getGeneralDataTableNegative(testTools.objectToJson(requestWrapper)).convertToHttpResponseJson();
         assertEquals(response.getHttpStatusCode(), 500);
-        assertEquals(response.getObject().get("error").getAsString(), DataIntegrityErrorCode.INVALID_REQUEST_ENTITY.toString());
-        assertEquals(response.getObject().get("message").getAsString(), "Invalid Request Entity");
+        assertEquals(response.getObject().get("error").getAsString(), DataIntegrityErrorCode.INVALID_PARAMETER.toString());
+        assertEquals(response.getObject().get("message").getAsString(), "Chart selection can't be blank");
     }
 
-//    Expected :INVALID_REQUEST_ENTITY
-//    Actual   :GENERAL_SERVER_ERROR
     @Test
     public void testGetGeneralDataTableWithoutSelection() throws Exception {
         HttpResponseJson response = helper.getGeneralDataTableNegative("{}").convertToHttpResponseJson();
         assertEquals(response.getHttpStatusCode(), 500);
-        assertEquals(response.getObject().get("error").getAsString(), DataIntegrityErrorCode.INVALID_REQUEST_ENTITY.toString());
-        assertEquals(response.getObject().get("message").getAsString(), "Invalid Request Entity");
+        assertEquals(response.getObject().get("error").getAsString(), DataIntegrityErrorCode.INVALID_PARAMETER.toString());
+        assertEquals(response.getObject().get("message").getAsString(), "Chart selection can't be blank");
     }
 
-    //    Expected :INVALID_REQUEST_ENTITY
-//    Actual   :GENERAL_SERVER_ERROR
     @Test
     public void testGetGeneralDataTableWithUserSelection() throws Exception {
         ChartSelection selection = chartSelectionRepository.findOne(UserRequestHandler.DEFAULT_CHART_SELECTION);
         ChartRequestWrapper requestWrapper = new ChartRequestWrapper();
         requestWrapper.setChartSelection(selection);
-        HttpResponseJson response = helper.getGeneralDataTableNegative(testTools.ObjectToJson(requestWrapper)).convertToHttpResponseJson();
+        HttpResponseJson response = helper.getGeneralDataTableNegative(testTools.objectToJson(requestWrapper)).convertToHttpResponseJson();
         assertEquals(response.getHttpStatusCode(), 500);
-        assertEquals(response.getObject().get("error").getAsString(), DataIntegrityErrorCode.INVALID_REQUEST_ENTITY.toString());
-        assertEquals(response.getObject().get("message").getAsString(), "Invalid Request Entity");
+        assertEquals(response.getObject().get("error").getAsString(), EntitiesErrorCode.UNKNOWN_CHART_SELECTION_ID.toString());
+        assertEquals(response.getObject().get("message").getAsString(), "Unknown chart selection ID");
     }
 }

@@ -4,6 +4,8 @@ import com.google.gson.reflect.TypeToken;
 import com.kamabizbazti.common.TestConfiguration;
 import com.kamabizbazti.common.entities.HttpResponse;
 import com.kamabizbazti.common.entities.HttpResponseJson;
+import com.kamabizbazti.model.dao.GeneralCategory;
+import com.kamabizbazti.model.dao.Record;
 import com.kamabizbazti.model.entities.*;
 
 import java.lang.reflect.Type;
@@ -15,15 +17,15 @@ public class UserRestControllerConnectorHelper extends HttpConnectorGeneral {
         super(port);
     }
 
-    public HttpResponse getPurposesListPositive(String token) {
-        Type listType = new TypeToken<List<GeneralPurpose>>(){}.getType();
-        HttpResponse response = sendGetRequest(TestConfiguration.GET_PURPOSES_LIST, token);
+    public HttpResponse getCategoriesListPositive(String token) {
+        Type listType = new TypeToken<List<GeneralCategory>>(){}.getType();
+        HttpResponse response = sendGetRequest(TestConfiguration.GET_CATEGORIES_LIST, token);
         response.setObject(testTools.stringToObject((String) response.getObject(), listType));
         return response;
     }
 
-    public HttpResponse getPurposesListNegative(String token) {
-        return sendGetRequest(TestConfiguration.GET_PURPOSES_LIST, token);
+    public HttpResponse getCategoriesListNegative(String token) {
+        return sendGetRequest(TestConfiguration.GET_CATEGORIES_LIST, token);
     }
 
     public HttpResponse getUserDefaultDataTablePositive(String token){
@@ -46,7 +48,7 @@ public class UserRestControllerConnectorHelper extends HttpConnectorGeneral {
         return sendPostRequest(TestConfiguration.GET_USER_DATATABLE, jsonString, token);
     }
 
-    public HttpResponse addRecordPositive(Record record, String token) {
+    public HttpResponse addRecordPositive(ERecord record, String token) {
         HttpResponse response = sendPostRequest(TestConfiguration.ADD_RECORD, record, token);
         response.setObject(testTools.stringToObject((String) response.getObject(), Record.class));
         return response;
@@ -56,18 +58,22 @@ public class UserRestControllerConnectorHelper extends HttpConnectorGeneral {
         return sendPostRequest(TestConfiguration.ADD_RECORD, jsonString, token);
     }
 
-    public HttpResponse addCustomPurposePositive(CustomPurpose customPurpose, String token) {
-        HttpResponse response = sendPostRequest(TestConfiguration.ADD_CUSTOM_PURPOSE, customPurpose, token);
-        response.setObject(testTools.stringToObject((String) response.getObject(), GeneralPurpose.class));
+    public HttpResponse addCustomCategoryPositive(ECustomCategory customCategory, String token) {
+        HttpResponse response = sendPostRequest(TestConfiguration.ADD_CUSTOM_CATEGORY, customCategory, token);
+        response.setObject(testTools.stringToObject((String) response.getObject(), GeneralCategory.class));
         return response;
     }
 
-    public HttpResponse addCustomPurposeNegative(String jsonString, String token) {
-        return sendPostRequest(TestConfiguration.ADD_CUSTOM_PURPOSE, jsonString, token);
+    public HttpResponse addCustomCategoryNegative(String jsonString, String token) {
+        return sendPostRequest(TestConfiguration.ADD_CUSTOM_CATEGORY, jsonString, token);
     }
 
     public HttpResponseJson getRecordsListJson(DatePicker datePicker, String token) {
         return sendPostRequest(TestConfiguration.GET_RECORDS_LIST, datePicker, token).convertToHttpResponseJson();
+    }
+
+    public HttpResponseJson getRecordsListJson(String request, String token) {
+        return sendPostRequest(TestConfiguration.GET_RECORDS_LIST, request, token).convertToHttpResponseJson();
     }
 
     public HttpResponse deleteRecordPositive(Long recordId, String token) {
@@ -80,7 +86,7 @@ public class UserRestControllerConnectorHelper extends HttpConnectorGeneral {
         return sendPostRequest(TestConfiguration.DELETE_RECORD, jsonString, token);
     }
 
-    public HttpResponse editRecordPositive(Record record, String token) {
+    public HttpResponse editRecordPositive(EditRecordWrapper record, String token) {
         HttpResponse response = sendPostRequest(TestConfiguration.EDIT_RECORD, record, token);
         response.setObject(testTools.stringToObject((String) response.getObject(), Record.class));
         return response;

@@ -3,11 +3,12 @@ package com.kamabizbazti.dao;
 import com.kamabizbazti.DataGenerator;
 import com.kamabizbazti.KamaBizbaztiBootApplication;
 import com.kamabizbazti.config.KamaBizbaztiApplicationConfig;
-import com.kamabizbazti.model.entities.*;
+import com.kamabizbazti.model.dao.*;
+import com.kamabizbazti.model.enumerations.CategoryType;
 import com.kamabizbazti.model.repository.*;
 import com.kamabizbazti.security.entities.Authority;
 import com.kamabizbazti.security.entities.AuthorityName;
-import com.kamabizbazti.security.entities.User;
+import com.kamabizbazti.model.dao.User;
 import com.kamabizbazti.security.repository.AuthorityRepository;
 import com.kamabizbazti.security.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,8 +41,8 @@ public class EntityRelationsValidation extends AbstractTestNGSpringContextTests 
     private static final String languageToChange = "HEB";
     private static final String currencyToChange = "RUB";
     private static List <User> users;
-    private static List <GeneralPurpose> customPps;
-    private static List <GeneralPurpose> generalPps;
+    private static List <GeneralCategory> customCategories;
+    private static List <GeneralCategory> generalCategories;
 
     @Autowired
     private DataGenerator dataGenerator;
@@ -53,10 +54,10 @@ public class EntityRelationsValidation extends AbstractTestNGSpringContextTests 
     private CurrencyRepository currencyRepository;
 
     @Autowired
-    private GeneralPurposeRepository generalPurposeRepository;
+    private GeneralCategoryRepository generalCategoryRepository;
 
     @Autowired
-    private CustomPurposeRepository customPurposeRepository;
+    private CustomCategoryRepository customCategoryRepository;
 
     @Autowired
     private AuthorityRepository authorityRepository;
@@ -73,8 +74,8 @@ public class EntityRelationsValidation extends AbstractTestNGSpringContextTests 
     @BeforeClass
     public void generateData() {
         dataGenerator.insertUsers(userRepository, languageRepository, currencyRepository, authorityRepository, passwordEncoder, 2);
-        dataGenerator.insertCustomPurposes(userRepository, generalPurposeRepository, customPurposeRepository);
-        dataGenerator.insertRecords(userRepository, recordRepository, customPurposeRepository, 2, 150);
+        dataGenerator.insertCustomCategories(userRepository, generalCategoryRepository, customCategoryRepository);
+        dataGenerator.insertRecords(userRepository, recordRepository, customCategoryRepository, 2, 150);
         users = userRepository.findAll();
     }
 
@@ -202,46 +203,46 @@ public class EntityRelationsValidation extends AbstractTestNGSpringContextTests 
     }
 
     @Test(expectedExceptions = DataIntegrityViolationException.class, dependsOnMethods = "validateRecordCanBeDeleted")
-    public void validateCustomPurposeInUseCantBeDeleted() throws Exception {
-        customPps = customPurposeRepository.findAllCustomPurposes(users.get(0).getId());
-        customPurposeRepository.delete(customPps.get(0).getPurposeId());
+    public void validateCustomCategoryInUseCantBeDeleted() throws Exception {
+        customCategories = customCategoryRepository.findAllCustomCategories(users.get(0).getId());
+        customCategoryRepository.delete(customCategories.get(0).getCategoryId());
     }
 
-    @Test(dependsOnMethods = "validateCustomPurposeInUseCantBeDeleted")
-    public void validateCustomPurposeWasNotDeleted() throws Exception {
-        Assert.assertNotNull(customPurposeRepository.findOne(customPps.get(0).getPurposeId()));
+    @Test(dependsOnMethods = "validateCustomCategoryInUseCantBeDeleted")
+    public void validateCustomCategoryWasNotDeleted() throws Exception {
+        Assert.assertNotNull(customCategoryRepository.findOne(customCategories.get(0).getCategoryId()));
     }
 
-    @Test(expectedExceptions = DataIntegrityViolationException.class, dependsOnMethods = "validateCustomPurposeWasNotDeleted")
-    public void validateGeneralPurposeInUseCantBeDeleted() throws Exception {
-        generalPps = generalPurposeRepository.findAll();
-        generalPurposeRepository.delete(generalPps.get(0).getPurposeId());
+    @Test(expectedExceptions = DataIntegrityViolationException.class, dependsOnMethods = "validateCustomCategoryWasNotDeleted")
+    public void validateGeneralCategoryInUseCantBeDeleted() throws Exception {
+        generalCategories = generalCategoryRepository.findAll();
+        generalCategoryRepository.delete(generalCategories.get(0).getCategoryId());
     }
 
-    @Test(dependsOnMethods = "validateGeneralPurposeInUseCantBeDeleted")
-    public void validateGeneralPurposeWasNotDeleted() throws Exception {
-        Assert.assertNotNull(generalPurposeRepository.findOne(generalPps.get(0).getPurposeId()));
+    @Test(dependsOnMethods = "validateGeneralCategoryInUseCantBeDeleted")
+    public void validateGeneralCategoryWasNotDeleted() throws Exception {
+        Assert.assertNotNull(generalCategoryRepository.findOne(generalCategories.get(0).getCategoryId()));
     }
 
-    @Test(dependsOnMethods = "validateGeneralPurposeWasNotDeleted")
-    public void validateGeneralPurposeNotInUseCanBeDeleted() throws Exception {
-        GeneralPurpose purpose = new GeneralPurpose("Test Type", PurposeType.GENERAL);
-        long id = generalPurposeRepository.save(purpose).getPurposeId();
-        Assert.assertNotNull(generalPurposeRepository.findOne(id));
-        generalPurposeRepository.delete(id);
-        Assert.assertNull(generalPurposeRepository.findOne(id));
+    @Test(dependsOnMethods = "validateGeneralCategoryWasNotDeleted")
+    public void validateGeneralCategoryNotInUseCanBeDeleted() throws Exception {
+        GeneralCategory category = new GeneralCategory("Test Type", CategoryType.GENERAL);
+        long id = generalCategoryRepository.save(category).getCategoryId();
+        Assert.assertNotNull(generalCategoryRepository.findOne(id));
+        generalCategoryRepository.delete(id);
+        Assert.assertNull(generalCategoryRepository.findOne(id));
     }
 
-    @Test(dependsOnMethods = "validateGeneralPurposeNotInUseCanBeDeleted")
-    public void validateCustomPurposeNotInUseCanBeDeleted() throws Exception {
-        CustomPurpose purpose = new CustomPurpose(users.get(0), "User test type");
-        long id = customPurposeRepository.save(purpose).getPurposeId();
-        Assert.assertNotNull(customPurposeRepository.findOne(id));
-        customPurposeRepository.delete(id);
-        Assert.assertNull(customPurposeRepository.findOne(id));
+    @Test(dependsOnMethods = "validateGeneralCategoryNotInUseCanBeDeleted")
+    public void validateCustomCategoryNotInUseCanBeDeleted() throws Exception {
+        CustomCategory category = new CustomCategory(users.get(0), "User test type");
+        long id = customCategoryRepository.save(category).getCategoryId();
+        Assert.assertNotNull(customCategoryRepository.findOne(id));
+        customCategoryRepository.delete(id);
+        Assert.assertNull(customCategoryRepository.findOne(id));
     }
 
-    @Test(dependsOnMethods = "validateCustomPurposeNotInUseCanBeDeleted")
+    @Test(dependsOnMethods = "validateCustomCategoryNotInUseCanBeDeleted")
     public void validateUserCanBeDeleted() throws Exception {
         User user1 = userRepository.findOne(users.get(0).getId());
         User user2 = userRepository.findOne(users.get(1).getId());
@@ -249,9 +250,9 @@ public class EntityRelationsValidation extends AbstractTestNGSpringContextTests 
         Assert.assertNotNull(user2);
         Assert.assertEquals(user1.getUsername(), users.get(0).getUsername());
         Assert.assertEquals(user2.getUsername(), users.get(1).getUsername());
-        List <GeneralPurpose> ppsUser1Before = customPurposeRepository.findAllCustomPurposes(user1.getId());
-        List <GeneralPurpose> ppsUser2Before = customPurposeRepository.findAllCustomPurposes(user2.getId());
-        List <GeneralPurpose> generalPpsBefore = generalPurposeRepository.findAll();
+        List <GeneralCategory> ppsUser1Before = customCategoryRepository.findAllCustomCategories(user1.getId());
+        List <GeneralCategory> ppsUser2Before = customCategoryRepository.findAllCustomCategories(user2.getId());
+        List <GeneralCategory> generalPpsBefore = generalCategoryRepository.findAll();
         List <Language> languagesBefore = (List <Language>) languageRepository.findAll();
         List <Currency> currenciesBefore = (List <Currency>)currencyRepository.findAll();
         List <Record> recordsUser1Before = recordRepository.getRecords(user1.getId(), 1, System.currentTimeMillis());
@@ -276,14 +277,14 @@ public class EntityRelationsValidation extends AbstractTestNGSpringContextTests 
         user2 = userRepository.findOne(users.get(1).getId());
         Assert.assertNull(user1);
         Assert.assertNotNull(user2);
-        List <GeneralPurpose> ppsUser1After = customPurposeRepository.findAllCustomPurposes(users.get(0).getId());
-        List <GeneralPurpose> ppsUser2After = customPurposeRepository.findAllCustomPurposes(user2.getId());
-        List <GeneralPurpose> generalPpsAfter = generalPurposeRepository.findAll();
+        List <GeneralCategory> ppsUser1After = customCategoryRepository.findAllCustomCategories(users.get(0).getId());
+        List <GeneralCategory> ppsUser2After = customCategoryRepository.findAllCustomCategories(user2.getId());
+        List <GeneralCategory> generalPpsAfter = generalCategoryRepository.findAll();
         List <Language> languagesAfter = (List <Language>) languageRepository.findAll();
         List <Currency> currenciesAfter = (List <Currency>) currencyRepository.findAll();
         List <Record> recordsUser1After = recordRepository.getRecords(users.get(0).getId(), 1, System.currentTimeMillis());
         List <Record> recordsUser2After = recordRepository.getRecords(user2.getId(), 1, System.currentTimeMillis());
-        Assert.assertEquals(customPurposeRepository.findAllCustomPurposes(users.get(0).getId()).size(), 0);
+        Assert.assertEquals(customCategoryRepository.findAllCustomCategories(users.get(0).getId()).size(), 0);
         Assert.assertEquals(ppsUser1After.size(), 0);
         Assert.assertNotNull(ppsUser2After);
         Assert.assertNotNull(generalPpsAfter);
@@ -299,12 +300,12 @@ public class EntityRelationsValidation extends AbstractTestNGSpringContextTests 
         Assert.assertEquals(recordsUser2Before.size(), recordsUser2After.size());
         userRepository.deleteAll();
         Assert.assertEquals(userRepository.findAll().size(), 0);
-        List <GeneralPurpose> customPurposes = (List <GeneralPurpose>) customPurposeRepository.findAll();
-        List <GeneralPurpose> generalPpsAfter1 = generalPurposeRepository.findAll();
+        List <GeneralCategory> customCategories = (List <GeneralCategory>) customCategoryRepository.findAll();
+        List <GeneralCategory> generalPpsAfter1 = generalCategoryRepository.findAll();
         List <Language> languagesAfter1 = (List <Language>) languageRepository.findAll();
         List <Currency> currenciesAfter1 = (List <Currency>) currencyRepository.findAll();
         Assert.assertEquals(recordRepository.count(), 0);
-        Assert.assertEquals(customPurposes.size(), generalPpsAfter1.size());
+        Assert.assertEquals(customCategories.size(), generalPpsAfter1.size());
         Assert.assertNotNull(generalPpsAfter1);
         Assert.assertNotNull(languagesAfter1);
         Assert.assertNotNull(currenciesAfter1);

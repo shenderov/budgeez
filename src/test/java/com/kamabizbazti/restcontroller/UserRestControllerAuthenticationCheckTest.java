@@ -7,11 +7,14 @@ import com.kamabizbazti.common.entities.HttpResponseJson;
 import com.kamabizbazti.common.http.AuthenticationRestControllerConnectorHelper;
 import com.kamabizbazti.common.http.UserRestControllerConnectorHelper;
 import com.kamabizbazti.config.KamaBizbaztiApplicationConfig;
+import com.kamabizbazti.model.dao.GeneralCategory;
+import com.kamabizbazti.model.dao.Record;
 import com.kamabizbazti.model.entities.*;
+import com.kamabizbazti.model.enumerations.ChartSelectionIdEnum;
 import com.kamabizbazti.model.repository.ChartSelectionRepository;
-import com.kamabizbazti.model.repository.GeneralPurposeRepository;
+import com.kamabizbazti.model.repository.GeneralCategoryRepository;
 import com.kamabizbazti.security.entities.SignUpWrapper;
-import com.kamabizbazti.security.entities.User;
+import com.kamabizbazti.model.dao.User;
 import com.kamabizbazti.security.repository.UserRepository;
 import com.kamabizbazti.security.service.JwtAuthenticationResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,7 +53,7 @@ public class UserRestControllerAuthenticationCheckTest extends AbstractTestNGSpr
     private UserRepository userRepository;
 
     @Autowired
-    private GeneralPurposeRepository generalPurposeRepository;
+    private GeneralCategoryRepository generalCategoryRepository;
 
     @Autowired
     private TestTools testTools;
@@ -77,8 +80,8 @@ public class UserRestControllerAuthenticationCheckTest extends AbstractTestNGSpr
     }
 
     @Test
-    public void testGetPurposesList(){
-        HttpResponseJson response = helper.getPurposesListNegative(null).convertToHttpResponseJson();
+    public void testGetCategoriesList(){
+        HttpResponseJson response = helper.getCategoriesListNegative(null).convertToHttpResponseJson();
         assertEquals(response.getHttpStatusCode(), 401);
         assertEquals(response.getObject().get("error").getAsString(), "Unauthorized");
         assertEquals(response.getObject().get("message").getAsString(), "Unauthorized");
@@ -93,8 +96,8 @@ public class UserRestControllerAuthenticationCheckTest extends AbstractTestNGSpr
     }
 
     @Test
-    public void testGetPurposesListInvalidToken(){
-        HttpResponseJson response = helper.getPurposesListNegative(expiredToken).convertToHttpResponseJson();
+    public void testGetCategoriesListInvalidToken(){
+        HttpResponseJson response = helper.getCategoriesListNegative(expiredToken).convertToHttpResponseJson();
         assertEquals(response.getHttpStatusCode(), 401);
         assertEquals(response.getObject().get("error").getAsString(), "Unauthorized");
         assertEquals(response.getObject().get("message").getAsString(), "Unauthorized");
@@ -111,8 +114,8 @@ public class UserRestControllerAuthenticationCheckTest extends AbstractTestNGSpr
     @Test
     public void testGetUserDataTable(){
         ChartRequestWrapper requestWrapper = new ChartRequestWrapper();
-        requestWrapper.setChartSelection(chartSelectionRepository.findOne(ChartSelectionId.USER_CURRENT_MONTH));
-        HttpResponseJson response = helper.getGeneralDataTableNegative(testTools.ObjectToJson(requestWrapper),null).convertToHttpResponseJson();
+        requestWrapper.setChartSelection(chartSelectionRepository.findOne(ChartSelectionIdEnum.USER_CURRENT_MONTH));
+        HttpResponseJson response = helper.getGeneralDataTableNegative(testTools.objectToJson(requestWrapper),null).convertToHttpResponseJson();
         assertEquals(response.getHttpStatusCode(), 401);
         assertEquals(response.getObject().get("error").getAsString(), "Unauthorized");
         assertEquals(response.getObject().get("message").getAsString(), "Unauthorized");
@@ -120,21 +123,24 @@ public class UserRestControllerAuthenticationCheckTest extends AbstractTestNGSpr
 
     @Test
     public void testAddRecord(){
-        GeneralPurpose purpose = generalPurposeRepository.findAll().get(0);
-        Record record = new Record(null, purpose, 12.5, System.currentTimeMillis());
+        GeneralCategory category = generalCategoryRepository.findAll().get(0);
+        ERecord record = new ERecord();
+        record.setCategoryId(category.getCategoryId());
+        record.setAmount(12.5);
+        record.setDate(System.currentTimeMillis());
         HttpResponse httpResponse = helper.addRecordPositive(record, token);
         this.record = (Record) httpResponse.getObject();
-        HttpResponseJson response = helper.addRecordNegative(testTools.ObjectToJson(this.record),null).convertToHttpResponseJson();
+        HttpResponseJson response = helper.addRecordNegative(testTools.objectToJson(this.record),null).convertToHttpResponseJson();
         assertEquals(response.getHttpStatusCode(), 401);
         assertEquals(response.getObject().get("error").getAsString(), "Unauthorized");
         assertEquals(response.getObject().get("message").getAsString(), "Unauthorized");
     }
 
     @Test
-    public void testCustomPurpose(){
-        CustomPurpose purpose = new CustomPurpose();
-        purpose.setName("New purpose");
-        HttpResponseJson response = helper.addCustomPurposeNegative(testTools.ObjectToJson(purpose),null).convertToHttpResponseJson();
+    public void testCustomCategory(){
+        GeneralCategory category = new GeneralCategory();
+        category.setName("New category");
+        HttpResponseJson response = helper.addCustomCategoryNegative(testTools.objectToJson(category),null).convertToHttpResponseJson();
         assertEquals(response.getHttpStatusCode(), 401);
         assertEquals(response.getObject().get("error").getAsString(), "Unauthorized");
         assertEquals(response.getObject().get("message").getAsString(), "Unauthorized");
@@ -161,10 +167,10 @@ public class UserRestControllerAuthenticationCheckTest extends AbstractTestNGSpr
 
     @Test(dependsOnMethods = {"testAddRecord"})
     public void testEditRecord(){
-        GeneralPurpose purpose = generalPurposeRepository.findAll().get(0);
-        //Record record = new Record(user, purpose, 12.5, System.currentTimeMillis());
-        record.setPurpose(purpose);
-        HttpResponseJson response = helper.editRecordNegative(testTools.ObjectToJson(record),null).convertToHttpResponseJson();
+        GeneralCategory category = generalCategoryRepository.findAll().get(0);
+        //Record record = new Record(user, category, 12.5, System.currentTimeMillis());
+        record.setCategory(category);
+        HttpResponseJson response = helper.editRecordNegative(testTools.objectToJson(record),null).convertToHttpResponseJson();
         assertEquals(response.getHttpStatusCode(), 401);
         assertEquals(response.getObject().get("error").getAsString(), "Unauthorized");
         assertEquals(response.getObject().get("message").getAsString(), "Unauthorized");

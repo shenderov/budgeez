@@ -8,10 +8,15 @@ import com.kamabizbazti.common.http.AuthenticationRestControllerConnectorHelper;
 import com.kamabizbazti.common.http.GeneralRestControllerConnectorHelper;
 import com.kamabizbazti.common.http.UserRestControllerConnectorHelper;
 import com.kamabizbazti.config.KamaBizbaztiApplicationConfig;
+import com.kamabizbazti.model.dao.ChartSelection;
 import com.kamabizbazti.model.entities.*;
+import com.kamabizbazti.model.enumerations.ChartSelectionIdEnum;
+import com.kamabizbazti.model.enumerations.ChartType;
 import com.kamabizbazti.model.exceptions.codes.DataIntegrityErrorCode;
+import com.kamabizbazti.model.exceptions.codes.EntitiesErrorCode;
 import com.kamabizbazti.model.handlers.GeneralRequestHandler;
 import com.kamabizbazti.model.handlers.UserRequestHandler;
+import com.kamabizbazti.model.interfaces.IDateHelper;
 import com.kamabizbazti.model.repository.ChartSelectionRepository;
 import com.kamabizbazti.security.entities.SignUpWrapper;
 import com.kamabizbazti.security.repository.UserRepository;
@@ -49,6 +54,9 @@ public class UserRestControllerGetUserDatatableTest extends AbstractTestNGSpring
     @Autowired
     private TestTools testTools;
 
+    @Autowired
+    private IDateHelper dateHelper;
+
     private String name = "User Datatable";
     private String email1 = "userdatatable1@kamabizbazti.com";
     private String password = "Password";
@@ -57,7 +65,6 @@ public class UserRestControllerGetUserDatatableTest extends AbstractTestNGSpring
     private UserRestControllerConnectorHelper helper;
     private AuthenticationRestControllerConnectorHelper authHelper;
     private GeneralRestControllerConnectorHelper generalHelper;
-
 
     @BeforeClass
     public void setup() {
@@ -88,13 +95,17 @@ public class UserRestControllerGetUserDatatableTest extends AbstractTestNGSpring
         Assert.assertEquals(wrapper.getChartType(), selection.getChartType());
     }
 
-    //TODO BUG
     @Test
     public void testGetUserGeneralDataTable() throws Exception {
         List<ChartSelection> selections = (List<ChartSelection>) generalHelper.getUserChartSelectionsListPositive().getObject();
+        DatePicker datePicker = new DatePicker();
+        datePicker.setEndDate(dateHelper.getLastDayOfCurrentMonth());
+        datePicker.setStartDate(dateHelper.getFirstDayOfCurrentMonth());
         for (ChartSelection c : selections) {
             ChartRequestWrapper requestWrapper = new ChartRequestWrapper();
             requestWrapper.setChartSelection(c);
+            if(c.isDatePicker())
+                requestWrapper.setDatePicker(datePicker);
             ChartWrapper wrapper = (ChartWrapper) helper.getGeneralDataTablePositive(requestWrapper, token1).getObject();
             Assert.assertNotNull(wrapper);
             Assert.assertNotNull(wrapper.getDataTable());
@@ -104,31 +115,28 @@ public class UserRestControllerGetUserDatatableTest extends AbstractTestNGSpring
         }
     }
 
-    //TODO ADD PROPER EXCEPTION
     @Test
     public void testGetUserGeneralDataTableWrongSelection() throws Exception {
         String wrongSelectionId = "WRONG";
         ChartRequestWrapper requestWrapper = new ChartRequestWrapper();
-        requestWrapper.setChartSelection(chartSelectionRepository.findOne(ChartSelectionId.USER_CURRENT_MONTH));
+        requestWrapper.setChartSelection(chartSelectionRepository.findOne(ChartSelectionIdEnum.USER_CURRENT_MONTH));
         JsonObject jsonObject = testTools.objectToJsonObject(requestWrapper);
         jsonObject.get("chartSelection").getAsJsonObject().remove("selectionId");
         jsonObject.get("chartSelection").getAsJsonObject().addProperty("selectionId", wrongSelectionId);
         HttpResponseJson response = helper.getGeneralDataTableNegative(jsonObject.toString(), token1).convertToHttpResponseJson();
         assertEquals(response.getHttpStatusCode(), 500);
         assertEquals(response.getObject().get("error").getAsString(), DataIntegrityErrorCode.INVALID_REQUEST_ENTITY.toString());
-        assertEquals(response.getObject().get("message").getAsString(), "Chart selection ID: " + wrongSelectionId + " does not exist");
+        assertEquals(response.getObject().get("message").getAsString(), "Invalid Request Entity");
     }
 
-    //TODO FIX METHOD
     @Test
     public void testGetGeneralDataTableWithSelectionIdOnlyIsValid() throws Exception {
-        ChartSelection selectionDB = chartSelectionRepository.findOne(ChartSelectionId.USER_CURRENT_MONTH);
+        ChartSelection selectionDB = chartSelectionRepository.findOne(ChartSelectionIdEnum.USER_CURRENT_MONTH);
         ChartSelection selection = new ChartSelection();
-        selection.setSelectionId(ChartSelectionId.USER_CURRENT_MONTH);
+        selection.setSelectionId(ChartSelectionIdEnum.USER_CURRENT_MONTH);
         ChartRequestWrapper requestWrapper = new ChartRequestWrapper();
         requestWrapper.setChartSelection(selection);
         ChartWrapper wrapper = (ChartWrapper) helper.getGeneralDataTablePositive(requestWrapper, token1).getObject();
-        System.out.println(wrapper.toString());
         Assert.assertNotNull(wrapper);
         Assert.assertNotNull(wrapper.getDataTable());
         Assert.assertEquals(selectionDB.getChartType(), wrapper.getChartType());
@@ -136,12 +144,11 @@ public class UserRestControllerGetUserDatatableTest extends AbstractTestNGSpring
         Assert.assertEquals(selectionDB.getChartType(), wrapper.getChartType());
     }
 
-    //TODO FIX METHOD
     @Test
     public void testGetGeneralDataTableWithValidSelectionAndInvalidOtherFields() throws Exception {
-        ChartSelection selectionDB = chartSelectionRepository.findOne(ChartSelectionId.USER_CURRENT_MONTH);
+        ChartSelection selectionDB = chartSelectionRepository.findOne(ChartSelectionIdEnum.USER_CURRENT_MONTH);
         ChartSelection selection = new ChartSelection();
-        selection.setSelectionId(ChartSelectionId.USER_CURRENT_MONTH);
+        selection.setSelectionId(ChartSelectionIdEnum.USER_CURRENT_MONTH);
         selection.setAuthRequired(true);
         selection.setChartType(ChartType.COLUMNCHART);
         selection.setDatePicker(true);
@@ -149,7 +156,6 @@ public class UserRestControllerGetUserDatatableTest extends AbstractTestNGSpring
         ChartRequestWrapper requestWrapper = new ChartRequestWrapper();
         requestWrapper.setChartSelection(selection);
         ChartWrapper wrapper = (ChartWrapper) helper.getGeneralDataTablePositive(requestWrapper, token1).getObject();
-        System.out.println(wrapper.toString());
         Assert.assertNotNull(wrapper);
         Assert.assertNotNull(wrapper.getDataTable());
         Assert.assertEquals(selectionDB.getChartType(), wrapper.getChartType());
@@ -157,66 +163,119 @@ public class UserRestControllerGetUserDatatableTest extends AbstractTestNGSpring
         Assert.assertEquals(selectionDB.getChartType(), wrapper.getChartType());
     }
 
-    //TODO ADD PROPER EXCEPTION
     @Test
     public void testGetUserGeneralDataTableNullSelection() throws Exception {
         ChartRequestWrapper requestWrapper = new ChartRequestWrapper();
         requestWrapper.setChartSelection(null);
-        HttpResponseJson response = helper.getGeneralDataTableNegative(testTools.ObjectToJson(requestWrapper), token1).convertToHttpResponseJson();
-        System.out.println(response.getObject().toString());
+        HttpResponseJson response = helper.getGeneralDataTableNegative(testTools.objectToJson(requestWrapper), token1).convertToHttpResponseJson();
         assertEquals(response.getHttpStatusCode(), 500);
-        assertEquals(response.getObject().get("error").getAsString(), DataIntegrityErrorCode.INVALID_REQUEST_ENTITY.toString());
-        assertEquals(response.getObject().get("message").getAsString(), "Invalid Request Entity");
+        assertEquals(response.getObject().get("error").getAsString(), DataIntegrityErrorCode.INVALID_PARAMETER.toString());
+        assertEquals(response.getObject().get("message").getAsString(), "Chart selection can't be blank");
     }
 
     @Test
     public void testDataTableRequiresDatePickerWithDatePickerNull() throws Exception {
-        ChartSelection selectionDB = chartSelectionRepository.findOne(ChartSelectionId.USER_CUSTOM_PERIOD_AVG);
+        ChartSelection selectionDB = chartSelectionRepository.findOne(ChartSelectionIdEnum.USER_CUSTOM_PERIOD_AVG);
         ChartRequestWrapper requestWrapper = new ChartRequestWrapper();
         requestWrapper.setChartSelection(selectionDB);
-        HttpResponseJson response = helper.getGeneralDataTableNegative(testTools.ObjectToJson(requestWrapper), token1).convertToHttpResponseJson();
+        HttpResponseJson response = helper.getGeneralDataTableNegative(testTools.objectToJson(requestWrapper), token1).convertToHttpResponseJson();
         System.out.println(response.getObject().toString());
         assertEquals(response.getHttpStatusCode(), 500);
         assertEquals(response.getObject().get("error").getAsString(), DataIntegrityErrorCode.INVALID_PARAMETER.toString());
-        assertEquals(response.getObject().get("message").getAsString(), "Date picker can't be null for selection id: " + ChartSelectionId.USER_CUSTOM_PERIOD_AVG);
+        assertEquals(response.getObject().get("message").getAsString(), "Date picker can't be blank");
     }
 
     @Test
     public void testDataTableRequiresDatePickerWithEndDateBeforeStartDate() throws Exception {
-        ChartSelection selectionDB = chartSelectionRepository.findOne(ChartSelectionId.USER_CUSTOM_PERIOD_AVG);
+        ChartSelection selectionDB = chartSelectionRepository.findOne(ChartSelectionIdEnum.USER_CUSTOM_PERIOD_AVG);
         DatePicker picker = new DatePicker();
         picker.setEndDate(System.currentTimeMillis()-100000);
         picker.setStartDate(System.currentTimeMillis());
         ChartRequestWrapper requestWrapper = new ChartRequestWrapper();
         requestWrapper.setChartSelection(selectionDB);
         requestWrapper.setDatePicker(picker);
-        HttpResponseJson response = helper.getGeneralDataTableNegative(testTools.ObjectToJson(requestWrapper), token1).convertToHttpResponseJson();
+        HttpResponseJson response = helper.getGeneralDataTableNegative(testTools.objectToJson(requestWrapper), token1).convertToHttpResponseJson();
         System.out.println(response.getObject().toString());
         assertEquals(response.getHttpStatusCode(), 500);
         assertEquals(response.getObject().get("error").getAsString(), DataIntegrityErrorCode.DATES_ARE_NOT_CHRONOLOGICAL.toString());
         assertEquals(response.getObject().get("message").getAsString(), "End date before start date");
     }
 
-//    Expected :INVALID_REQUEST_ENTITY
-//    Actual   :GENERAL_SERVER_ERROR
     @Test
     public void testGetUserGeneralDataTableWithoutSelection() throws Exception {
         HttpResponseJson response = helper.getGeneralDataTableNegative("{}", token1).convertToHttpResponseJson();
         assertEquals(response.getHttpStatusCode(), 500);
-        assertEquals(response.getObject().get("error").getAsString(), DataIntegrityErrorCode.INVALID_REQUEST_ENTITY.toString());
-        assertEquals(response.getObject().get("message").getAsString(), "Invalid Request Entity");
+        assertEquals(response.getObject().get("error").getAsString(), DataIntegrityErrorCode.INVALID_PARAMETER.toString());
+        assertEquals(response.getObject().get("message").getAsString(), "Chart selection can't be blank");
     }
 
-//    Expected :INVALID_REQUEST_ENTITY
-//    Actual   :Internal Server Error
     @Test
     public void testGetUserDataTableWithGeneralSelection() throws Exception {
         ChartSelection selection = chartSelectionRepository.findOne(GeneralRequestHandler.DEFAULT_CHART_SELECTION);
         ChartRequestWrapper requestWrapper = new ChartRequestWrapper();
         requestWrapper.setChartSelection(selection);
-        HttpResponseJson response = helper.getGeneralDataTableNegative(testTools.ObjectToJson(requestWrapper), token1).convertToHttpResponseJson();
+        HttpResponseJson response = helper.getGeneralDataTableNegative(testTools.objectToJson(requestWrapper), token1).convertToHttpResponseJson();
+        assertEquals(response.getHttpStatusCode(), 500);
+        assertEquals(response.getObject().get("error").getAsString(), EntitiesErrorCode.UNKNOWN_CHART_SELECTION_ID.toString());
+        assertEquals(response.getObject().get("message").getAsString(), "Unknown chart selection ID");
+    }
+
+    @Test
+    public void testGetUserGeneralDataTableOnlyStartDate() throws Exception {
+        ChartSelection selection = chartSelectionRepository.findOne(ChartSelectionIdEnum.USER_CUSTOM_PERIOD_AVG);
+        DatePicker datePicker = new DatePicker();
+        datePicker.setStartDate(dateHelper.getFirstDayOfCurrentMonth());
+        ChartRequestWrapper requestWrapper = new ChartRequestWrapper();
+        requestWrapper.setChartSelection(selection);
+        requestWrapper.setDatePicker(datePicker);
+        HttpResponseJson response = helper.getGeneralDataTableNegative(testTools.objectToJson(requestWrapper), token1).convertToHttpResponseJson();
+        assertEquals(response.getHttpStatusCode(), 500);
+        assertEquals(response.getObject().get("error").getAsString(), DataIntegrityErrorCode.INVALID_PARAMETER.toString());
+        assertEquals(response.getObject().get("message").getAsString(), "End date can't be null");
+    }
+
+    @Test
+    public void testGetUserGeneralDataTableOnlyEndDate() throws Exception {
+        ChartSelection selection = chartSelectionRepository.findOne(ChartSelectionIdEnum.USER_CUSTOM_PERIOD_AVG);
+        DatePicker datePicker = new DatePicker();
+        datePicker.setEndDate(dateHelper.getLastDayOfCurrentMonth());
+        ChartRequestWrapper requestWrapper = new ChartRequestWrapper();
+        requestWrapper.setChartSelection(selection);
+        requestWrapper.setDatePicker(datePicker);
+        HttpResponseJson response = helper.getGeneralDataTableNegative(testTools.objectToJson(requestWrapper), token1).convertToHttpResponseJson();
+        assertEquals(response.getHttpStatusCode(), 500);
+        assertEquals(response.getObject().get("error").getAsString(), DataIntegrityErrorCode.INVALID_PARAMETER.toString());
+        assertEquals(response.getObject().get("message").getAsString(), "Start date can't be null");
+    }
+
+    @Test
+    public void testGetUserGeneralDataTableStartDateString() throws Exception {
+        ChartSelection selection = chartSelectionRepository.findOne(ChartSelectionIdEnum.USER_CUSTOM_PERIOD_AVG);
+        JsonObject datePicker = new JsonObject();
+        datePicker.addProperty("startDate", "string");
+        datePicker.addProperty("endDate", dateHelper.getLastDayOfCurrentMonth());
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("chartSelection", testTools.objectToJson(selection));
+        jsonObject.addProperty("datePicker", datePicker.toString());
+        HttpResponseJson response = helper.getGeneralDataTableNegative(jsonObject.toString(), token1).convertToHttpResponseJson();
         assertEquals(response.getHttpStatusCode(), 500);
         assertEquals(response.getObject().get("error").getAsString(), DataIntegrityErrorCode.INVALID_REQUEST_ENTITY.toString());
         assertEquals(response.getObject().get("message").getAsString(), "Invalid Request Entity");
     }
+
+    @Test
+    public void testGetUserGeneralDataTableOnlyStartDateNegative() throws Exception {
+        ChartSelection selection = chartSelectionRepository.findOne(ChartSelectionIdEnum.USER_CUSTOM_PERIOD_AVG);
+        DatePicker datePicker = new DatePicker();
+        datePicker.setEndDate(dateHelper.getLastDayOfCurrentMonth());
+        datePicker.setStartDate(-100000L);
+        ChartRequestWrapper requestWrapper = new ChartRequestWrapper();
+        requestWrapper.setChartSelection(selection);
+        requestWrapper.setDatePicker(datePicker);
+        HttpResponseJson response = helper.getGeneralDataTableNegative(testTools.objectToJson(requestWrapper), token1).convertToHttpResponseJson();
+        assertEquals(response.getHttpStatusCode(), 500);
+        assertEquals(response.getObject().get("error").getAsString(), DataIntegrityErrorCode.INVALID_PARAMETER.toString());
+        assertEquals(response.getObject().get("message").getAsString(), "Start date should be positive number");
+    }
+
 }

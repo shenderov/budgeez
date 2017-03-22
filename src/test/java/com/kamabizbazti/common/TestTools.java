@@ -28,8 +28,11 @@ public class TestTools {
         return gson.fromJson(jsonString, returnClass);
     }
 
-    public String ObjectToJson(Object object) {
-        return new JsonParser().parse(gson.toJson(object)).toString();
+    public String objectToJson(Object object) {
+        if(object instanceof String)
+            return (String) object;
+        else
+            return new JsonParser().parse(gson.toJson(object)).toString();
     }
 
     public Map<String, String> setToken(String token) {

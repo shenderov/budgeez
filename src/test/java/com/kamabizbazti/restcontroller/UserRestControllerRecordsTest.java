@@ -8,9 +8,12 @@ import com.kamabizbazti.common.entities.HttpResponseJson;
 import com.kamabizbazti.common.http.AuthenticationRestControllerConnectorHelper;
 import com.kamabizbazti.common.http.UserRestControllerConnectorHelper;
 import com.kamabizbazti.config.KamaBizbaztiApplicationConfig;
+import com.kamabizbazti.model.dao.GeneralCategory;
+import com.kamabizbazti.model.dao.Record;
 import com.kamabizbazti.model.entities.*;
 import com.kamabizbazti.model.exceptions.codes.DataIntegrityErrorCode;
 import com.kamabizbazti.model.exceptions.codes.EntitiesErrorCode;
+import com.kamabizbazti.model.repository.RecordRepository;
 import com.kamabizbazti.security.entities.SignUpWrapper;
 import com.kamabizbazti.security.repository.UserRepository;
 import com.kamabizbazti.security.service.JwtAuthenticationResponse;
@@ -43,6 +46,9 @@ public class UserRestControllerRecordsTest extends AbstractTestNGSpringContextTe
     private UserRepository userRepository;
 
     @Autowired
+    private RecordRepository recordRepository;
+
+    @Autowired
     private TestTools testTools;
 
     private String name = "User Records";
@@ -51,8 +57,10 @@ public class UserRestControllerRecordsTest extends AbstractTestNGSpringContextTe
     private String password = "Password";
     private String token1;
     private String token2;
-    private GeneralPurpose purpose;
+    private GeneralCategory category;
+    private GeneralCategory userCategory;
     private Record record;
+    private Record record1;
     private String maxComment = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean m";
 
     private UserRestControllerConnectorHelper helper;
@@ -71,30 +79,39 @@ public class UserRestControllerRecordsTest extends AbstractTestNGSpringContextTe
         wrapper.setEmail(email2);
         JwtAuthenticationResponse jwtToken2 = (JwtAuthenticationResponse) authHelper.createUserPositive(wrapper).getObject();
         token2 = jwtToken2.getToken();
-        List <GeneralPurpose> purposesUser1 = (List<GeneralPurpose>) helper.getPurposesListPositive(token1).getObject();
-        purpose = purposesUser1.get(0);
+        List<GeneralCategory> categoriesUser1 = (List<GeneralCategory>) helper.getCategoriesListPositive(token1).getObject();
+        category = categoriesUser1.get(0);
+        ECustomCategory cat = new ECustomCategory();
+        cat.setName("User2 category");
+        userCategory = (GeneralCategory) helper.addCustomCategoryPositive(cat, token2).getObject();
+        ERecord record = new ERecord();
+        record.setAmount(10.5);
+        record.setCategoryId(category.getCategoryId());
+        record.setComment("Comment");
+        record.setDate(System.currentTimeMillis());
+        this.record1 = (Record) helper.addRecordPositive(record, token1).getObject();
     }
 
     @AfterClass
-    public void tearDown(){
+    public void tearDown() {
         userRepository.delete(userRepository.findByUsername(email1));
         userRepository.delete(userRepository.findByUsername(email2));
     }
 
-    //TODO add test getRecordsList end date before start date
     @Test
     public void testAddRecord() {
-        Record record = new Record();
+        ERecord record = new ERecord();
         record.setAmount(10.5);
-        record.setPurpose(purpose);
+        record.setCategoryId(category.getCategoryId());
         record.setComment("Comment");
         record.setDate(System.currentTimeMillis());
         Record res = (Record) helper.addRecordPositive(record, token1).getObject();
         this.record = res;
+        Record r = recordRepository.findOne(1L);
         Assert.assertEquals(res.getAmount(), record.getAmount());
         Assert.assertEquals(res.getComment(), record.getComment());
         Assert.assertEquals(res.getDate(), record.getDate());
-        Assert.assertEquals(res.getPurpose().getName(), record.getPurpose().getName());
+        Assert.assertEquals(res.getCategory().getCategoryId() == record.getCategoryId(), true);
     }
 
     @Test(dependsOnMethods = {"testAddRecord"})
@@ -103,6 +120,56 @@ public class UserRestControllerRecordsTest extends AbstractTestNGSpringContextTe
         picker.setStartDate(System.currentTimeMillis() - 1000000);
         picker.setEndDate(System.currentTimeMillis());
         HttpResponseJson response = helper.getRecordsListJson(picker, token1);
+        Assert.assertTrue(response.getObject().get("totalElements").getAsInt() > 0);
+        Record record = (Record) testTools.stringToObject(response.getObject().getAsJsonArray("content").get(0).toString(), Record.class);
+        Assert.assertNotNull(record);
+    }
+
+    @Test(dependsOnMethods = {"testAddRecord"})
+    public void testGetRecordsListEndDateNull() throws IOException {
+        DatePicker picker = new DatePicker();
+        picker.setStartDate(System.currentTimeMillis());
+        picker.setEndDate(null);
+        HttpResponseJson response = helper.getRecordsListJson(picker, token1);
+        assertEquals(response.getHttpStatusCode(), 500);
+        assertEquals(response.getObject().get("error").getAsString(), DataIntegrityErrorCode.INVALID_PARAMETER.toString());
+        assertEquals(response.getObject().get("message").getAsString(), "End date can't be null");
+    }
+
+    @Test(dependsOnMethods = {"testAddRecord"})
+    public void testGetRecordsListStartDateNull() throws IOException {
+        DatePicker picker = new DatePicker();
+        picker.setStartDate(null);
+        picker.setEndDate(System.currentTimeMillis());
+        HttpResponseJson response = helper.getRecordsListJson(picker, token1);
+        assertEquals(response.getHttpStatusCode(), 500);
+        assertEquals(response.getObject().get("error").getAsString(), DataIntegrityErrorCode.INVALID_PARAMETER.toString());
+        assertEquals(response.getObject().get("message").getAsString(), "Start date can't be null");
+    }
+
+    @Test(dependsOnMethods = {"testAddRecord"})
+    public void testGetRecordsListEndDateNotProvided() throws IOException {
+        DatePicker picker = new DatePicker();
+        picker.setStartDate(System.currentTimeMillis());
+        HttpResponseJson response = helper.getRecordsListJson(picker, token1);
+        assertEquals(response.getHttpStatusCode(), 500);
+        assertEquals(response.getObject().get("error").getAsString(), DataIntegrityErrorCode.INVALID_PARAMETER.toString());
+        assertEquals(response.getObject().get("message").getAsString(), "End date can't be null");
+    }
+
+    @Test(dependsOnMethods = {"testAddRecord"})
+    public void testGetRecordsListStartDateNotProvided() throws IOException {
+        DatePicker picker = new DatePicker();
+        picker.setEndDate(System.currentTimeMillis());
+        HttpResponseJson response = helper.getRecordsListJson(picker, token1);
+        assertEquals(response.getHttpStatusCode(), 500);
+        assertEquals(response.getObject().get("error").getAsString(), DataIntegrityErrorCode.INVALID_PARAMETER.toString());
+        assertEquals(response.getObject().get("message").getAsString(), "Start date can't be null");
+    }
+
+    @Test(dependsOnMethods = {"testAddRecord"})
+    public void testGetRecordsListDatePickerNull() {
+        HttpResponseJson response = helper.getRecordsListJson("{}", token1);
         Assert.assertTrue(response.getObject().get("totalElements").getAsInt() > 0);
         Record record = (Record) testTools.stringToObject(response.getObject().getAsJsonArray("content").get(0).toString(), Record.class);
         Assert.assertNotNull(record);
@@ -121,120 +188,125 @@ public class UserRestControllerRecordsTest extends AbstractTestNGSpringContextTe
 
     @Test(dependsOnMethods = {"testAddRecord"})
     public void testEditRecord() throws IOException, InterruptedException {
-        Record record = this.record;
+        ERecord record = new ERecord();
         record.setAmount(11.4);
-        record.setPurpose(purpose);
+        record.setCategoryId(category.getCategoryId());
         record.setComment("Comment ffff");
         record.setDate(System.currentTimeMillis());
-        Record res = (Record) helper.editRecordPositive(record, token1).getObject();
-        Assert.assertTrue(record.getAmount().equals(res.getAmount()));
-        Assert.assertTrue(record.getPurpose().getName().equals(res.getPurpose().getName()));
-        Assert.assertTrue(record.getComment().equals(res.getComment()));
-        Assert.assertTrue(record.getDate().equals(res.getDate()));
+        EditRecordWrapper wrapper = new EditRecordWrapper();
+        wrapper.setRecordId(this.record.getRecordId());
+        wrapper.setRecord(record);
+        Record res = (Record) helper.editRecordPositive(wrapper, token1).getObject();
+        Assert.assertEquals(res.getAmount(), record.getAmount());
+        Assert.assertEquals(res.getComment(), record.getComment());
+        Assert.assertEquals(res.getDate(), record.getDate());
+        Assert.assertEquals(res.getCategory().getCategoryId() == record.getCategoryId(), true);
     }
 
     @Test(dependsOnMethods = {"testAddRecord"})
     public void testEditRecordCreatedByAnotherUser() {
-        Record record = this.record;
-        record.setAmount(55.5);
-        record.setPurpose(purpose);
+        ERecord record = new ERecord();
+        record.setAmount(10.5);
+        record.setCategoryId(category.getCategoryId());
         record.setComment("Comment wewe");
         record.setDate(System.currentTimeMillis());
-        HttpResponseJson response = helper.editRecordNegative(testTools.ObjectToJson(record), token2).convertToHttpResponseJson();
+        EditRecordWrapper wrapper = new EditRecordWrapper();
+        wrapper.setRecordId(this.record.getRecordId());
+        wrapper.setRecord(record);
+        HttpResponseJson response = helper.editRecordNegative(testTools.objectToJson(wrapper), token2).convertToHttpResponseJson();
         assertEquals(response.getHttpStatusCode(), 500);
         assertEquals(response.getObject().get("error").getAsString(), EntitiesErrorCode.RECORD_DOES_NOT_EXIST.toString());
-        assertEquals(response.getObject().get("message").getAsString(), "Record does not exist");
+        assertEquals(response.getObject().get("message").getAsString(), "Record Does Not Exist");
     }
 
-    @Test(dependsOnMethods = {"testEditRecord"})
+    @Test
     public void testEditNotExistingRecord() {
-        Record record = this.record;
-        record.setRecordId(Long.MAX_VALUE);
-        HttpResponseJson response = helper.editRecordNegative(testTools.ObjectToJson(record), token2).convertToHttpResponseJson();
+        ERecord record = new ERecord();
+        record.setAmount(10.5);
+        record.setCategoryId(category.getCategoryId());
+        record.setComment("Comment wewe");
+        record.setDate(System.currentTimeMillis());
+        EditRecordWrapper wrapper = new EditRecordWrapper();
+        wrapper.setRecordId(Long.MAX_VALUE);
+        wrapper.setRecord(record);
+        HttpResponseJson response = helper.editRecordNegative(testTools.objectToJson(wrapper), token2).convertToHttpResponseJson();
         assertEquals(response.getHttpStatusCode(), 500);
         assertEquals(response.getObject().get("error").getAsString(), EntitiesErrorCode.RECORD_DOES_NOT_EXIST.toString());
-        assertEquals(response.getObject().get("message").getAsString(), "Record does not exist");
+        assertEquals(response.getObject().get("message").getAsString(), "Record Does Not Exist");
     }
 
     @Test(dependsOnMethods = {"testAddRecord"})
     public void testDeleteRecordCreatedByAnotherUser() {
-        Record record = this.record;
-        record.setAmount(55.5);
-        record.setPurpose(purpose);
-        record.setComment("Comment wewe");
-        record.setDate(System.currentTimeMillis());
-        HttpResponseJson response = helper.deleteRecordNegative(String.valueOf(record.getRecordId()), token2).convertToHttpResponseJson();
+        HttpResponseJson response = helper.deleteRecordNegative(String.valueOf(this.record.getRecordId()), token2).convertToHttpResponseJson();
         assertEquals(response.getHttpStatusCode(), 500);
         assertEquals(response.getObject().get("error").getAsString(), EntitiesErrorCode.RECORD_DOES_NOT_EXIST.toString());
-        assertEquals(response.getObject().get("message").getAsString(), "Record does not exist");
+        assertEquals(response.getObject().get("message").getAsString(), "Record Does Not Exist");
     }
 
-//    Expected :RECORD_DOES_NOT_EXIST
-//    Actual   :Internal Server Error
     @Test
     public void testDeleteNotExistingRecord() {
-        HttpResponseJson response = helper.deleteRecordNegative(String.valueOf(Long.MAX_VALUE), token1).convertToHttpResponseJson();
+        HttpResponseJson response = helper.deleteRecordNegative(String.valueOf(999L), token1).convertToHttpResponseJson();
         assertEquals(response.getHttpStatusCode(), 500);
         assertEquals(response.getObject().get("error").getAsString(), EntitiesErrorCode.RECORD_DOES_NOT_EXIST.toString());
-        assertEquals(response.getObject().get("message").getAsString(), "Record does not exist");
+        assertEquals(response.getObject().get("message").getAsString(), "Record Does Not Exist");
     }
 
-    @Test(dependsOnMethods = {"testEditRecord"})
+    @Test
     public void testAddRecordWithoutComment() {
-        Record record = new Record();
+        ERecord record = new ERecord();
         record.setAmount(10.5);
-        record.setPurpose(purpose);
+        record.setCategoryId(category.getCategoryId());
         record.setDate(System.currentTimeMillis());
         Record res = (Record) helper.addRecordPositive(record, token1).getObject();
         Assert.assertEquals(res.getAmount(), record.getAmount());
         Assert.assertEquals(res.getComment(), record.getComment());
         Assert.assertEquals(res.getDate(), record.getDate());
-        Assert.assertEquals(res.getPurpose().getName(), record.getPurpose().getName());
+        Assert.assertEquals(res.getCategory().getCategoryId() == record.getCategoryId(), true);
     }
 
-    @Test(dependsOnMethods = {"testEditRecord"})
+    @Test
     public void testAddRecordNullComment() {
-        Record record = new Record();
+        ERecord record = new ERecord();
         record.setAmount(10.5);
-        record.setPurpose(purpose);
+        record.setCategoryId(category.getCategoryId());
         record.setComment(null);
         record.setDate(System.currentTimeMillis());
         Record res = (Record) helper.addRecordPositive(record, token1).getObject();
         Assert.assertEquals(res.getAmount(), record.getAmount());
         Assert.assertEquals(res.getComment(), record.getComment());
         Assert.assertEquals(res.getDate(), record.getDate());
-        Assert.assertEquals(res.getPurpose().getName(), record.getPurpose().getName());
+        Assert.assertEquals(res.getCategory().getCategoryId() == record.getCategoryId(), true);
     }
 
-    @Test(dependsOnMethods = {"testEditRecord"})
+    @Test
     public void testAddRecordMaxComment() {
-        Record record = new Record();
+        ERecord record = new ERecord();
         record.setAmount(10.5);
-        record.setPurpose(purpose);
+        record.setCategoryId(category.getCategoryId());
         record.setComment(maxComment);
         record.setDate(System.currentTimeMillis());
         Record res = (Record) helper.addRecordPositive(record, token1).getObject();
         Assert.assertEquals(res.getAmount(), record.getAmount());
         Assert.assertEquals(res.getComment(), record.getComment());
         Assert.assertEquals(res.getDate(), record.getDate());
-        Assert.assertEquals(res.getPurpose().getName(), record.getPurpose().getName());
+        Assert.assertEquals(res.getCategory().getCategoryId() == record.getCategoryId(), true);
     }
 
     @Test
     public void testAddRecordLongComment() {
-        Record record = new Record();
+        ERecord record = new ERecord();
         record.setAmount(10.5);
-        record.setPurpose(purpose);
+        record.setCategoryId(category.getCategoryId());
         record.setComment(maxComment + "n");
         record.setDate(System.currentTimeMillis());
-        HttpResponseJson response = helper.addRecordNegative(testTools.ObjectToJson(record), token1).convertToHttpResponseJson();
+        HttpResponseJson response = helper.addRecordNegative(testTools.objectToJson(record), token1).convertToHttpResponseJson();
         assertEquals(response.getHttpStatusCode(), 500);
         assertEquals(response.getObject().get("error").getAsString(), DataIntegrityErrorCode.INVALID_PARAMETER.toString());
         assertEquals(response.getObject().get("message").getAsString(), "Comment length should be less than 100 chars");
     }
 
     @Test
-    public void testAddRecordMissingPurpose() {
+    public void testAddRecordMissingCategory() {
         JsonObject record = new JsonObject();
         record.addProperty("amount", 10.3);
         record.addProperty("comment", maxComment);
@@ -242,20 +314,20 @@ public class UserRestControllerRecordsTest extends AbstractTestNGSpringContextTe
         HttpResponseJson response = helper.addRecordNegative(record.toString(), token1).convertToHttpResponseJson();
         assertEquals(response.getHttpStatusCode(), 500);
         assertEquals(response.getObject().get("error").getAsString(), DataIntegrityErrorCode.INVALID_PARAMETER.toString());
-        assertEquals(response.getObject().get("message").getAsString(), "Purpose can't be blank");
+        assertEquals(response.getObject().get("message").getAsString(), "Category id can't be blank");
     }
 
     @Test
-    public void testAddRecordNullPurpose() {
+    public void testAddRecordNullCategory() {
         JsonObject record = new JsonObject();
         record.addProperty("amount", 10.3);
-        record.addProperty("purpose", (String) null);
+        record.addProperty("categoryId", (String) null);
         record.addProperty("comment", maxComment);
         record.addProperty("date", System.currentTimeMillis());
-        HttpResponseJson response = helper.addRecordNegative(testTools.ObjectToJson(record), token1).convertToHttpResponseJson();
+        HttpResponseJson response = helper.addRecordNegative(testTools.objectToJson(record), token1).convertToHttpResponseJson();
         assertEquals(response.getHttpStatusCode(), 500);
         assertEquals(response.getObject().get("error").getAsString(), DataIntegrityErrorCode.INVALID_PARAMETER.toString());
-        assertEquals(response.getObject().get("message").getAsString(), "Purpose can't be blank");
+        assertEquals(response.getObject().get("message").getAsString(), "Category id can't be blank");
     }
 
     @Test
@@ -263,283 +335,322 @@ public class UserRestControllerRecordsTest extends AbstractTestNGSpringContextTe
         JsonObject record = new JsonObject();
         record.addProperty("amount", (String) null);
         record.addProperty("comment", maxComment);
-        record.addProperty("purpose", testTools.ObjectToJson(purpose));
+        record.addProperty("categoryId", category.getCategoryId());
         record.addProperty("date", System.currentTimeMillis());
         HttpResponseJson response = helper.addRecordNegative(record.toString(), token1).convertToHttpResponseJson();
         assertEquals(response.getHttpStatusCode(), 500);
         assertEquals(response.getObject().get("error").getAsString(), DataIntegrityErrorCode.INVALID_PARAMETER.toString());
-        assertEquals(response.getObject().get("message").getAsString(), "Amount can't be blank");
+        assertEquals(response.getObject().get("message").getAsString(), "Amount can't be null");
     }
 
     @Test
     public void testAddRecordMissingAmount() {
         JsonObject record = new JsonObject();
         record.addProperty("comment", maxComment);
-        record.addProperty("purpose", testTools.ObjectToJson(purpose));
+        record.addProperty("categoryId", category.getCategoryId());
         record.addProperty("date", System.currentTimeMillis());
         HttpResponseJson response = helper.addRecordNegative(record.toString(), token1).convertToHttpResponseJson();
         assertEquals(response.getHttpStatusCode(), 500);
         assertEquals(response.getObject().get("error").getAsString(), DataIntegrityErrorCode.INVALID_PARAMETER.toString());
-        assertEquals(response.getObject().get("message").getAsString(), "Amount can't be blank");
+        assertEquals(response.getObject().get("message").getAsString(), "Amount can't be null");
     }
 
     @Test
     public void testAddRecordStringAmount() {
         JsonObject record = new JsonObject();
         record.addProperty("amount", "string");
-        record.addProperty("purpose", testTools.ObjectToJson(purpose));
+        record.addProperty("categoryId", category.getCategoryId());
         record.addProperty("comment", maxComment);
         record.addProperty("date", System.currentTimeMillis());
         HttpResponseJson response = helper.addRecordNegative(record.toString(), token1).convertToHttpResponseJson();
         assertEquals(response.getHttpStatusCode(), 500);
-        assertEquals(response.getObject().get("error").getAsString(), DataIntegrityErrorCode.INVALID_DATA_TYPE.toString());
-        assertEquals(response.getObject().get("message").getAsString(), "Invalid Data Type");
+        assertEquals(response.getObject().get("error").getAsString(), DataIntegrityErrorCode.INVALID_REQUEST_ENTITY.toString());
+        assertEquals(response.getObject().get("message").getAsString(), "Invalid Request Entity");
     }
 
     @Test
     public void testAddRecordNullDate() {
         JsonObject record = new JsonObject();
         record.addProperty("amount", 10.3);
-        record.addProperty("purpose", testTools.ObjectToJson(purpose));
+        record.addProperty("categoryId", category.getCategoryId());
         record.addProperty("comment", maxComment);
         record.addProperty("date", (Long) null);
-        HttpResponseJson response = helper.addRecordNegative(testTools.ObjectToJson(record), token1).convertToHttpResponseJson();
+        HttpResponseJson response = helper.addRecordNegative(testTools.objectToJson(record), token1).convertToHttpResponseJson();
         assertEquals(response.getHttpStatusCode(), 500);
         assertEquals(response.getObject().get("error").getAsString(), DataIntegrityErrorCode.INVALID_PARAMETER.toString());
-        assertEquals(response.getObject().get("message").getAsString(), "Date can't be blank");
+        assertEquals(response.getObject().get("message").getAsString(), "Date can't be null");
     }
 
     @Test
     public void testAddRecordMissingDate() {
         JsonObject record = new JsonObject();
         record.addProperty("amount", 10.3);
-        record.addProperty("purpose", testTools.ObjectToJson(purpose));
+        record.addProperty("categoryId", category.getCategoryId());
         record.addProperty("comment", maxComment);
         HttpResponseJson response = helper.addRecordNegative(record.toString(), token1).convertToHttpResponseJson();
         assertEquals(response.getHttpStatusCode(), 500);
         assertEquals(response.getObject().get("error").getAsString(), DataIntegrityErrorCode.INVALID_PARAMETER.toString());
-        assertEquals(response.getObject().get("message").getAsString(), "Date can't be blank");
+        assertEquals(response.getObject().get("message").getAsString(), "Date can't be null");
     }
 
     @Test
     public void testAddRecordStringDate() {
         JsonObject record = new JsonObject();
         record.addProperty("amount", 10.3);
-        record.addProperty("purpose", testTools.ObjectToJson(purpose));
+        record.addProperty("categoryId", category.getCategoryId());
         record.addProperty("comment", maxComment);
         record.addProperty("date", "string");
         HttpResponseJson response = helper.addRecordNegative(record.toString(), token1).convertToHttpResponseJson();
         assertEquals(response.getHttpStatusCode(), 500);
-        assertEquals(response.getObject().get("error").getAsString(), DataIntegrityErrorCode.INVALID_DATA_TYPE.toString());
-        assertEquals(response.getObject().get("message").getAsString(), "Invalid Data Type");
+        assertEquals(response.getObject().get("error").getAsString(), DataIntegrityErrorCode.INVALID_REQUEST_ENTITY.toString());
+        assertEquals(response.getObject().get("message").getAsString(), "Invalid Request Entity");
     }
 
-    @Test(dependsOnMethods = {"testEditRecord"})
+    @Test
     public void testEditRecordWithoutComment() {
-        Record record = this.record;
+        ERecord record = new ERecord();
         record.setAmount(10.5);
-        record.setPurpose(purpose);
+        record.setCategoryId(category.getCategoryId());
         record.setDate(System.currentTimeMillis());
-        Record res = (Record) helper.editRecordPositive(record, token1).getObject();
+        EditRecordWrapper wrapper = new EditRecordWrapper();
+        wrapper.setRecordId(this.record.getRecordId());
+        wrapper.setRecord(record);
+        Record res = (Record) helper.editRecordPositive(wrapper, token1).getObject();
         Assert.assertEquals(res.getAmount(), record.getAmount());
         Assert.assertEquals(res.getComment(), record.getComment());
         Assert.assertEquals(res.getDate(), record.getDate());
-        Assert.assertEquals(res.getPurpose().getName(), record.getPurpose().getName());
+        Assert.assertTrue(record.getCategoryId().equals(res.getCategory().getCategoryId()));
     }
 
-    @Test(dependsOnMethods = {"testEditRecord"})
+    @Test
     public void testEditRecordNullComment() {
-        Record record = this.record;
+        ERecord record = new ERecord();
         record.setAmount(10.5);
-        record.setPurpose(purpose);
+        record.setCategoryId(category.getCategoryId());
         record.setComment(null);
         record.setDate(System.currentTimeMillis());
-        Record res = (Record) helper.editRecordPositive(record, token1).getObject();
+        EditRecordWrapper wrapper = new EditRecordWrapper();
+        wrapper.setRecordId(this.record.getRecordId());
+        wrapper.setRecord(record);
+        Record res = (Record) helper.editRecordPositive(wrapper, token1).getObject();
         Assert.assertEquals(res.getAmount(), record.getAmount());
         Assert.assertEquals(res.getComment(), record.getComment());
         Assert.assertEquals(res.getDate(), record.getDate());
-        Assert.assertEquals(res.getPurpose().getName(), record.getPurpose().getName());
+        Assert.assertTrue(res.getCategory().getCategoryId() == record.getCategoryId());
     }
 
-    @Test(dependsOnMethods = {"testEditRecord"})
+    @Test
     public void testEditRecordMaxComment() {
-        Record record = this.record;
+        ERecord record = new ERecord();
         record.setAmount(10.5);
-        record.setPurpose(purpose);
+        record.setCategoryId(category.getCategoryId());
         record.setComment(maxComment);
         record.setDate(System.currentTimeMillis());
-        Record res = (Record) helper.editRecordPositive(record, token1).getObject();
+        EditRecordWrapper wrapper = new EditRecordWrapper();
+        wrapper.setRecordId(this.record.getRecordId());
+        wrapper.setRecord(record);
+        Record res = (Record) helper.editRecordPositive(wrapper, token1).getObject();
         Assert.assertEquals(res.getAmount(), record.getAmount());
         Assert.assertEquals(res.getComment(), record.getComment());
         Assert.assertEquals(res.getDate(), record.getDate());
-        Assert.assertEquals(res.getPurpose().getName(), record.getPurpose().getName());
+        Assert.assertTrue(res.getCategory().getCategoryId() == record.getCategoryId());
     }
 
-    //TODO add proper exception
     @Test
     public void testEditRecordLongComment() {
-        Record record = this.record;
+        ERecord record = new ERecord();
         record.setAmount(10.5);
-        record.setPurpose(purpose);
+        record.setCategoryId(category.getCategoryId());
         record.setComment(maxComment + "n");
         record.setDate(System.currentTimeMillis());
-        HttpResponseJson response = helper.editRecordNegative(testTools.ObjectToJson(record), token1).convertToHttpResponseJson();
+        EditRecordWrapper wrapper = new EditRecordWrapper();
+        wrapper.setRecordId(this.record.getRecordId());
+        wrapper.setRecord(record);
+        HttpResponseJson response = helper.editRecordNegative(testTools.objectToJson(wrapper), token1).convertToHttpResponseJson();
         assertEquals(response.getHttpStatusCode(), 500);
         assertEquals(response.getObject().get("error").getAsString(), DataIntegrityErrorCode.INVALID_PARAMETER.toString());
         assertEquals(response.getObject().get("message").getAsString(), "Comment length should be less than 100 chars");
     }
 
     @Test
-    public void testEditRecordNullPurpose() {
-        Record record = this.record;
-        record.setPurpose(purpose);
-        record.setAmount(11.4);
-        record.setComment(maxComment);
-        record.setDate(System.currentTimeMillis());
-        JsonObject jsonObject = testTools.objectToJsonObject(record);
-        jsonObject.remove("purpose");
-        jsonObject.addProperty("purpose", (String) null);
-        HttpResponseJson response = helper.editRecordNegative(testTools.ObjectToJson(record), token1).convertToHttpResponseJson();
+    public void testEditRecordNullCategory() {
+        JsonObject record = new JsonObject();
+        record.addProperty("amount", 10.3);
+        record.addProperty("categoryId", (String) null);
+        record.addProperty("comment", maxComment);
+        record.addProperty("date", System.currentTimeMillis());
+        JsonObject wrapper = new JsonObject();
+        wrapper.addProperty("recordId", this.record.getRecordId());
+        wrapper.add("record", record);
+        HttpResponseJson response = helper.editRecordNegative(testTools.objectToJson(wrapper), token1).convertToHttpResponseJson();
         assertEquals(response.getHttpStatusCode(), 500);
         assertEquals(response.getObject().get("error").getAsString(), DataIntegrityErrorCode.INVALID_PARAMETER.toString());
-        assertEquals(response.getObject().get("message").getAsString(), "Purpose can't be blank");
+        assertEquals(response.getObject().get("message").getAsString(), "Category id can't be blank");
     }
 
     @Test
     public void testEditRecordNullAmount() {
-        Record record = this.record;
+        ERecord record = new ERecord();
         record.setAmount(null);
-        record.setPurpose(purpose);
+        record.setCategoryId(category.getCategoryId());
         record.setComment(maxComment);
         record.setDate(System.currentTimeMillis());
-        HttpResponseJson response = helper.editRecordNegative(testTools.ObjectToJson(record), token1).convertToHttpResponseJson();
+        EditRecordWrapper wrapper = new EditRecordWrapper();
+        wrapper.setRecordId(this.record.getRecordId());
+        wrapper.setRecord(record);
+        HttpResponseJson response = helper.editRecordNegative(testTools.objectToJson(wrapper), token1).convertToHttpResponseJson();
         assertEquals(response.getHttpStatusCode(), 500);
         assertEquals(response.getObject().get("error").getAsString(), DataIntegrityErrorCode.INVALID_PARAMETER.toString());
-        assertEquals(response.getObject().get("message").getAsString(), "Amount can't be blank");
+        assertEquals(response.getObject().get("message").getAsString(), "Amount can't be null");
     }
 
     @Test
     public void testEditRecordStringAmount() {
-        Record record = this.record;
-        record.setPurpose(purpose);
-        record.setAmount(11.4);
-        record.setComment(maxComment);
-        record.setDate(System.currentTimeMillis());
-        JsonObject jsonObject = testTools.objectToJsonObject(record);
-        jsonObject.remove("amount");
-        jsonObject.addProperty("amount", "string");
-        HttpResponseJson response = helper.editRecordNegative(jsonObject.toString(), token1).convertToHttpResponseJson();
+        JsonObject record = new JsonObject();
+        record.addProperty("amount", "string");
+        record.addProperty("categoryId", category.getCategoryId());
+        record.addProperty("comment", maxComment);
+        record.addProperty("date", System.currentTimeMillis());
+        JsonObject wrapper = new JsonObject();
+        wrapper.addProperty("recordId", this.record.getRecordId());
+        wrapper.add("record", record);
+        HttpResponseJson response = helper.editRecordNegative(testTools.objectToJson(wrapper), token1).convertToHttpResponseJson();
         assertEquals(response.getHttpStatusCode(), 500);
-        assertEquals(response.getObject().get("error").getAsString(), DataIntegrityErrorCode.INVALID_DATA_TYPE.toString());
-        assertEquals(response.getObject().get("message").getAsString(), "Invalid Data Type");
+        assertEquals(response.getObject().get("error").getAsString(), DataIntegrityErrorCode.INVALID_REQUEST_ENTITY.toString());
+        assertEquals(response.getObject().get("message").getAsString(), "Invalid Request Entity");
     }
 
     @Test
     public void testEditRecordNullDate() {
-        Record record = this.record;
-        record.setAmount(10.4);
-        record.setPurpose(purpose);
+        ERecord record = new ERecord();
+        record.setAmount(10.5);
+        record.setCategoryId(category.getCategoryId());
         record.setComment(maxComment);
         record.setDate(null);
-        HttpResponseJson response = helper.editRecordNegative(testTools.ObjectToJson(record), token1).convertToHttpResponseJson();
+        EditRecordWrapper wrapper = new EditRecordWrapper();
+        wrapper.setRecordId(this.record.getRecordId());
+        wrapper.setRecord(record);
+        HttpResponseJson response = helper.editRecordNegative(testTools.objectToJson(wrapper), token1).convertToHttpResponseJson();
         assertEquals(response.getHttpStatusCode(), 500);
         assertEquals(response.getObject().get("error").getAsString(), DataIntegrityErrorCode.INVALID_PARAMETER.toString());
-        assertEquals(response.getObject().get("message").getAsString(), "Date can't be blank");
+        assertEquals(response.getObject().get("message").getAsString(), "Date can't be null");
     }
 
     @Test
     public void testEditRecordStringDate() {
-        Record record = this.record;
-        record.setPurpose(purpose);
-        record.setAmount(11.4);
-        record.setComment(maxComment);
-        record.setDate(System.currentTimeMillis());
-        JsonObject jsonObject = testTools.objectToJsonObject(record);
-        jsonObject.remove("date");
-        jsonObject.addProperty("date", "string");
-        HttpResponseJson response = helper.editRecordNegative(jsonObject.toString(), token1).convertToHttpResponseJson();
+        JsonObject record = new JsonObject();
+        record.addProperty("amount", 11.4);
+        record.addProperty("categoryId", category.getCategoryId());
+        record.addProperty("comment", maxComment);
+        record.addProperty("date", "string");
+        JsonObject wrapper = new JsonObject();
+        wrapper.addProperty("recordId", this.record.getRecordId());
+        wrapper.add("record", record);
+        HttpResponseJson response = helper.editRecordNegative(testTools.objectToJson(wrapper), token1).convertToHttpResponseJson();
         assertEquals(response.getHttpStatusCode(), 500);
-        assertEquals(response.getObject().get("error").getAsString(), DataIntegrityErrorCode.INVALID_DATA_TYPE.toString());
-        assertEquals(response.getObject().get("message").getAsString(), "Invalid Data Type");
+        assertEquals(response.getObject().get("error").getAsString(), DataIntegrityErrorCode.INVALID_REQUEST_ENTITY.toString());
+        assertEquals(response.getObject().get("message").getAsString(), "Invalid Request Entity");
     }
 
     @Test
-    public void testAddRecordWithNotExistingPurpose() {
-        GeneralPurpose purpose = new GeneralPurpose();
-        purpose.setName("Not existing");
-        purpose.setType(PurposeType.GENERAL);
-        purpose.setuId(Long.MAX_VALUE);
-        Record record = new Record();
+    public void testAddRecordWithNotExistingCategory() {
+        ERecord record = new ERecord();
         record.setAmount(10.5);
-        record.setPurpose(purpose);
-        record.setComment(maxComment);
+        record.setCategoryId(Long.MAX_VALUE);
+        record.setComment("Comment");
         record.setDate(System.currentTimeMillis());
-        HttpResponseJson response = helper.addRecordNegative(testTools.ObjectToJson(record), token1).convertToHttpResponseJson();
+        HttpResponseJson response = helper.addRecordNegative(testTools.objectToJson(record), token1).convertToHttpResponseJson();
         assertEquals(response.getHttpStatusCode(), 500);
-        assertEquals(response.getObject().get("error").getAsString(), EntitiesErrorCode.PURPOSE_DOES_NOT_EXIST.toString());
-        assertEquals(response.getObject().get("message").getAsString(), "Purpose Does Not Exist");
+        assertEquals(response.getObject().get("error").getAsString(), EntitiesErrorCode.CATEGORY_DOES_NOT_EXIST.toString());
+        assertEquals(response.getObject().get("message").getAsString(), "Category Does Not Exist");
     }
 
-    @Test(dependsOnMethods = {"testEditRecord"})
-    public void testAddRecordWithOnlyPurposeId() {
-        GeneralPurpose purpose = new GeneralPurpose();
-        purpose.setuId(this.purpose.getuId());
-        Record record = new Record();
+    @Test
+    public void testAddRecordWithOnlyCategoryId() {
+        ERecord record = new ERecord();
         record.setAmount(10.5);
-        record.setPurpose(purpose);
+        record.setCategoryId(category.getCategoryId());
         record.setComment("Comment");
         record.setDate(System.currentTimeMillis());
         Record res = (Record) helper.addRecordPositive(record, token1).getObject();
         Assert.assertEquals(res.getAmount(), record.getAmount());
         Assert.assertEquals(res.getComment(), record.getComment());
         Assert.assertEquals(res.getDate(), record.getDate());
-        Assert.assertEquals(res.getPurpose().getName(), this.purpose.getName());
+        Assert.assertEquals(res.getCategory().getName(), this.category.getName());
     }
 
-    @Test(dependsOnMethods = {"testEditRecord"})
-    public void testAddRecordWithValidIdAndInvalidParameters() {
-        GeneralPurpose purpose = new GeneralPurpose();
-        purpose.setuId(this.purpose.getuId());
-        purpose.setName("Bla-bla-bla");
-        purpose.setType(PurposeType.CUSTOM);
-        Record record = new Record();
-        record.setAmount(10.5);
-        record.setPurpose(purpose);
-        record.setComment("Comment");
-        record.setDate(System.currentTimeMillis());
-        Record res = (Record) helper.addRecordPositive(record, token1).getObject();
-        Assert.assertEquals(res.getAmount(), record.getAmount());
-        Assert.assertEquals(res.getComment(), record.getComment());
-        Assert.assertEquals(res.getDate(), record.getDate());
-        Assert.assertEquals(res.getPurpose().getName(), this.purpose.getName());
-    }
-
-    @Test(dependsOnMethods = {"testEditRecord"})
-    public void testAddRecordWithAnotherUserPurpose() {
-        CustomPurpose purpose = new CustomPurpose();
-        purpose.setName("Test pps");
-        GeneralPurpose res = (GeneralPurpose) helper.addCustomPurposePositive(purpose, token2).getObject();
+    @Test
+    public void testAddRecordWithAnotherUserCategory() {
+        ECustomCategory category = new ECustomCategory();
+        category.setName("Test pps");
+        GeneralCategory res = (GeneralCategory) helper.addCustomCategoryPositive(category, token2).getObject();
         Assert.assertNotNull(res);
-        Record record = new Record();
+        ERecord record = new ERecord();
         record.setAmount(10.5);
-        record.setPurpose(res);
+        record.setCategoryId(res.getCategoryId());
         record.setComment("Comment");
         record.setDate(System.currentTimeMillis());
-        HttpResponseJson response = helper.addRecordNegative(testTools.ObjectToJson(record), token1).convertToHttpResponseJson();
-        System.out.println(response.getObject().toString());
+        HttpResponseJson response = helper.addRecordNegative(testTools.objectToJson(record), token1).convertToHttpResponseJson();
         assertEquals(response.getHttpStatusCode(), 500);
-        assertEquals(response.getObject().get("error").getAsString(), EntitiesErrorCode.PURPOSE_DOES_NOT_EXIST.toString());
-        assertEquals(response.getObject().get("message").getAsString(), "Purpose Does Not Exist");
+        assertEquals(response.getObject().get("error").getAsString(), EntitiesErrorCode.CATEGORY_DOES_NOT_EXIST.toString());
+        assertEquals(response.getObject().get("message").getAsString(), "Category Does Not Exist");
     }
 
-    @Test(dependsOnMethods = {"testEditRecord"})
+    @Test
     public void testDeleteRecord() {
-        Record record = this.record;
-        record.setAmount(55.5);
-        record.setPurpose(purpose);
+        HttpResponse response = helper.deleteRecordPositive(this.record1.getRecordId(), token1);
+        assertEquals(response.getHttpStatusCode(), 200);
+    }
+
+    @Test
+    public void validateEditWrapperRecordIdNull() {
+        ERecord record = new ERecord();
+        record.setAmount(10.5);
+        record.setCategoryId(category.getCategoryId());
         record.setComment("Comment wewe");
         record.setDate(System.currentTimeMillis());
-        HttpResponse response = helper.deleteRecordPositive(record.getRecordId(), token1);
-        assertEquals(response.getHttpStatusCode(), 200);
+        EditRecordWrapper wrapper = new EditRecordWrapper();
+        wrapper.setRecordId(null);
+        wrapper.setRecord(record);
+        HttpResponseJson response = helper.editRecordNegative(testTools.objectToJson(wrapper), token2).convertToHttpResponseJson();
+        assertEquals(response.getHttpStatusCode(), 500);
+        assertEquals(response.getObject().get("error").getAsString(), DataIntegrityErrorCode.INVALID_PARAMETER.toString());
+        assertEquals(response.getObject().get("message").getAsString(), "Record id can't be null");
+    }
+
+    @Test
+    public void validateEditWrapperWithoutRecordId() {
+        ERecord record = new ERecord();
+        record.setAmount(10.5);
+        record.setCategoryId(category.getCategoryId());
+        record.setComment("Comment wewe");
+        record.setDate(System.currentTimeMillis());
+        EditRecordWrapper wrapper = new EditRecordWrapper();
+        wrapper.setRecord(record);
+        HttpResponseJson response = helper.editRecordNegative(testTools.objectToJson(wrapper), token2).convertToHttpResponseJson();
+        assertEquals(response.getHttpStatusCode(), 500);
+        assertEquals(response.getObject().get("error").getAsString(), DataIntegrityErrorCode.INVALID_PARAMETER.toString());
+        assertEquals(response.getObject().get("message").getAsString(), "Record id can't be null");
+    }
+
+    @Test
+    public void validateEditWrapperRecordNull() {
+        EditRecordWrapper wrapper = new EditRecordWrapper();
+        wrapper.setRecordId(this.record.getRecordId());
+        wrapper.setRecord(null);
+        HttpResponseJson response = helper.editRecordNegative(testTools.objectToJson(wrapper), token2).convertToHttpResponseJson();
+        assertEquals(response.getHttpStatusCode(), 500);
+        assertEquals(response.getObject().get("error").getAsString(), DataIntegrityErrorCode.INVALID_PARAMETER.toString());
+        assertEquals(response.getObject().get("message").getAsString(), "Record can't be null");
+    }
+
+    @Test
+    public void validateEditWrapperWithoutRecord() {
+        EditRecordWrapper wrapper = new EditRecordWrapper();
+        wrapper.setRecordId(this.record.getRecordId());
+        HttpResponseJson response = helper.editRecordNegative(testTools.objectToJson(wrapper), token2).convertToHttpResponseJson();
+        assertEquals(response.getHttpStatusCode(), 500);
+        assertEquals(response.getObject().get("error").getAsString(), DataIntegrityErrorCode.INVALID_PARAMETER.toString());
+        assertEquals(response.getObject().get("message").getAsString(), "Record can't be null");
     }
 }

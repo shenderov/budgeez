@@ -73,4 +73,14 @@ public class HttpResponse {
             jsonObject = new JsonParser().parse(new Gson().toJson(object)).getAsJsonObject();
         return new HttpResponseJson(jsonObject, this.cookies, this.headers, this.httpStatusCode);
     }
+
+    @Override
+    public String toString() {
+        return "HttpResponse{" +
+                "object=" + object +
+                ", cookies=" + cookies +
+                ", headers=" + headers +
+                ", httpStatusCode=" + httpStatusCode +
+                '}';
+    }
 }
