@@ -1,42 +1,86 @@
 [
   {
     "type": "GENERAL",
+    "name": "Housing"
+  },
+  {
+    "type": "GENERAL",
+    "name": "Utilities"
+  },
+  {
+    "type": "GENERAL",
+    "name": "Communication"
+  },
+  {
+    "type": "GENERAL",
     "name": "Food"
   },
   {
     "type": "GENERAL",
-    "name": "Car"
+    "name": "Clothing"
   },
   {
     "type": "GENERAL",
-    "name": "Gas"
+    "name": "Public Transportation"
   },
   {
     "type": "GENERAL",
-    "name": "Beer"
+    "name": "Fuel"
   },
   {
     "type": "GENERAL",
-    "name": "Bills"
+    "name": "Car Maintenance"
   },
   {
     "type": "GENERAL",
-    "name": "Internet"
+    "name": "Insurance"
   },
   {
     "type": "GENERAL",
-    "name": "Travel"
+    "name": "Investments/Savings"
   },
   {
     "type": "GENERAL",
-    "name": "Vodka"
+    "name": "Debt Payments"
   },
   {
     "type": "GENERAL",
-    "name": "Transportation"
+    "name": "Beauty/Healthcare/Sports"
   },
   {
     "type": "GENERAL",
-    "name": "Pubs"
+    "name": "Education"
+  },
+  {
+    "type": "GENERAL",
+    "name": "Entertainment/Recreation"
+  },
+  {
+    "type": "GENERAL",
+    "name": "Events"
+  },
+  {
+    "type": "GENERAL",
+    "name": "Vacation/Travel"
+  },
+  {
+    "type": "GENERAL",
+    "name": "Pet Food/Threats"
+  },
+  {
+    "type": "GENERAL",
+    "name": "Hobbies"
+  },
+  {
+    "type": "GENERAL",
+    "name": "Gifts"
+  },
+  {
+    "type": "GENERAL",
+    "name": "Charitable Giving"
+  },
+  {
+    "type": "GENERAL",
+    "name": "Misc Personal"
   }
 ]
