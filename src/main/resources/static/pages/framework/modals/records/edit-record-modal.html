@@ -5,6 +5,6 @@
     <div ng-include="'pages/framework/statistics/add-edit-record-form.html'"></div>
 </div>
 <div class="modal-footer">
-    <button class="btn btn-primary" type="button" ng-disabled="(addRecordFormHolder.addEditRecordForm.$invalid && (addRecordFormHolder.addEditRecordForm.inputAmount.$dirty || addRecordFormHolder.addEditRecordForm.inputPurpose.$dirty)) || addRecordSubmitDisable" ng-click="addRecordFormHolder.addEditRecordForm.$valid && ok(record, purposeName)">OK</button>
+    <button class="btn btn-primary" type="button" ng-disabled="(addRecordFormHolder.addEditRecordForm.$invalid && (addRecordFormHolder.addEditRecordForm.inputAmount.$dirty || addRecordFormHolder.addEditRecordForm.inputCategory.$dirty)) || addRecordSubmitDisable" ng-click="addRecordFormHolder.addEditRecordForm.$valid && ok(record, categoryName)">OK</button>
     <button class="btn btn-default" type="button" ng-click="cancel()">Cancel</button>
 </div>

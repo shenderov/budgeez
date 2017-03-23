@@ -4,22 +4,23 @@ app.controller('RecordsController', function($scope, $rootScope, $http, Connecto
     console.log("RecordsController");
     $scope.chartsCtrl = {};
     $scope.recordsListCtrl = {};
-    $rootScope.purposesList = {};
+    $rootScope.categoriesList = {};
     $scope.record = {};
-    $scope.purposeName = null;
-    $scope.addPurposeElement = {purposeId: 0, type:'ADD_NEW', name:'Add new...'};
+    $scope.recordWrapper = {};
+    $scope.categoryName = null;
+    $scope.addCategoryElement = {categoryId: 0, type:'ADD_NEW', name:'Add new...'};
     $scope.recordDate = new Date().getTime();
     $scope.addRecordFormHolder = {};
     $scope.addRecordFormHolder.addEditRecordForm = {};
     $scope.addRecordSubmitDisable = false;
     $scope.controllerName = "RecordsController";
 
-    $scope.getPurposesList = function(){
-        Connector.getPurposesList(createAuthorizationTokenHeader())
+    $scope.getCategoriesList = function(){
+        Connector.getCategoriesList(createAuthorizationTokenHeader())
             .then(
-                function(purposesList) {
-                    $rootScope.purposesList = purposesList;
-                    $rootScope.purposesList.push($scope.addPurposeElement);
+                function(categoriesList) {
+                    $rootScope.categoriesList = categoriesList;
+                    $rootScope.categoriesList.push($scope.addCategoryElement);
                 },
                 function(errResponse){
                     $rootScope.addAuthAddRecordBlockAlert("danger", errResponse.data.message);
@@ -28,24 +29,31 @@ app.controller('RecordsController', function($scope, $rootScope, $http, Connecto
             );
     };
     $scope.$on('authorized', function () {
-        $scope.getPurposesList();
+        $scope.getCategoriesList();
     });
 
-    $scope.addRecord = function(record, purposeName){
-        record.date = $scope.recordDate;
-        if(record.purpose.type == 'ADD_NEW'){
-            var newPurpose = $rootScope.addPurpose({name: purposeName});
-            newPurpose.then(function(result){
+    $scope.addRecord = function(record, categoryName){
+        $scope.recordWrapper.date = $scope.recordDate;
+        $scope.recordWrapper.amount = record.amount;
+        if(record.comment != null){
+            $scope.recordWrapper.comment = record.comment;
+        }
+        //noinspection JSUnresolvedVariable
+        if(record.category.type == 'ADD_NEW'){
+            var newCategory = $rootScope.addCategory({name: categoryName});
+            newCategory.then(function(result){
                 if(result != null){
-                    record.purpose = result.data;
-                    $scope.addNewRecord(record);
+                    $scope.recordWrapper.categoryId = result.data.categoryId;
+                    $scope.addNewRecord($scope.recordWrapper);
                 }
             }, function(error){
                 $rootScope.addAuthAddRecordBlockAlert("danger", errResponse.data.message);
                 console.log("addRecord record error: " + JSON.stringify(error));
             });
         }else {
-            $scope.addNewRecord(record);
+            //noinspection JSUnresolvedVariable
+            $scope.recordWrapper.categoryId = record.category.categoryId;
+            $scope.addNewRecord($scope.recordWrapper);
         }
     };
 
@@ -66,26 +74,23 @@ app.controller('RecordsController', function($scope, $rootScope, $http, Connecto
                 },
                 function(errResponse){
                     console.log("Add new record error: " + JSON.stringify(errResponse));
-                    //console.error('Error while fetching dataTable');
                     $rootScope.addAuthAddRecordBlockAlert("danger", errResponse.data.message);
-                   // $scope.addAddEditFormAlert("danger", "Can not add record");
                     $scope.addRecordSubmitDisable = false;
                     return errResponse;
                 }
             );
     };
 
-    $rootScope.addPurpose = function(purpose){
-        return Connector.addCustomPurpose(purpose, createAuthorizationTokenHeader())
+    $rootScope.addCategory = function(category){
+        return Connector.addCustomCategory(category, createAuthorizationTokenHeader())
             .then(
-                function(purpose) {
-                    $rootScope.purposesList.pop();
-                    $rootScope.purposesList.push(purpose.data, $scope.addPurposeElement);
-                    console.log("addPurpose done: " + JSON.stringify(purpose));
-                    return purpose;
+                function(category) {
+                    $rootScope.categoriesList.pop();
+                    $rootScope.categoriesList.push(category.data, $scope.addCategoryElement);
+                    return category;
                 },
                 function(errResponse){
-                    console.error("addPurpose error: " + JSON.stringify(errResponse));
+                    console.error("addCategory error: " + JSON.stringify(errResponse));
                     $rootScope.addAuthAddRecordBlockAlert("danger", errResponse.data.message);
                 }
             );

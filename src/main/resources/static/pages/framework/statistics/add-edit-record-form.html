@@ -2,7 +2,7 @@
      close="$parent.closeAuthAddRecordBlockAlert($index)" dismiss-on-timeout="5000">{{alert.msg}}
 </div>
 <form class="form-add-record" name="addRecordFormHolder.addEditRecordForm" role="form" ng-model="$parent.record">
-    <p class="bg-danger" ng-show="alertError" ng-init="alertError=false"><strong>Custom purpose exist</strong>
+    <p class="bg-danger" ng-show="alertError" ng-init="alertError=false"><strong>Custom category exist</strong>
     </p>
     <div class="form-group"
          ng-class="{'has-error': addRecordFormHolder.addEditRecordForm.inputAmount.$touched && addRecordFormHolder.addEditRecordForm.inputAmount.$invalid}">
@@ -11,19 +11,19 @@
                ng-model="$parent.record.amount" name="inputAmount" max="9223372036854775807" min="-9223372036854775808">
     </div>
     <div class="form-group"
-         ng-class="{'has-error': addRecordFormHolder.addEditRecordForm.inputPurpose.$touched && addRecordFormHolder.addEditRecordForm.inputPurpose.$invalid}">
-        <label for="inputPurpose">Purpose:</label>
-        <select class="form-control" id="inputPurpose"
-                ng-options="purpose as purpose.name for purpose in $parent.purposesList  track by purpose.purposeId"
-                required ng-model="$parent.record.purpose" name="inputPurpose"></select>
+         ng-class="{'has-error': addRecordFormHolder.addEditRecordForm.inputCategory.$touched && addRecordFormHolder.addEditRecordForm.inputCategory.$invalid}">
+        <label for="inputCategory">Category:</label>
+        <select class="form-control" id="inputCategory"
+                ng-options="category as category.name for category in $parent.categoriesList track by category.categoryId"
+                required ng-model="$parent.record.category" name="inputCategory"></select>
     </div>
     <div class="form-group"
-         ng-class="{'has-error': addRecordFormHolder.addEditRecordForm.inputNewPurpose.$touched && addRecordFormHolder.addEditRecordForm.inputNewPurpose.$invalid}"
-         ng-show="$parent.record.purpose.type == 'ADD_NEW'">
-        <label for="inputNewPurpose">New Purpose Name:</label>
-        <input type="text" id="inputNewPurpose" class="form-control" placeholder="Enter Purpose Name"
-               ng-model="$parent.purposeName" maxlength="30" minlength="1" name="inputNewPurpose"
-               ng-required="$parent.record.purpose.type == 'ADD_NEW'">
+         ng-class="{'has-error': addRecordFormHolder.addEditRecordForm.inputNewCategory.$touched && addRecordFormHolder.addEditRecordForm.inputNewCategory.$invalid}"
+         ng-show="$parent.record.category.type == 'ADD_NEW'">
+        <label for="inputNewCategory">New Category Name:</label>
+        <input type="text" id="inputNewCategory" class="form-control" placeholder="Enter Category Name"
+               ng-model="$parent.categoryName" maxlength="30" minlength="1" name="inputNewCategory"
+               ng-required="$parent.record.category.type == 'ADD_NEW'">
     </div>
     <div class="form-group">
         <label for="inputComment">Comment:</label>

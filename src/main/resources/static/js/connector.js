@@ -51,8 +51,8 @@ app.factory('Connector', ['$http', '$q', function ($http, $q) {
                 );
         },
 
-        getPurposesList: function (token) {
-            return $http.get(serverPath + 'user/getPurposesList', {headers: token})
+        getCategoriesList: function (token) {
+            return $http.get(serverPath + 'user/getCategoriesList', {headers: token})
                 .then(
                     function (response) {
                         return response.data;
@@ -87,8 +87,8 @@ app.factory('Connector', ['$http', '$q', function ($http, $q) {
                 );
         },
 
-        addCustomPurpose: function (purpose, token) {
-            return $http.post(serverPath + 'user/addCustomPurpose', purpose, {headers: token})
+        addCustomCategory: function (category, token) {
+            return $http.post(serverPath + 'user/addCustomCategory', category, {headers: token})
                 .then(
                     function (response) {
                         return response;

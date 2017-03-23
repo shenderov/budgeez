@@ -2,8 +2,8 @@
     <h3 class="form-signin-heading text-center">Add New Record</h3>
     <div ng-include="'pages/framework/statistics/add-edit-record-form.html'"></div>
     <button class="btn btn-lg btn-default btn-block" type="submit"
-            ng-click="addRecordFormHolder.addEditRecordForm.$valid && addRecord(record, purposeName)"
-            ng-disabled="(addRecordFormHolder.addEditRecordForm.$invalid && (addRecordFormHolder.addEditRecordForm.inputAmount.$touched || addRecordFormHolder.addEditRecordForm.inputPurpose.$touched)) || addRecordSubmitDisable">
+            ng-click="addRecordFormHolder.addEditRecordForm.$valid && addRecord(record, categoryName)"
+            ng-disabled="(addRecordFormHolder.addEditRecordForm.$invalid && (addRecordFormHolder.addEditRecordForm.inputAmount.$touched || addRecordFormHolder.addEditRecordForm.inputCategory.$touched)) || addRecordSubmitDisable">
         Add Record
     </button>
 </div>

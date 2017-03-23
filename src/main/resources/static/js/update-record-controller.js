@@ -4,28 +4,38 @@ app.controller('UpdateRecordCtrl', function ($scope, $rootScope, $uibModalInstan
     console.log("UpdateRecordCtrl");
 
     $scope.record = record;
+    $scope.recordWrapper = {};
+    $scope.recordWrapper.recordId = null;
+    $scope.recordWrapper.record = {};
     $scope.recordDate = new Date($scope.record.date);
     $scope.addRecordFormHolder = {};
     $scope.addRecordFormHolder.addEditRecordForm = {};
     $scope.addRecordSubmitDisable = false;
 
-    $scope.ok = function (record, purposeName) {
+    $scope.ok = function (record, categoryName) {
         if (!angular.equals(record, recordBefore)) {
-            //noinspection JSUnresolvedFunction
-            record.date = $scope.recordDate.getTime();
-            if (record.purpose.type == 'ADD_NEW') {
-                var newPurpose = $rootScope.addPurpose({name: purposeName});
-                newPurpose.then(function(result){
+            $scope.recordWrapper.recordId = record.recordId;
+            $scope.recordWrapper.record.amount = record.amount;
+            $scope.recordWrapper.record.date = $scope.recordDate.getTime();
+            if(record.comment != null){
+                $scope.recordWrapper.record.comment = record.comment;
+            }
+            //noinspection JSUnresolvedVariable
+            if (record.category.type == 'ADD_NEW') {
+                var newCategory = $rootScope.addCategory({name: categoryName});
+                newCategory.then(function(result){
                     if(result != null){
-                        record.purpose = result.data;
-                        $scope.editRecord(record);
+                        $scope.recordWrapper.record.categoryId = result.data.categoryId;
+                        $scope.editRecord($scope.recordWrapper);
                     }
                 }, function (errResponse) {
                     $rootScope.addAuthAddRecordBlockAlert("danger", errResponse.data.message);
                     console.error(JSON.stringify(errResponse));
                 });
             } else {
-                $scope.editRecord(record);
+                //noinspection JSUnresolvedVariable
+                $scope.recordWrapper.record.categoryId = record.category.categoryId;
+                $scope.editRecord($scope.recordWrapper);
             }
         } else
             $uibModalInstance.close(record);
