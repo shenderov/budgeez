@@ -2,6 +2,7 @@ package com.kamabizbazti.model.handlers;
 
 import com.kamabizbazti.model.entities.ChartRequestWrapper;
 import com.kamabizbazti.model.dao.ChartSelection;
+import com.kamabizbazti.model.entities.EVersion;
 import com.kamabizbazti.model.enumerations.ChartSelectionIdEnum;
 import com.kamabizbazti.model.entities.ChartWrapper;
 import com.kamabizbazti.model.exceptions.UnknownSelectionIdException;
@@ -9,6 +10,7 @@ import com.kamabizbazti.model.exceptions.codes.EntitiesErrorCode;
 import com.kamabizbazti.model.interfaces.IExceptionMessagesHelper;
 import com.kamabizbazti.model.interfaces.IGeneralRequestHandler;
 import com.kamabizbazti.model.interfaces.IGeneralStatisticsHandler;
+import com.kamabizbazti.model.interfaces.ISystemHelper;
 import com.kamabizbazti.model.repository.ChartSelectionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -26,6 +28,9 @@ public class GeneralRequestHandler implements IGeneralRequestHandler {
 
     @Autowired
     private IExceptionMessagesHelper exceptionMessagesHelper;
+
+    @Autowired
+    private ISystemHelper systemHelper;
 
     public static final ChartSelectionIdEnum DEFAULT_CHART_SELECTION = ChartSelectionIdEnum.CURRENT_MONTH_AVG;
 
@@ -65,6 +70,10 @@ public class GeneralRequestHandler implements IGeneralRequestHandler {
         ChartRequestWrapper requestWrapper = new ChartRequestWrapper();
         requestWrapper.setChartSelection(chartSelectionRepository.findOne(DEFAULT_CHART_SELECTION));
         return getGeneralDatatable(requestWrapper);
+    }
+
+    public EVersion getVersion() {
+        return systemHelper.getVersion();
     }
 
     public List<ChartSelection> getGeneralChartSelectionsList() {

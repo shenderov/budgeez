@@ -3,6 +3,7 @@ package com.kamabizbazti.model.interfaces;
 import com.kamabizbazti.model.entities.ChartRequestWrapper;
 import com.kamabizbazti.model.dao.ChartSelection;
 import com.kamabizbazti.model.entities.ChartWrapper;
+import com.kamabizbazti.model.entities.EVersion;
 import com.kamabizbazti.model.exceptions.UnknownSelectionIdException;
 
 import java.util.List;
@@ -15,4 +16,6 @@ public interface IGeneralRequestHandler {
     ChartWrapper getGeneralDatatable(ChartRequestWrapper chartRequestWrapper) throws UnknownSelectionIdException;
 
     ChartWrapper getDefaultDataTable() throws UnknownSelectionIdException;
+
+    EVersion getVersion();
 }

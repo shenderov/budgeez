@@ -25,6 +25,7 @@ general:
     getUserChartSelectionsList: getUserChartSelectionsList
     getDefaultDataTable: getDefaultDataTable
     getGeneralDataTable: getGeneralDataTable
+    getVersion: getVersion
 
 user:
   path: user

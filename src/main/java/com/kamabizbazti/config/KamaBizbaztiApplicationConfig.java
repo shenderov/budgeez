@@ -7,6 +7,7 @@ import com.kamabizbazti.model.handlers.UserRequestHandler;
 import com.kamabizbazti.model.handlers.UserStatisticsHandler;
 import com.kamabizbazti.model.helpers.DateHelper;
 import com.kamabizbazti.model.helpers.ExceptionMessagesHelper;
+import com.kamabizbazti.model.helpers.SystemHelper;
 import com.kamabizbazti.model.helpers.ValidationHelper;
 import com.kamabizbazti.model.interfaces.*;
 import org.springframework.context.annotation.Bean;
@@ -54,6 +55,11 @@ public class KamaBizbaztiApplicationConfig {
     @Bean
     public IExceptionMessagesHelper exceptionMessagesHelper() {
         return new ExceptionMessagesHelper();
+    }
+
+    @Bean
+    public ISystemHelper systemHelper() {
+        return new SystemHelper();
     }
 
     @Bean

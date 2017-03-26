@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+Implementation-Version: SNAPSHOT
+Implementation-Title: 00000000
+Created-By: Konstantin Shenderov
+Specification-Title: KamaBizbazti
+Specification-Version: 1.0
+

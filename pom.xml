@@ -5,11 +5,11 @@
 
     <groupId>com.kamabizbazti</groupId>
     <artifactId>kamabizbazti</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0</version>
     <packaging>war</packaging>
 
-    <name>KamaBizbaztiBoot</name>
-    <description>Kama Bizbazti</description>
+    <name>KamaBizbazti</name>
+    <description>Kama Bizbazti?</description>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -23,6 +23,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
         <start-class>com.kamabizbazti.KamaBizbaztiBootApplication</start-class>
+        <build.number>SNAPSHOT</build.number>
     </properties>
 
     <dependencies>
@@ -109,6 +110,11 @@
             <version>2.8.0</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>javax</groupId>
+            <artifactId>javaee-api</artifactId>
+            <version>7.0</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -116,6 +122,19 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifestEntries>
+                            <Specification-Title>${project.name}</Specification-Title>
+                            <Specification-Version>${project.version}</Specification-Version>
+                            <Implementation-Version>${build.number}</Implementation-Version>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
             </plugin>
         </plugins>
     </build>
