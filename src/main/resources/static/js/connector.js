@@ -3,6 +3,18 @@
 app.factory('Connector', ['$http', '$q', function ($http, $q) {
     console.log("Connector");
     return {
+        getVersion: function () {
+            return $http.get(serverPath + 'general/getVersion')
+                .then(
+                    function (response) {
+                        return response.data;
+                    },
+                    function (errResponse) {
+                        return $q.reject(errResponse);
+                    }
+                );
+        },
+
         getGeneralSelectionsList: function () {
             return $http.get(serverPath + 'general/getGeneralChartSelectionsList')
                 .then(

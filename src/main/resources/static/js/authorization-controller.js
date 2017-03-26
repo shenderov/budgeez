@@ -28,6 +28,7 @@ app.controller('AuthorizationController', function($scope, $rootScope, $location
     $scope.isAutorized = false;
     $scope.formats = ['dd/MM/yyyy', 'dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'];
     $rootScope.format = $scope.formats[0];
+    $scope.version = "";
     $scope.signUpSubmitButtomDisabled = false;
     $scope.loginSubmitButtomDisabled = false;
     $scope.userDetails = {};
@@ -98,6 +99,20 @@ app.controller('AuthorizationController', function($scope, $rootScope, $location
         $location.path('/');
         removeToken();
     };
+
+    $scope.getVersion = function () {
+        return Connector.getVersion()
+            .then(
+                function (version) {
+                    $scope.version = version.version;
+                },
+                function (errResponse) {
+                    console.error(JSON.stringify(errResponse));
+                    return null;
+                }
+            )
+    };
+    $scope.getVersion();
 
     $rootScope.addMainWindowAlert = function (type, msg) {
         $rootScope.mainWindowAlerts.push({type: type, msg: msg});
