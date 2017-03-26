@@ -3,7 +3,6 @@ package com.kamabizbazti.model.helpers;
 import com.kamabizbazti.model.entities.EVersion;
 import com.kamabizbazti.model.interfaces.ISystemHelper;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.jar.Attributes;
@@ -17,7 +16,7 @@ public class SystemHelper implements ISystemHelper {
         if (version == null) {
             Manifest mf = new Manifest();
             try {
-                InputStream mfStream = new FileInputStream("META-INF/MANIFEST.MF");
+                InputStream mfStream = getClass().getClassLoader().getResourceAsStream("META-INF/MANIFEST.MF");
                 mf.read(mfStream);
             } catch (IOException e) {
                 e.printStackTrace();

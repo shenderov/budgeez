@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="c89a054c-e753-4bfa-b84c-c2141fbc81d5" name="Cubie_Client" url="http://10.10.10.2:8080/kamabizbazti">
+        <fileTransfer host="10.10.10.2" port="21" rootFolder="/home/cubie/kamabizbazti/webapps/kamabizbazti/WEB-INF/classes/static">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" />
+          </advancedOptions>
+          <option name="port" value="21" />
+        </fileTransfer>
+      </webServer>
+      <webServer id="b279ae23-94f3-4460-81a4-517ba62d42cf" name="NUC" url="http://kostya.myvnc.com:8080/kamabizbazti">
+        <fileTransfer host="kostya.myvnc.com" port="22" rootFolder="/var/lib/tomcat8/webapps/kamabizbazti/WEB-INF/classes/static" accessType="SFTP">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" />
+          </advancedOptions>
+          <option name="port" value="22" />
+        </fileTransfer>
+      </webServer>
+      <webServer id="43d91ab6-072d-41b8-83b2-8f84bb33c9b9" name="NUC_Local" url="http://10.10.10.3:8080/kamabizbazti">
+        <fileTransfer host="10.10.10.3" port="22" rootFolder="/var/lib/tomcat8/webapps/kamabizbazti/WEB-INF/classes/static" accessType="SFTP">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" />
+          </advancedOptions>
+          <option name="port" value="22" />
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>
