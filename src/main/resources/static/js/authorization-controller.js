@@ -28,7 +28,7 @@ app.controller('AuthorizationController', function($scope, $rootScope, $location
     $scope.isAutorized = false;
     $scope.formats = ['dd/MM/yyyy', 'dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'];
     $rootScope.format = $scope.formats[0];
-    $scope.version = "";
+    $scope.buildInfo = {};
     $scope.signUpSubmitButtomDisabled = false;
     $scope.loginSubmitButtomDisabled = false;
     $scope.userDetails = {};
@@ -103,8 +103,8 @@ app.controller('AuthorizationController', function($scope, $rootScope, $location
     $scope.getVersion = function () {
         return Connector.getVersion()
             .then(
-                function (version) {
-                    $scope.version = version.version;
+                function (buildInfo) {
+                    $scope.buildInfo = buildInfo;
                 },
                 function (errResponse) {
                     console.error(JSON.stringify(errResponse));
