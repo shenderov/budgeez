@@ -8,4 +8,6 @@ public interface IValidationHelper {
 
     void validateNumberIsPositive(Long number);
 
+    void validateStringIsPureAscii(String string);
+
 }

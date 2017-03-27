@@ -5,6 +5,7 @@ import com.kamabizbazti.model.exceptions.UserRegistrationException;
 import com.kamabizbazti.model.exceptions.codes.UserRegistrationErrorCode;
 import com.kamabizbazti.model.interfaces.IAuthenticationRestController;
 import com.kamabizbazti.model.interfaces.IExceptionMessagesHelper;
+import com.kamabizbazti.model.interfaces.IValidationHelper;
 import com.kamabizbazti.model.repository.CurrencyRepository;
 import com.kamabizbazti.model.repository.LanguageRepository;
 import com.kamabizbazti.security.JwtTokenUtil;
@@ -60,6 +61,9 @@ public class AuthenticationRestController implements IAuthenticationRestControll
     @Autowired
     private IExceptionMessagesHelper exceptionMessagesHelper;
 
+    @Autowired
+    private IValidationHelper validationHelper;
+
     @Value("${security.header}")
     private String tokenHeader;
     private static final String DEFAULT_LANGUAGE = "ENG";
@@ -83,6 +87,7 @@ public class AuthenticationRestController implements IAuthenticationRestControll
     @CrossOrigin(origins = "*")
     @RequestMapping(value = "${security.route.authentication.signup}", method = RequestMethod.POST)
     public ResponseEntity<?> createUser(@RequestBody @Valid SignUpWrapper wrapper, Device device) throws UserRegistrationException {
+        validationHelper.validateStringIsPureAscii(wrapper.getPassword());
         if (userRepository.findByUsername(wrapper.getEmail()) != null)
             throw new UserRegistrationException(UserRegistrationErrorCode.EMAIL_ALREADY_REGISTERED, exceptionMessagesHelper.getLocalizedMessage("error.registration.email"));
         else {
