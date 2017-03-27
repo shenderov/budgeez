@@ -1,32 +1,62 @@
 package com.kamabizbazti.model.helpers;
 
 import com.kamabizbazti.model.entities.EVersion;
+import com.kamabizbazti.model.interfaces.IDateHelper;
 import com.kamabizbazti.model.interfaces.ISystemHelper;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.jar.Attributes;
-import java.util.jar.Manifest;
+import java.util.Properties;
 
 public class SystemHelper implements ISystemHelper {
+
+    @Autowired
+    IDateHelper dateHelper;
+
+    private final String buildProperties = "build.properties";
 
     private EVersion version;
 
     public EVersion getVersion() {
         if (version == null) {
-            Manifest mf = new Manifest();
-            try {
-                InputStream mfStream = getClass().getClassLoader().getResourceAsStream("META-INF/MANIFEST.MF");
-                mf.read(mfStream);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            Attributes attributes = mf.getMainAttributes();
-            String ver = attributes.getValue(Attributes.Name.SPECIFICATION_VERSION) + "." + attributes.getValue(Attributes.Name.IMPLEMENTATION_VERSION);
+            Properties properties = getProperties(buildProperties);
+            String copyRightYears = getCopyrightYears(properties.getProperty("build.initiate.release.date"));
             version = new EVersion();
-            version.setVersion(ver);
-            version.setBuildDate(attributes.getValue(Attributes.Name.IMPLEMENTATION_TITLE));
+            version.setName(properties.getProperty("build.name"));
+            version.setDescription(properties.getProperty("build.description"));
+            version.setVersion(properties.getProperty("build.version") + "." + properties.getProperty("build.number"));
+            version.setTimestamp(properties.getProperty("build.timestamp"));
+            version.setCopyrights(properties.getProperty("build.author") + " © " + copyRightYears);
         }
         return version;
+    }
+
+    private Properties getProperties(String fileName) {
+        Properties properties = new Properties();
+        InputStream stream = null;
+        try {
+            stream = getClass().getClassLoader().getResourceAsStream(fileName);
+            properties.load(stream);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (stream != null) {
+                try {
+                    stream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return properties;
+    }
+
+    private String getCopyrightYears(String initiateYear) {
+        String currentYear = dateHelper.getYear(System.currentTimeMillis());
+        if (currentYear.equals(initiateYear)) {
+            return initiateYear;
+        } else
+            return initiateYear + "-" + currentYear;
     }
 }

@@ -2,8 +2,27 @@ package com.kamabizbazti.model.entities;
 
 public class EVersion {
 
+    private String name;
+    private String description;
     private String version;
-    private String buildDate;
+    private String timestamp;
+    private String copyrights;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
     public String getVersion() {
         return version;
@@ -13,11 +32,19 @@ public class EVersion {
         this.version = version;
     }
 
-    public String getBuildDate() {
-        return buildDate;
+    public String getTimestamp() {
+        return timestamp;
     }
 
-    public void setBuildDate(String buildDate) {
-        this.buildDate = buildDate;
+    public void setTimestamp(String timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public String getCopyrights() {
+        return copyrights;
+    }
+
+    public void setCopyrights(String copyrights) {
+        this.copyrights = copyrights;
     }
 }
