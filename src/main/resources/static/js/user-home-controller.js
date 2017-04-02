@@ -11,6 +11,7 @@ app.controller('UserHomeController', function ($scope, $rootScope, $http, $templ
     $rootScope.authCheck();
     chartAuth = $scope.isAutorized;
     $rootScope.showCarousel = false;
+    $rootScope.activeTab = 0;
 
     $scope.getUserSelectionsList = function () {
         Connector.getUserSelectionsList()
@@ -21,7 +22,8 @@ app.controller('UserHomeController', function ($scope, $rootScope, $http, $templ
                 },
                 function (errResponse) {
                     console.error(JSON.stringify(errResponse));
-                    $rootScope.addMainWindowAlert('danger', errResponse.data.message);
+                    $rootScope.addMainWindowAlert('danger', errResponse.message);
+                    $rootScope.authExceptionCheck(errResponse);
                 }
             );
     };
@@ -36,7 +38,8 @@ app.controller('UserHomeController', function ($scope, $rootScope, $http, $templ
                 },
                 function (errResponse) {
                     console.error(JSON.stringify(errResponse));
-                    $rootScope.addMainWindowAlert('danger', errResponse.data.message);
+                    $rootScope.addMainWindowAlert('danger', errResponse.message);
+                    $rootScope.authExceptionCheck(errResponse);
                     return null;
                 }
             );
@@ -52,8 +55,9 @@ app.controller('UserHomeController', function ($scope, $rootScope, $http, $templ
                 },
                 function (errResponse) {
                     console.error(JSON.stringify(errResponse));
-                    $rootScope.addMainWindowAlert('danger', errResponse.data.message);
+                    $rootScope.addMainWindowAlert('danger', errResponse.message);
                     $scope.datePickerSubmitDisable = false;
+                    $rootScope.authExceptionCheck(errResponse);
                     return null;
                 }
             )

@@ -12,6 +12,7 @@ app.controller('RecordListController', function ($scope, $rootScope, $http, Conn
     $scope.datePickerSubmitDisable = false;
     $scope.datePickerSubmitButtonName = "Search";
     $rootScope.showCarousel = false;
+    $rootScope.activeTab = 1;
 
     $scope.defaultAction = function (startDate, endDate) {
         $scope.datePickerWrapper = {};
@@ -36,9 +37,10 @@ app.controller('RecordListController', function ($scope, $rootScope, $http, Conn
                     $scope.showTable = recordsList.totalElements > 0;
                 },
                 function (errResponse) {
-                    $rootScope.addMainWindowAlert("danger", errResponse.data.message);
+                    $rootScope.addMainWindowAlert("danger", errResponse.message);
                     console.error(JSON.stringify(errResponse));
                     $scope.datePickerSubmitDisable = false;
+                    $rootScope.authExceptionCheck(errResponse);
                 }
             );
     };
@@ -77,9 +79,10 @@ app.controller('RecordListController', function ($scope, $rootScope, $http, Conn
                 },
                 function (errResponse) {
                     //$scope.addRecordListAlert("danger", "Error Delete Record");
-                    $rootScope.addMainWindowAlert("danger", errResponse.data.message);
+                    $rootScope.addMainWindowAlert("danger", errResponse.message);
                     console.error('Error while fetching dataTable');
                     console.error(JSON.stringify(errResponse));
+                    $rootScope.authExceptionCheck(errResponse);
                 }
             );
     };

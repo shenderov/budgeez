@@ -70,7 +70,7 @@ app.controller('AuthorizationController', function($scope, $rootScope, $location
                 },
                 function(errResponse){
                     $scope.loginSubmitButtomDisabled = false;
-                    $rootScope.addAuthAddRecordBlockAlert("danger", errResponse.data.message);
+                    $rootScope.addAuthAddRecordBlockAlert("danger", errResponse.message);
                     console.error('Error while fetching dataTable');
                 }
             );
@@ -88,7 +88,7 @@ app.controller('AuthorizationController', function($scope, $rootScope, $location
                 },
                 function(errResponse){
                     $scope.signUpSubmitButtomDisabled = false;
-                    $rootScope.addAuthAddRecordBlockAlert("danger", errResponse.data.message);
+                    $rootScope.addAuthAddRecordBlockAlert("danger", errResponse.message);
                     console.error('Error while fetching dataTable');
                 }
             );
@@ -135,6 +135,13 @@ app.controller('AuthorizationController', function($scope, $rootScope, $location
             $scope.logout();
             $rootScope.mainWindowAlerts = [];
             $rootScope.authAddRecordBlockAlerts = [];
+        }
+    };
+
+    $rootScope.authExceptionCheck = function (errResponse) {
+        if(errResponse.error == 'Unauthorized'){
+            $scope.isAutorized = false;
+            $rootScope.authCheck();
         }
     };
 });

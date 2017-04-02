@@ -23,8 +23,9 @@ app.controller('RecordsController', function($scope, $rootScope, $http, Connecto
                     $rootScope.categoriesList.push($scope.addCategoryElement);
                 },
                 function(errResponse){
-                    $rootScope.addAuthAddRecordBlockAlert("danger", errResponse.data.message);
+                    $rootScope.addAuthAddRecordBlockAlert("danger", errResponse.message);
                     console.error(JSON.stringify(errResponse));
+                    $rootScope.authExceptionCheck(errResponse);
                 }
             );
     };
@@ -43,11 +44,11 @@ app.controller('RecordsController', function($scope, $rootScope, $http, Connecto
             var newCategory = $rootScope.addCategory({name: categoryName});
             newCategory.then(function(result){
                 if(result != null){
-                    $scope.recordWrapper.categoryId = result.data.categoryId;
+                    $scope.recordWrapper.categoryId = result.categoryId;
                     $scope.addNewRecord($scope.recordWrapper);
                 }
             }, function(error){
-                $rootScope.addAuthAddRecordBlockAlert("danger", errResponse.data.message);
+                $rootScope.addAuthAddRecordBlockAlert("danger", errResponse.message);
                 console.log("addRecord record error: " + JSON.stringify(error));
             });
         }else {
@@ -74,8 +75,9 @@ app.controller('RecordsController', function($scope, $rootScope, $http, Connecto
                 },
                 function(errResponse){
                     console.log("Add new record error: " + JSON.stringify(errResponse));
-                    $rootScope.addAuthAddRecordBlockAlert("danger", errResponse.data.message);
+                    $rootScope.addAuthAddRecordBlockAlert("danger", errResponse.message);
                     $scope.addRecordSubmitDisable = false;
+                    $rootScope.authExceptionCheck(errResponse);
                     return errResponse;
                 }
             );
@@ -86,12 +88,13 @@ app.controller('RecordsController', function($scope, $rootScope, $http, Connecto
             .then(
                 function(category) {
                     $rootScope.categoriesList.pop();
-                    $rootScope.categoriesList.push(category.data, $scope.addCategoryElement);
+                    $rootScope.categoriesList.push(category, $scope.addCategoryElement);
                     return category;
                 },
                 function(errResponse){
                     console.error("addCategory error: " + JSON.stringify(errResponse));
-                    $rootScope.addAuthAddRecordBlockAlert("danger", errResponse.data.message);
+                    $rootScope.addAuthAddRecordBlockAlert("danger", errResponse.message);
+                    $rootScope.authExceptionCheck(errResponse);
                 }
             );
     };

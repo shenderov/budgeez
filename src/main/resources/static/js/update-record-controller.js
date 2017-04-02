@@ -25,12 +25,13 @@ app.controller('UpdateRecordCtrl', function ($scope, $rootScope, $uibModalInstan
                 var newCategory = $rootScope.addCategory({name: categoryName});
                 newCategory.then(function(result){
                     if(result != null){
-                        $scope.recordWrapper.record.categoryId = result.data.categoryId;
+                        $scope.recordWrapper.record.categoryId = result.categoryId;
                         $scope.editRecord($scope.recordWrapper);
                     }
                 }, function (errResponse) {
-                    $rootScope.addAuthAddRecordBlockAlert("danger", errResponse.data.message);
+                    $rootScope.addAuthAddRecordBlockAlert("danger", errResponse.message);
                     console.error(JSON.stringify(errResponse));
+                    $rootScope.authExceptionCheck(errResponse);
                 });
             } else {
                 //noinspection JSUnresolvedVariable
@@ -54,8 +55,9 @@ app.controller('UpdateRecordCtrl', function ($scope, $rootScope, $uibModalInstan
                     return record;
                 },
                 function (errResponse) {
-                    $rootScope.addAuthAddRecordBlockAlert("danger", errResponse.data.message);
+                    $rootScope.addAuthAddRecordBlockAlert("danger", errResponse.message);
                     console.error(JSON.stringify(errResponse));
+                    $rootScope.authExceptionCheck(errResponse);
                     return null;
                 }
             );

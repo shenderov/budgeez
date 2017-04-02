@@ -10,7 +10,7 @@ app.factory('Connector', ['$http', '$q', function ($http, $q) {
                         return response.data;
                     },
                     function (errResponse) {
-                        return $q.reject(errResponse);
+                        return $q.reject(errResponse.data);
                     }
                 );
         },
@@ -22,7 +22,7 @@ app.factory('Connector', ['$http', '$q', function ($http, $q) {
                         return response.data;
                     },
                     function (errResponse) {
-                        return $q.reject(errResponse);
+                        return $q.reject(errResponse.data);
                     }
                 );
         },
@@ -34,7 +34,7 @@ app.factory('Connector', ['$http', '$q', function ($http, $q) {
                         return response.data;
                     },
                     function (errResponse) {
-                        return $q.reject(errResponse);
+                        return $q.reject(errResponse.data);
                     }
                 );
         },
@@ -46,7 +46,7 @@ app.factory('Connector', ['$http', '$q', function ($http, $q) {
                         return response.data;
                     },
                     function (errResponse) {
-                        return $q.reject(errResponse);
+                        return $q.reject(errResponse.data);
                     }
                 );
         },
@@ -58,7 +58,7 @@ app.factory('Connector', ['$http', '$q', function ($http, $q) {
                         return response.data;
                     },
                     function (errResponse) {
-                        return $q.reject(errResponse);
+                        return $q.reject(errResponse.data);
                     }
                 );
         },
@@ -70,7 +70,7 @@ app.factory('Connector', ['$http', '$q', function ($http, $q) {
                         return response.data;
                     },
                     function (errResponse) {
-                        return $q.reject(errResponse);
+                        return $q.reject(errResponse.data);
                     }
                 );
         },
@@ -82,7 +82,7 @@ app.factory('Connector', ['$http', '$q', function ($http, $q) {
                         return response.data;
                     },
                     function (errResponse) {
-                        return $q.reject(errResponse);
+                        return $q.reject(errResponse.data);
                     }
                 );
         },
@@ -94,7 +94,7 @@ app.factory('Connector', ['$http', '$q', function ($http, $q) {
                         return response.data;
                     },
                     function (errResponse) {
-                        return $q.reject(errResponse);
+                        return $q.reject(errResponse.data);
                     }
                 );
         },
@@ -103,10 +103,10 @@ app.factory('Connector', ['$http', '$q', function ($http, $q) {
             return $http.post(serverPath + 'user/addCustomCategory', category, {headers: token})
                 .then(
                     function (response) {
-                        return response;
+                        return response.data;
                     },
                     function (errResponse) {
-                        return $q.reject(errResponse);
+                        return $q.reject(errResponse.data);
                     }
                 );
         },
@@ -118,7 +118,7 @@ app.factory('Connector', ['$http', '$q', function ($http, $q) {
                         return response.data;
                     },
                     function (errResponse) {
-                        return $q.reject(errResponse);
+                        return $q.reject(errResponse.data);
                     }
                 );
         },
@@ -130,7 +130,7 @@ app.factory('Connector', ['$http', '$q', function ($http, $q) {
                         return response.data;
                     },
                     function (errResponse) {
-                        return $q.reject(errResponse);
+                        return $q.reject(errResponse.data);
                     }
                 );
         },
@@ -142,7 +142,7 @@ app.factory('Connector', ['$http', '$q', function ($http, $q) {
                         return response.data;
                     },
                     function (errResponse) {
-                        return $q.reject(errResponse);
+                        return $q.reject(errResponse.data);
                     }
                 );
         },
@@ -154,7 +154,7 @@ app.factory('Connector', ['$http', '$q', function ($http, $q) {
                         return response.data;
                     },
                     function (errResponse) {
-                        return $q.reject(errResponse);
+                        return $q.reject(errResponse.data);
                     }
                 );
         },
@@ -166,7 +166,7 @@ app.factory('Connector', ['$http', '$q', function ($http, $q) {
                         return result.data;
                     },
                     function (errResponse) {
-                        return $q.reject(errResponse);
+                        return $q.reject(errResponse.data);
                     }
                 );
         },
@@ -178,7 +178,7 @@ app.factory('Connector', ['$http', '$q', function ($http, $q) {
                         return result.data;
                     },
                     function (errResponse) {
-                        return $q.reject(errResponse);
+                        return $q.reject(errResponse.data);
                     }
                 );
         },
@@ -190,7 +190,7 @@ app.factory('Connector', ['$http', '$q', function ($http, $q) {
                         return response.data;
                     },
                     function (errResponse) {
-                        return $q.reject(errResponse);
+                        return $q.reject(errResponse.data);
                     }
                 );
         }

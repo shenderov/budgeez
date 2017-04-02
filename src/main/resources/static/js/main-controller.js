@@ -20,7 +20,7 @@ app.controller('MainController', function ($scope, $rootScope, $http, $templateC
                 },
                 function (errResponse) {
                     console.error(JSON.stringify(errResponse));
-                    $rootScope.addMainWindowAlert('danger', errResponse.data.message);
+                    $rootScope.addMainWindowAlert('danger', errResponse.message);
                 }
             );
     };
@@ -34,7 +34,7 @@ app.controller('MainController', function ($scope, $rootScope, $http, $templateC
                 },
                 function (errResponse) {
                     console.error(JSON.stringify(errResponse));
-                    $rootScope.addMainWindowAlert('danger', errResponse.data.message);
+                    $rootScope.addMainWindowAlert('danger', errResponse.message);
                     return null;
                 }
             )
@@ -50,7 +50,7 @@ app.controller('MainController', function ($scope, $rootScope, $http, $templateC
                 },
                 function (errResponse) {
                     console.error(JSON.stringify(errResponse));
-                    $rootScope.addMainWindowAlert('danger', errResponse.data.message);
+                    $rootScope.addMainWindowAlert('danger', errResponse.message);
                     $scope.getChartSubmitDisable = false;
                     return null;
                 }
