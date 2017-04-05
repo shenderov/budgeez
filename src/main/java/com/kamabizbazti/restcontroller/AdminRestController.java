@@ -1,8 +1,8 @@
 package com.kamabizbazti.restcontroller;
 
 
-import com.kamabizbazti.model.dao.Currency;
-import com.kamabizbazti.model.dao.Language;
+import com.kamabizbazti.model.entities.dao.Currency;
+import com.kamabizbazti.model.entities.dao.Language;
 import com.kamabizbazti.model.repository.CurrencyRepository;
 import com.kamabizbazti.model.repository.LanguageRepository;
 import com.kamabizbazti.security.entities.Authority;

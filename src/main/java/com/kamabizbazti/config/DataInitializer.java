@@ -2,10 +2,10 @@ package com.kamabizbazti.config;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.kamabizbazti.model.dao.ChartSelection;
-import com.kamabizbazti.model.dao.Currency;
-import com.kamabizbazti.model.dao.GeneralCategory;
-import com.kamabizbazti.model.dao.Language;
+import com.kamabizbazti.model.entities.dao.ChartSelection;
+import com.kamabizbazti.model.entities.dao.Currency;
+import com.kamabizbazti.model.entities.dao.GeneralCategory;
+import com.kamabizbazti.model.entities.dao.Language;
 import com.kamabizbazti.model.repository.ChartSelectionRepository;
 import com.kamabizbazti.model.repository.CurrencyRepository;
 import com.kamabizbazti.model.repository.GeneralCategoryRepository;

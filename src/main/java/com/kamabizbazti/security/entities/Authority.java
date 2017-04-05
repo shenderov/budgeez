@@ -1,6 +1,6 @@
 package com.kamabizbazti.security.entities;
 
-import com.kamabizbazti.model.dao.User;
+import com.kamabizbazti.model.entities.dao.User;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;

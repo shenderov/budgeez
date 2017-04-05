@@ -1,6 +1,6 @@
 package com.kamabizbazti.model.repository;
 
-import com.kamabizbazti.model.dao.GeneralCategory;
+import com.kamabizbazti.model.entities.dao.GeneralCategory;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;

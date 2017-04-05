@@ -13,7 +13,7 @@ import com.kamabizbazti.model.exceptions.codes.DataIntegrityErrorCode;
 import com.kamabizbazti.model.exceptions.codes.UserRegistrationErrorCode;
 import com.kamabizbazti.security.entities.JwtAuthenticationRequest;
 import com.kamabizbazti.security.entities.SignUpWrapper;
-import com.kamabizbazti.model.dao.User;
+import com.kamabizbazti.model.entities.dao.User;
 import com.kamabizbazti.security.repository.UserRepository;
 import com.kamabizbazti.security.service.JwtAuthenticationResponse;
 import org.springframework.beans.factory.annotation.Autowired;

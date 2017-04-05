@@ -1,4 +1,4 @@
-package com.kamabizbazti.model.entities;
+package com.kamabizbazti.model.entities.external;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;

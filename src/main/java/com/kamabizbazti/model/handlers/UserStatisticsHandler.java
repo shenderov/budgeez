@@ -1,7 +1,9 @@
 package com.kamabizbazti.model.handlers;
 
-import com.kamabizbazti.model.dao.GeneralCategory;
+import com.kamabizbazti.model.entities.dao.GeneralCategory;
 import com.kamabizbazti.model.entities.*;
+import com.kamabizbazti.model.entities.external.ChartRequestWrapper;
+import com.kamabizbazti.model.entities.external.ChartWrapper;
 import com.kamabizbazti.model.enumerations.ChartType;
 import com.kamabizbazti.model.exceptions.DateRangeException;
 import com.kamabizbazti.model.interfaces.IDateHelper;

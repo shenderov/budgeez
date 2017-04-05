@@ -1,8 +1,8 @@
 package com.kamabizbazti.model.repository;
 
-import com.kamabizbazti.model.dao.GeneralCategory;
+import com.kamabizbazti.model.entities.dao.GeneralCategory;
 import com.kamabizbazti.model.enumerations.CategoryType;
-import com.kamabizbazti.model.dao.Record;
+import com.kamabizbazti.model.entities.dao.Record;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Modifying;

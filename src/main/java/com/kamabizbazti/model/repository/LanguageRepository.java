@@ -1,6 +1,6 @@
 package com.kamabizbazti.model.repository;
 
-import com.kamabizbazti.model.dao.Language;
+import com.kamabizbazti.model.entities.dao.Language;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;

@@ -8,7 +8,7 @@ import com.kamabizbazti.security.entities.JwtUser;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import com.kamabizbazti.security.entities.Authority;
-import com.kamabizbazti.model.dao.User;
+import com.kamabizbazti.model.entities.dao.User;
 
 public final class JwtUserFactory {
 

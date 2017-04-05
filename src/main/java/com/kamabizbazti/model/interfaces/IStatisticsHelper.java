@@ -1,6 +1,6 @@
 package com.kamabizbazti.model.interfaces;
 
-import com.kamabizbazti.model.dao.GeneralCategory;
+import com.kamabizbazti.model.entities.dao.GeneralCategory;
 
 import java.util.List;
 

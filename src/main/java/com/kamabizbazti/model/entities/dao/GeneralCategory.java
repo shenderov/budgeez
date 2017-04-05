@@ -1,4 +1,4 @@
-package com.kamabizbazti.model.dao;
+package com.kamabizbazti.model.entities.dao;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.kamabizbazti.model.enumerations.CategoryType;

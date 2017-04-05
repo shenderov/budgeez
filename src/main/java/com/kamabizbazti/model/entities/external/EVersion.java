@@ -1,4 +1,4 @@
-package com.kamabizbazti.model.entities;
+package com.kamabizbazti.model.entities.external;
 
 public class EVersion {
 

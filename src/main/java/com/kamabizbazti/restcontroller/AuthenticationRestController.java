@@ -1,6 +1,6 @@
 package com.kamabizbazti.restcontroller;
 
-import com.kamabizbazti.model.dao.User;
+import com.kamabizbazti.model.entities.dao.User;
 import com.kamabizbazti.model.exceptions.UserRegistrationException;
 import com.kamabizbazti.model.exceptions.codes.UserRegistrationErrorCode;
 import com.kamabizbazti.model.interfaces.IAuthenticationRestController;

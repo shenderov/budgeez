@@ -1,9 +1,9 @@
 package com.kamabizbazti.restcontroller;
 
-import com.kamabizbazti.model.dao.CustomCategory;
-import com.kamabizbazti.model.dao.GeneralCategory;
-import com.kamabizbazti.model.dao.Record;
-import com.kamabizbazti.model.entities.*;
+import com.kamabizbazti.model.entities.dao.CustomCategory;
+import com.kamabizbazti.model.entities.dao.GeneralCategory;
+import com.kamabizbazti.model.entities.dao.Record;
+import com.kamabizbazti.model.entities.external.*;
 import com.kamabizbazti.model.exceptions.*;
 import com.kamabizbazti.model.interfaces.IUserRequestHandler;
 import com.kamabizbazti.model.interfaces.IUserRestController;

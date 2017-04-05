@@ -1,6 +1,6 @@
 package com.kamabizbazti.model.helpers;
 
-import com.kamabizbazti.model.entities.EVersion;
+import com.kamabizbazti.model.entities.external.EVersion;
 import com.kamabizbazti.model.interfaces.IDateHelper;
 import com.kamabizbazti.model.interfaces.ISystemHelper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +12,7 @@ import java.util.Properties;
 public class SystemHelper implements ISystemHelper {
 
     @Autowired
-    IDateHelper dateHelper;
+    private IDateHelper dateHelper;
 
     private final String buildProperties = "build.properties";
 

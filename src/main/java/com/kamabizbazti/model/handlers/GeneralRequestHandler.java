@@ -1,10 +1,10 @@
 package com.kamabizbazti.model.handlers;
 
-import com.kamabizbazti.model.entities.ChartRequestWrapper;
-import com.kamabizbazti.model.dao.ChartSelection;
-import com.kamabizbazti.model.entities.EVersion;
+import com.kamabizbazti.model.entities.external.ChartRequestWrapper;
+import com.kamabizbazti.model.entities.dao.ChartSelection;
+import com.kamabizbazti.model.entities.external.EVersion;
 import com.kamabizbazti.model.enumerations.ChartSelectionIdEnum;
-import com.kamabizbazti.model.entities.ChartWrapper;
+import com.kamabizbazti.model.entities.external.ChartWrapper;
 import com.kamabizbazti.model.exceptions.UnknownSelectionIdException;
 import com.kamabizbazti.model.exceptions.codes.EntitiesErrorCode;
 import com.kamabizbazti.model.interfaces.IExceptionMessagesHelper;

@@ -4,9 +4,9 @@ import com.google.gson.reflect.TypeToken;
 import com.kamabizbazti.common.TestConfiguration;
 import com.kamabizbazti.common.entities.HttpResponse;
 import com.kamabizbazti.common.entities.HttpResponseJson;
-import com.kamabizbazti.model.dao.GeneralCategory;
-import com.kamabizbazti.model.dao.Record;
-import com.kamabizbazti.model.entities.*;
+import com.kamabizbazti.model.entities.dao.GeneralCategory;
+import com.kamabizbazti.model.entities.dao.Record;
+import com.kamabizbazti.model.entities.external.*;
 
 import java.lang.reflect.Type;
 import java.util.List;

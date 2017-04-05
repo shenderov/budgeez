@@ -1,6 +1,6 @@
 package com.kamabizbazti.model.helpers;
 
-import com.kamabizbazti.model.dao.GeneralCategory;
+import com.kamabizbazti.model.entities.dao.GeneralCategory;
 import com.kamabizbazti.model.interfaces.IStatisticsHelper;
 import org.springframework.stereotype.Component;
 

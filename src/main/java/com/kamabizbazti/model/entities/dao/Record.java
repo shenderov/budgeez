@@ -1,4 +1,4 @@
-package com.kamabizbazti.model.dao;
+package com.kamabizbazti.model.entities.dao;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -15,7 +15,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.kamabizbazti.model.entities.ERecord;
+import com.kamabizbazti.model.entities.external.ERecord;
 import com.kamabizbazti.model.enumerations.CategoryType;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;

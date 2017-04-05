@@ -1,4 +1,4 @@
-package com.kamabizbazti.model.entities;
+package com.kamabizbazti.model.entities.external;
 
 import com.kamabizbazti.model.interfaces.IErrorCode;
 import org.springframework.http.HttpStatus;

@@ -1,6 +1,6 @@
 package com.kamabizbazti.model.repository;
 
-import com.kamabizbazti.model.dao.Currency;
+import com.kamabizbazti.model.entities.dao.Currency;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;

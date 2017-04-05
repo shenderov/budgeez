@@ -1,8 +1,8 @@
 package com.kamabizbazti.model.interfaces;
 
-import com.kamabizbazti.model.dao.GeneralCategory;
-import com.kamabizbazti.model.dao.Record;
-import com.kamabizbazti.model.entities.*;
+import com.kamabizbazti.model.entities.dao.GeneralCategory;
+import com.kamabizbazti.model.entities.dao.Record;
+import com.kamabizbazti.model.entities.external.*;
 import com.kamabizbazti.model.exceptions.*;
 import org.springframework.data.domain.Page;
 

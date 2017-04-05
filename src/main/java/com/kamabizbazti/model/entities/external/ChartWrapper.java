@@ -1,5 +1,6 @@
-package com.kamabizbazti.model.entities;
+package com.kamabizbazti.model.entities.external;
 
+import com.kamabizbazti.model.entities.DataTable;
 import com.kamabizbazti.model.enumerations.ChartType;
 
 @SuppressWarnings({"UnusedDeclaration"})

@@ -1,6 +1,6 @@
 package com.kamabizbazti.model.repository;
 
-import com.kamabizbazti.model.dao.ChartSelection;
+import com.kamabizbazti.model.entities.dao.ChartSelection;
 import com.kamabizbazti.model.enumerations.ChartSelectionIdEnum;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;

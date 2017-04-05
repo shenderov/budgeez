@@ -1,7 +1,7 @@
 package com.kamabizbazti.model.interfaces;
 
-import com.kamabizbazti.model.entities.ChartRequestWrapper;
-import com.kamabizbazti.model.entities.ChartWrapper;
+import com.kamabizbazti.model.entities.external.ChartRequestWrapper;
+import com.kamabizbazti.model.entities.external.ChartWrapper;
 
 public interface IGeneralStatisticsHandler {
     ChartWrapper getCurrentMonthAverage(ChartRequestWrapper chartRequestWrapper);

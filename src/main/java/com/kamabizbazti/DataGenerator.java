@@ -1,13 +1,13 @@
 package com.kamabizbazti;
 
-import com.kamabizbazti.model.dao.*;
-import com.kamabizbazti.model.dao.Currency;
+import com.kamabizbazti.model.entities.dao.*;
+import com.kamabizbazti.model.entities.dao.Currency;
 import com.kamabizbazti.model.enumerations.ChartSelectionIdEnum;
 import com.kamabizbazti.model.enumerations.ChartType;
 import com.kamabizbazti.model.repository.*;
 import com.kamabizbazti.security.entities.Authority;
 import com.kamabizbazti.security.entities.AuthorityName;
-import com.kamabizbazti.model.dao.User;
+import com.kamabizbazti.model.entities.dao.User;
 import com.kamabizbazti.security.repository.AuthorityRepository;
 import com.kamabizbazti.security.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;

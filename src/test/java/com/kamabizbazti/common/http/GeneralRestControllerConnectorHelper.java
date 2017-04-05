@@ -3,9 +3,9 @@ package com.kamabizbazti.common.http;
 import com.google.gson.reflect.TypeToken;
 import com.kamabizbazti.common.TestConfiguration;
 import com.kamabizbazti.common.entities.HttpResponse;
-import com.kamabizbazti.model.entities.ChartRequestWrapper;
-import com.kamabizbazti.model.dao.ChartSelection;
-import com.kamabizbazti.model.entities.ChartWrapper;
+import com.kamabizbazti.model.entities.external.ChartRequestWrapper;
+import com.kamabizbazti.model.entities.dao.ChartSelection;
+import com.kamabizbazti.model.entities.external.ChartWrapper;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;

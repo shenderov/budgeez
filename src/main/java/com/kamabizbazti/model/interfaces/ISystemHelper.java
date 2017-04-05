@@ -1,8 +1,6 @@
 package com.kamabizbazti.model.interfaces;
 
-import com.kamabizbazti.model.entities.EVersion;
-
-import java.io.IOException;
+import com.kamabizbazti.model.entities.external.EVersion;
 
 public interface ISystemHelper {
 

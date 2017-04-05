@@ -1,6 +1,6 @@
 package com.kamabizbazti.restcontroller;
 
-import com.kamabizbazti.model.entities.ExceptionWrapper;
+import com.kamabizbazti.model.entities.external.ExceptionWrapper;
 import com.kamabizbazti.model.exceptions.*;
 import com.kamabizbazti.model.exceptions.codes.AuthenticationErrorCode;
 import com.kamabizbazti.model.exceptions.codes.DataIntegrityErrorCode;
@@ -14,11 +14,9 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
-import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -27,9 +25,6 @@ public class RestControllerExceptionHandler {
 
     @Autowired
     private IExceptionMessagesHelper exceptionMessagesHelper;
-
-    private static final String INVALID_USERNAME_OR_PASSWORD_MESSAGE = "Invalid Username or Password";
-    private static final String HTTP_METHOD_IS_NOT_SUPPORTED = "HTTP_METHOD_IS_NOT_SUPPORTED";
 
     @ExceptionHandler({Exception.class})
     public ResponseEntity badRequest(HttpServletRequest req, Exception exception) {
@@ -69,7 +64,7 @@ public class RestControllerExceptionHandler {
     @ExceptionHandler({BadCredentialsException.class})
     public ResponseEntity badRequest(HttpServletRequest req, BadCredentialsException exception) {
         exception.printStackTrace();
-        AuthenticationException e = new AuthenticationException(AuthenticationErrorCode.INVALID_USERNAME_OR_PASSWORD, INVALID_USERNAME_OR_PASSWORD_MESSAGE);
+        AuthenticationException e = new AuthenticationException(AuthenticationErrorCode.INVALID_USERNAME_OR_PASSWORD, exceptionMessagesHelper.getLocalizedMessage("error.authentication.bad_credentials"));
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(new ExceptionWrapper(HttpStatus.INTERNAL_SERVER_ERROR, e, e.getErrorCode()));

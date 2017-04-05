@@ -1,8 +1,8 @@
 package com.kamabizbazti.security.repository;
 
-import com.kamabizbazti.model.dao.Currency;
-import com.kamabizbazti.model.dao.Language;
-import com.kamabizbazti.model.dao.User;
+import com.kamabizbazti.model.entities.dao.Currency;
+import com.kamabizbazti.model.entities.dao.Language;
+import com.kamabizbazti.model.entities.dao.User;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;

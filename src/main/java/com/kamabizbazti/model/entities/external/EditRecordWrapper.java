@@ -1,4 +1,6 @@
-package com.kamabizbazti.model.entities;
+package com.kamabizbazti.model.entities.external;
+
+import com.kamabizbazti.model.entities.external.ERecord;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
