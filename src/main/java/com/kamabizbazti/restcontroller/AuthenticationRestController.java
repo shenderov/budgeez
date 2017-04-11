@@ -72,6 +72,7 @@ public class AuthenticationRestController implements IAuthenticationRestControll
     @CrossOrigin(origins = "*")
     @RequestMapping(value = "${security.route.authentication.login}", method = RequestMethod.POST)
     public ResponseEntity<?> createAuthenticationToken(@RequestBody @Valid JwtAuthenticationRequest authenticationRequest, Device device) {
+        System.out.println(authenticationRequest.toString());
         final Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         authenticationRequest.getUsername(),
