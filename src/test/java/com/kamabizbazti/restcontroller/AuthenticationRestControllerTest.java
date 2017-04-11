@@ -42,7 +42,7 @@ public class AuthenticationRestControllerTest extends AbstractTestNGSpringContex
     private String email1 = "test1@kamabizbazti.com";
     private String email2 = "test2@kamabizbazti.com";
     private String email3 = "test3@kamabizbazti.com";
-    private String emailMixed = "tEsT4@KaMaBiZbAzTi.CoM";
+    private String emailMixed = "tEsTmIxEd@KaMaBiZbAzTi.CoM";
     private String email5 = "test5@kamabizbazti.com";
     private String minLengthEmail = "ab@c";
     private String maxLengthEmail = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa@bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb.cc";
