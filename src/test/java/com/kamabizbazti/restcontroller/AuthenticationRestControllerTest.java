@@ -81,7 +81,7 @@ public class AuthenticationRestControllerTest extends AbstractTestNGSpringContex
         userRepository.delete(userRepository.findByUsername(email1).getId());
         userRepository.delete(userRepository.findByUsername(email2).getId());
         userRepository.delete(userRepository.findByUsername(email3).getId());
-        userRepository.delete(userRepository.findByUsername(emailMixed).getId());
+        userRepository.delete(userRepository.findByUsername(emailMixed.toLowerCase()).getId());
     }
 
     @Test
