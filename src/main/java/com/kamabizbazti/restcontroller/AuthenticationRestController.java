@@ -72,7 +72,6 @@ public class AuthenticationRestController implements IAuthenticationRestControll
     @CrossOrigin(origins = "*")
     @RequestMapping(value = "${security.route.authentication.login}", method = RequestMethod.POST)
     public ResponseEntity<?> createAuthenticationToken(@RequestBody @Valid JwtAuthenticationRequest authenticationRequest, Device device) {
-        System.out.println(authenticationRequest.toString());
         final Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         authenticationRequest.getUsername(),
@@ -92,13 +91,13 @@ public class AuthenticationRestController implements IAuthenticationRestControll
         if (userRepository.findByUsername(wrapper.getEmail()) != null)
             throw new UserRegistrationException(UserRegistrationErrorCode.EMAIL_ALREADY_REGISTERED, exceptionMessagesHelper.getLocalizedMessage("error.registration.email"));
         else {
-            User user = new User(wrapper.getEmail().toLowerCase(), passwordEncoder.encode(wrapper.getPassword()), wrapper.getName());
+            User user = new User(wrapper.getEmail(), passwordEncoder.encode(wrapper.getPassword()), wrapper.getName());
             user.setAuthorities(setUserAuthorities());
             user.setLanguage(languageRepository.findByLanguageCode(DEFAULT_LANGUAGE));
             user.setCurrency(currencyRepository.findByCurrencyCode(DEFAULT_CURRENCY));
             userRepository.save(user);
         }
-        return createAuthenticationToken(new JwtAuthenticationRequest(wrapper.getEmail().toLowerCase(), wrapper.getPassword()), device);
+        return createAuthenticationToken(new JwtAuthenticationRequest(wrapper.getEmail(), wrapper.getPassword()), device);
     }
 
     @RequestMapping(value = "${security.route.authentication.refresh}", method = RequestMethod.GET)
