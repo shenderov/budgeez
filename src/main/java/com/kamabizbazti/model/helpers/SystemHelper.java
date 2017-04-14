@@ -21,13 +21,13 @@ public class SystemHelper implements ISystemHelper {
     public EVersion getVersion() {
         if (version == null) {
             Properties properties = getProperties(buildProperties);
-            String copyRightYears = getCopyrightYears(properties.getProperty("build_initiate_release_date"));
+            String copyRightYears = getCopyrightYears(properties.getProperty("build.initiate.release.date"));
             version = new EVersion();
-            version.setName(properties.getProperty("build_name"));
-            version.setDescription(properties.getProperty("build_description"));
-            version.setVersion(properties.getProperty("build_version") + "." + properties.getProperty("build_number"));
-            version.setTimestamp(properties.getProperty("build_timestamp"));
-            version.setCopyrights(properties.getProperty("build_author") + " © " + copyRightYears);
+            version.setName(properties.getProperty("build.name"));
+            version.setDescription(properties.getProperty("build.description"));
+            version.setVersion(properties.getProperty("build.version") + "." + properties.getProperty("build.number"));
+            version.setTimestamp(properties.getProperty("build.timestamp"));
+            version.setCopyrights(properties.getProperty("build.author") + " © " + copyRightYears);
         }
         return version;
     }
