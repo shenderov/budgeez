@@ -50,5 +50,3 @@ DELETE FROM record WHERE record.id=11 AND (record.date BETWEEN 1472677200023 AND
 
 SELECT * FROM purpose WHERE purpose_id IN
 (SELECT record.purpose_id FROM record WHERE record.id=11 AND record.date BETWEEN 1480543200263 AND 1483221599263 GROUP BY record.purpose_id);
-
-DELETE FROM record WHERE purpose_type='CUSTOM';

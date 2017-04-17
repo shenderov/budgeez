@@ -1,0 +1,5 @@
+jenkins    ALL = NOPASSWD: /bin/mv /var/lib/jenkins/workspace/*/* /var/lib/tomcat8/webapps/*
+jenkins    ALL = NOPASSWD: /bin/cp /home/kamabizbazti/tmp/* /var/lib/tomcat8/webapps/*
+jenkins    ALL = NOPASSWD: /bin/cp /var/lib/tomcat8/webapps/* /home/kamabizbazti/tmp/*
+jenkins    ALL = NOPASSWD: /etc/init.d/tomcat8 stop
+jenkins    ALL = NOPASSWD: /etc/init.d/tomcat8 start

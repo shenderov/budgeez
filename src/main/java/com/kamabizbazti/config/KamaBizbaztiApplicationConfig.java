@@ -1,6 +1,5 @@
 package com.kamabizbazti.config;
 
-import com.kamabizbazti.DataGenerator;
 import com.kamabizbazti.model.handlers.GeneralRequestHandler;
 import com.kamabizbazti.model.handlers.GeneralStatisticsHandler;
 import com.kamabizbazti.model.handlers.UserRequestHandler;
@@ -63,11 +62,6 @@ public class KamaBizbaztiApplicationConfig {
     @Bean
     public ISystemHelper systemHelper() {
         return new SystemHelper();
-    }
-
-    @Bean
-    public DataGenerator dataGenerator() {
-        return new DataGenerator();
     }
 
     @Bean(name = "messageSource")

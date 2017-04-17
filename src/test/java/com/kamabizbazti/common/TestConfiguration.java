@@ -36,4 +36,9 @@ public class TestConfiguration {
     public TestTools testTools() {
         return new TestTools();
     }
+
+    @Bean
+    public DataGenerator dataGenerator() {
+        return new DataGenerator();
+    }
 }

@@ -1,6 +1,6 @@
 package com.kamabizbazti.dao;
 
-import com.kamabizbazti.DataGenerator;
+import com.kamabizbazti.common.DataGenerator;
 import com.kamabizbazti.KamaBizbaztiBootApplication;
 import com.kamabizbazti.config.KamaBizbaztiApplicationConfig;
 import com.kamabizbazti.model.entities.dao.*;
