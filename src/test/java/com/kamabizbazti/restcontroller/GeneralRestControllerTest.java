@@ -9,6 +9,7 @@ import com.kamabizbazti.config.KamaBizbaztiApplicationConfig;
 import com.kamabizbazti.model.entities.dao.ChartSelection;
 import com.kamabizbazti.model.entities.external.ChartRequestWrapper;
 import com.kamabizbazti.model.entities.external.ChartWrapper;
+import com.kamabizbazti.model.entities.external.EVersion;
 import com.kamabizbazti.model.enumerations.ChartSelectionIdEnum;
 import com.kamabizbazti.model.enumerations.ChartType;
 import com.kamabizbazti.model.exceptions.codes.DataIntegrityErrorCode;
@@ -171,5 +172,12 @@ public class GeneralRestControllerTest extends AbstractTestNGSpringContextTests 
         assertEquals(response.getHttpStatusCode(), 500);
         assertEquals(response.getObject().get("error").getAsString(), EntitiesErrorCode.UNKNOWN_CHART_SELECTION_ID.toString());
         assertEquals(response.getObject().get("message").getAsString(), "Unknown chart selection ID");
+    }
+
+    @Test
+    public void testGetVersion() throws Exception {
+        EVersion version = (EVersion) helper.getVersion().getObject();
+        Assert.assertNotNull(version);
+        Assert.assertEquals(version.getName(), "KamaBizbazti");
     }
 }

@@ -15,6 +15,7 @@ public class TestConfiguration {
     public static final String GET_USER_CHART_SELECTIONS_LIST = GENERAL_PATH + "/getUserChartSelectionsList";
     public static final String GET_DEFAULT_DATATABLE = GENERAL_PATH + "/getDefaultDataTable";
     public static final String GET_GENERAL_DATATABLE = GENERAL_PATH + "/getGeneralDataTable";
+    public static final String GET_VERSION = GENERAL_PATH + "/getVersion";
 
     //Authentication URLs
     public static final String LOGIN =  "/login";

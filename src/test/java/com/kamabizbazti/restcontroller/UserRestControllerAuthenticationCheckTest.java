@@ -170,7 +170,6 @@ public class UserRestControllerAuthenticationCheckTest extends AbstractTestNGSpr
     @Test(dependsOnMethods = {"testAddRecord"})
     public void testEditRecord(){
         GeneralCategory category = generalCategoryRepository.findAll().get(0);
-        //Record record = new Record(user, category, 12.5, System.currentTimeMillis());
         record.setCategory(category);
         HttpResponseJson response = helper.editRecordNegative(testTools.objectToJson(record),null).convertToHttpResponseJson();
         assertEquals(response.getHttpStatusCode(), 401);

@@ -42,6 +42,7 @@ public class AuthenticationRestControllerTest extends AbstractTestNGSpringContex
     private String email1 = "test1@kamabizbazti.com";
     private String email2 = "test2@kamabizbazti.com";
     private String email3 = "test3@kamabizbazti.com";
+    private String email4 = "test4@kamabizbazti.com";
     private String emailMixed = "tEsTmIxEd@KaMaBiZbAzTi.CoM";
     private String email5 = "test5@kamabizbazti.com";
     private String minLengthEmail = "ab@c";
@@ -50,6 +51,7 @@ public class AuthenticationRestControllerTest extends AbstractTestNGSpringContex
     private String minLengthName = "ab";
     private String maxLengthName = "MaxName MaxName MaxName MaxName MaxName MaxName MaxName MaxName MaxNam";
     private String password = "aBc_123_DeF";
+    private String cyrilicPwd = "пароль123";
     private String minLengthPassword = "passwd";
     private String maxLengthPassword = "passwordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpassword";
     private String token;
@@ -147,6 +149,18 @@ public class AuthenticationRestControllerTest extends AbstractTestNGSpringContex
         assertEquals(response.getHttpStatusCode(), 500);
         assertEquals(response.getObject().get("error").getAsString(), UserRegistrationErrorCode.EMAIL_ALREADY_REGISTERED.toString());
         assertEquals(response.getObject().get("message").getAsString(), "Email Already Registered");
+    }
+
+    @Test
+    public void testCreateUserWithCyrilicPassword() {
+        SignUpWrapper wrapper = new SignUpWrapper();
+        wrapper.setName(name);
+        wrapper.setEmail(email4);
+        wrapper.setPassword(cyrilicPwd);
+        HttpResponseJson response = helper.createUserNegative(testTools.objectToJson(wrapper)).convertToHttpResponseJson();
+        assertEquals(response.getHttpStatusCode(), 500);
+        assertEquals(response.getObject().get("error").getAsString(), UserRegistrationErrorCode.PASSWORD_CONTAINS_NOT_ASCII_CHARACTERS.toString());
+        assertEquals(response.getObject().get("message").getAsString(), "Password should contains only latin symbols");
     }
 
     @Test

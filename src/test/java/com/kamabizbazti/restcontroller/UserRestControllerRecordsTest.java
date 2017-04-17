@@ -117,6 +117,22 @@ public class UserRestControllerRecordsTest extends AbstractTestNGSpringContextTe
         Assert.assertEquals(res.getCategory().getCategoryId() == record.getCategoryId(), true);
     }
 
+    @Test
+    public void testAddRecordCyrilicComment() {
+        ERecord record = new ERecord();
+        record.setAmount(10.5);
+        record.setCategoryId(category.getCategoryId());
+        record.setComment("Комментарий");
+        record.setDate(System.currentTimeMillis());
+        Record res = (Record) helper.addRecordPositive(record, token1).getObject();
+        this.record = res;
+        Record r = recordRepository.findOne(1L);
+        Assert.assertEquals(res.getAmount(), record.getAmount());
+        Assert.assertEquals(res.getComment(), record.getComment());
+        Assert.assertEquals(res.getDate(), record.getDate());
+        Assert.assertEquals(res.getCategory().getCategoryId() == record.getCategoryId(), true);
+    }
+
     @Test(dependsOnMethods = {"testAddRecord"})
     public void testGetRecordsList() throws IOException {
         DatePicker picker = new DatePicker();

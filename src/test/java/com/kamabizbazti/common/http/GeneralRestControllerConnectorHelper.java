@@ -6,6 +6,7 @@ import com.kamabizbazti.common.entities.HttpResponse;
 import com.kamabizbazti.model.entities.external.ChartRequestWrapper;
 import com.kamabizbazti.model.entities.dao.ChartSelection;
 import com.kamabizbazti.model.entities.external.ChartWrapper;
+import com.kamabizbazti.model.entities.external.EVersion;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -44,5 +45,11 @@ public class GeneralRestControllerConnectorHelper extends HttpConnectorGeneral {
 
     public HttpResponse getGeneralDataTableNegative(String jsonObject) {
         return sendPostRequest(TestConfiguration.GET_GENERAL_DATATABLE, jsonObject);
+    }
+
+    public HttpResponse getVersion() {
+        HttpResponse response = sendGetRequest(TestConfiguration.GET_VERSION);
+        response.setObject(testTools.stringToObject((String) response.getObject(), EVersion.class));
+        return response;
     }
 }
