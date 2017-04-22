@@ -13,6 +13,7 @@ app.controller('RecordListController', function ($scope, $rootScope, $http, Conn
     $scope.datePickerSubmitButtonName = "Search";
     $rootScope.showCarousel = false;
     $rootScope.activeTab = 1;
+    $rootScope.authCheck();
 
     $scope.defaultAction = function (startDate, endDate) {
         $scope.datePickerWrapper = {};
@@ -44,7 +45,9 @@ app.controller('RecordListController', function ($scope, $rootScope, $http, Conn
                 }
             );
     };
-    $scope.defaultAction(0, 0);
+    if($scope.isAutorized){
+        $scope.defaultAction(0, 0);
+    }
 
     $scope.addRecordToRecordList = function (record) {
         $scope.recordsList.push(record);

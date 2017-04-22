@@ -12,6 +12,7 @@ app.controller('UserHomeController', function ($scope, $rootScope, $http, $templ
     chartAuth = $scope.isAutorized;
     $rootScope.showCarousel = false;
     $rootScope.activeTab = 0;
+    $scope.selectionDropdownDivider = false;
 
     $scope.getUserSelectionsList = function () {
         Connector.getUserSelectionsList()
@@ -19,6 +20,10 @@ app.controller('UserHomeController', function ($scope, $rootScope, $http, $templ
                 function (chartSelectionsList) {
                     $scope.chartSelectionsList = chartSelectionsList;
                     $scope.activeChartSelection = $scope.chartSelectionsList[0];
+                    angular.forEach($scope.chartSelectionsList, function(selection) {
+                        if(selection.datePicker === true)
+                            $scope.selectionDropdownDivider = true;
+                    });
                 },
                 function (errResponse) {
                     console.error(JSON.stringify(errResponse));

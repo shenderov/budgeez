@@ -2,7 +2,7 @@
     <h3 class="form-signin-heading text-center">Please Sign Up</h3>
     <form class="form-signin" role="form" name="signUp" novalidate>
         <div uib-alert ng-repeat="alert in authAddRecordBlockAlerts" ng-class="'alert-' + (alert.type || 'warning')"
-             close="closeAddEditFormAlert($index)" dismiss-on-timeout="5000">{{alert.msg}}
+             close="closeAuthAddRecordBlockAlert($index)" dismiss-on-timeout="5000">{{alert.msg}}
         </div>
         <div class="form-group"
              ng-class="{ 'has-error has-feedback': signUp.inputName.$touched && signUp.inputName.$invalid, 'has-success has-feedback' : signUp.inputName.$touched && signUp.inputName.$valid}">

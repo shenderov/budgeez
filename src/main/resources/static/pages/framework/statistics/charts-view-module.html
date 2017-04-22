@@ -1,6 +1,6 @@
 <div ng-controller="ChartsController" id="charts-view-module">
-    <div class="row" id="charts-selector-block">
-        <div class="col-lg-5" id="charts-selector-dropdown-block">
+    <div id="charts-selector-block">
+        <div id="charts-selector-dropdown-block">
             <div class="btn-group" uib-dropdown id="charts-selector-dropdown">
                 <button id="charts-selector-dropdown-split-button" type="button" class="btn btn-default"
                         ng-click="getDataAndDrawChart(activeChartSelection)">{{activeChartSelection.title}}
@@ -14,7 +14,7 @@
                     <li role="menuitem"
                         ng-repeat="chartSelection in chartSelectionsList | filter: {datePicker : 'false'} | filter: {selectionId: '!'+activeChartSelection.selectionId}:true">
                         <a ng-click="getDataAndDrawChart(chartSelection)">{{chartSelection.title}}</a></li>
-                    <li ng-if="chartSelection | contains: datePicker: 'true'" class="divider"></li>
+                    <li ng-if="selectionDropdownDivider" class="divider"></li>
                     <li role="menuitem"
                         ng-repeat="chartSelection in chartSelectionsList | filter: {datePicker : 'true'} | filter: {selectionId: '!'+activeChartSelection.selectionId}:true">
                         <a ng-click="setActiveChartSelection(chartSelection)">{{chartSelection.title}}</a></li>

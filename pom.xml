@@ -108,12 +108,25 @@
             <version>2.8.0</version>
         </dependency>
     </dependencies>
-
     <build>
         <resources>
             <resource>
                 <directory>${basedir}/src/main/resources</directory>
                 <filtering>true</filtering>
+                <excludes>
+                <exclude>**/*.woff</exclude>
+                <exclude>**/*.ttf</exclude>
+                    <exclude>**/*.woff2</exclude>
+                </excludes>
+            </resource>
+            <resource>
+                <directory>${basedir}/src/main/resources</directory>
+                <filtering>false</filtering>
+                <includes>
+                    <include>**/*.woff</include>
+                    <include>**/*.ttf</include>
+                    <include>**/*.woff2</include>
+                </includes>
             </resource>
         </resources>
         <plugins>
@@ -123,6 +136,4 @@
             </plugin>
         </plugins>
     </build>
-
-
 </project>

@@ -10,6 +10,7 @@ app.controller('MainController', function ($scope, $rootScope, $http, $templateC
     $scope.chartWrapper = null;
     chartAuth = true;
     $rootScope.showCarousel = true;
+    $scope.selectionDropdownDivider = false;
 
     $scope.getGeneralSelectionsList = function () {
         Connector.getGeneralSelectionsList()
@@ -17,6 +18,10 @@ app.controller('MainController', function ($scope, $rootScope, $http, $templateC
                 function (chartSelectionsList) {
                     $scope.chartSelectionsList = chartSelectionsList;
                     $scope.activeChartSelection = $scope.chartSelectionsList[0];
+                    angular.forEach($scope.chartSelectionsList, function(selection) {
+                        if(selection.datePicker === true)
+                            $scope.selectionDropdownDivider = true;
+                    });
                 },
                 function (errResponse) {
                     console.error(JSON.stringify(errResponse));
