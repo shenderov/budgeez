@@ -17,8 +17,6 @@ public interface UserRepository extends CrudRepository<User, Long> {
 
     List<User> findAll();
 
-    User save(User user);
-
     @Modifying
     @Transactional
     @Query(nativeQuery = true, value = "INSERT INTO user_authorities(users_id, authorities_id) VALUES (?2, ?1)")
