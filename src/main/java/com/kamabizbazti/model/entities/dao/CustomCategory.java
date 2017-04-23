@@ -8,11 +8,9 @@ import org.hibernate.annotations.OnDeleteAction;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "Category")
 public class CustomCategory extends GeneralCategory {
 
-    @ManyToOne()
-    //@JoinColumn(name = "id")
+    @ManyToOne
     @JsonIgnore
     @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
