@@ -5,8 +5,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class TestConfiguration {
-    public static final String BASE_URI = "http://localhost";
-    public static final String BASE_PATH = "/";
+
     static final String TOKEN_HEADER = "Authorization";
 
     //General URLs

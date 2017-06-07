@@ -13,8 +13,8 @@ import java.util.ArrayList;
 
 public class GeneralRestControllerConnectorHelper extends HttpConnectorGeneral {
 
-    public GeneralRestControllerConnectorHelper(int port) {
-        super(port);
+    public GeneralRestControllerConnectorHelper(String hostname, int port, String basePath) {
+        super(hostname, port, basePath);
     }
 
     public HttpResponse getGeneralChartSelectionsListPositive() {

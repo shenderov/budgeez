@@ -75,4 +75,24 @@ public class Language {
                 ", languageIcon='" + languageIcon + '\'' +
                 '}';
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Language)) return false;
+
+        Language language = (Language) o;
+
+        if (!languageCode.equals(language.languageCode)) return false;
+        if (!languageName.equals(language.languageName)) return false;
+        return languageIcon != null ? languageIcon.equals(language.languageIcon) : language.languageIcon == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = languageCode.hashCode();
+        result = 31 * result + languageName.hashCode();
+        result = 31 * result + (languageIcon != null ? languageIcon.hashCode() : 0);
+        return result;
+    }
 }

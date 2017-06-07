@@ -13,8 +13,8 @@ import java.util.List;
 
 public class UserRestControllerConnectorHelper extends HttpConnectorGeneral {
 
-    public UserRestControllerConnectorHelper(int port) {
-        super(port);
+    public UserRestControllerConnectorHelper(String hostname, int port, String basePath) {
+        super(hostname, port, basePath);
     }
 
     public HttpResponse getCategoriesListPositive(String token) {

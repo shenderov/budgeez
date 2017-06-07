@@ -13,11 +13,11 @@ import java.util.Map;
 import static com.jayway.restassured.RestAssured.given;
 @SuppressWarnings({"UnusedDeclaration", "unchecked", "FieldCanBeLocal"})
 public class HttpConnectorGeneral {
-    HttpConnectorGeneral(int port) {
+    HttpConnectorGeneral(String hostname, int port, String basePath) {
         if (System.getProperty("baseURI") != null)
             RestAssured.baseURI = System.getProperty("baseURI");
         else
-            RestAssured.baseURI = TestConfiguration.BASE_URI;
+            RestAssured.baseURI = "http://" + hostname;
         if (System.getProperty("port") != null)
             RestAssured.port = Integer.parseInt(System.getProperty("port"));
         else
@@ -25,7 +25,7 @@ public class HttpConnectorGeneral {
         if (System.getProperty("basePath") != null)
             RestAssured.basePath = System.getProperty("basePath");
         else
-            RestAssured.basePath = TestConfiguration.BASE_PATH;
+            RestAssured.basePath = basePath;
     }
 
     protected TestTools testTools = new TestTools();

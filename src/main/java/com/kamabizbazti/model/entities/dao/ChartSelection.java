@@ -2,8 +2,11 @@ package com.kamabizbazti.model.entities.dao;
 
 import com.kamabizbazti.model.enumerations.ChartSelectionIdEnum;
 import com.kamabizbazti.model.enumerations.ChartType;
+import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 @SuppressWarnings({"UnusedDeclaration"})
 @Entity
@@ -23,17 +26,17 @@ public class ChartSelection {
     private ChartType chartType;
 
     @Column(name = "datePicker", nullable = false)
-    private boolean datePicker;
+    private Boolean datePicker;
 
     @Column(name = "authRequired", nullable = false)
-    private boolean authRequired;
+    private Boolean authRequired;
 
     public ChartSelection() {
         super();
     }
 
-    public ChartSelection(ChartSelectionIdEnum selectionId, String title, ChartType chartType, boolean datePicker,
-                          boolean authRequired) {
+    public ChartSelection(ChartSelectionIdEnum selectionId, String title, ChartType chartType, Boolean datePicker,
+                          Boolean authRequired) {
         super();
         this.selectionId = selectionId;
         this.title = title;
@@ -66,19 +69,19 @@ public class ChartSelection {
         this.chartType = chartType;
     }
 
-    public boolean isDatePicker() {
+    public Boolean isDatePicker() {
         return datePicker;
     }
 
-    public void setDatePicker(boolean datePicker) {
+    public void setDatePicker(Boolean datePicker) {
         this.datePicker = datePicker;
     }
 
-    public boolean isAuthRequired() {
+    public Boolean isAuthRequired() {
         return authRequired;
     }
 
-    public void setAuthRequired(boolean authRequired) {
+    public void setAuthRequired(Boolean authRequired) {
         this.authRequired = authRequired;
     }
 
@@ -87,13 +90,13 @@ public class ChartSelection {
         if (this == o) return true;
         if (!(o instanceof ChartSelection)) return false;
 
-        ChartSelection that = (ChartSelection) o;
+        ChartSelection selection = (ChartSelection) o;
 
-        if (datePicker != that.datePicker) return false;
-        if (authRequired != that.authRequired) return false;
-        if (selectionId != that.selectionId) return false;
-        if (!title.equals(that.title)) return false;
-        return chartType == that.chartType;
+        if (selectionId != selection.selectionId) return false;
+        if (!title.equals(selection.title)) return false;
+        if (chartType != selection.chartType) return false;
+        if (!datePicker.equals(selection.datePicker)) return false;
+        return authRequired.equals(selection.authRequired);
     }
 
     @Override
@@ -101,8 +104,8 @@ public class ChartSelection {
         int result = selectionId.hashCode();
         result = 31 * result + title.hashCode();
         result = 31 * result + chartType.hashCode();
-        result = 31 * result + (datePicker ? 1 : 0);
-        result = 31 * result + (authRequired ? 1 : 0);
+        result = 31 * result + datePicker.hashCode();
+        result = 31 * result + authRequired.hashCode();
         return result;
     }
 }

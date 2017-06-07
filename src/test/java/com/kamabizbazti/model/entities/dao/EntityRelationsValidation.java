@@ -1,23 +1,10 @@
-package com.kamabizbazti.dao;
+package com.kamabizbazti.model.entities.dao;
 
-import com.kamabizbazti.common.DataGenerator;
-import com.kamabizbazti.KamaBizbaztiBootApplication;
-import com.kamabizbazti.config.KamaBizbaztiApplicationConfig;
-import com.kamabizbazti.model.entities.dao.*;
+import com.kamabizbazti.KamaBizbaztiBootApplicationTests;
 import com.kamabizbazti.model.enumerations.CategoryType;
-import com.kamabizbazti.model.repository.*;
 import com.kamabizbazti.security.entities.Authority;
 import com.kamabizbazti.security.entities.AuthorityName;
-import com.kamabizbazti.model.entities.dao.User;
-import com.kamabizbazti.security.repository.AuthorityRepository;
-import com.kamabizbazti.security.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -25,10 +12,7 @@ import org.testng.annotations.Test;
 import java.util.List;
 import java.util.Set;
 
-@SpringBootTest
-@ContextConfiguration(classes = {KamaBizbaztiBootApplication.class, KamaBizbaztiApplicationConfig.class})
-@TestPropertySource(locations="classpath:test.properties")
-public class EntityRelationsValidation extends AbstractTestNGSpringContextTests {
+public class EntityRelationsValidation extends KamaBizbaztiBootApplicationTests {
 
     private static final String currencyCode = "ILS";
     private static final String currencyName = "Sheqel";
@@ -43,33 +27,6 @@ public class EntityRelationsValidation extends AbstractTestNGSpringContextTests 
     private static List <User> users;
     private static List <GeneralCategory> customCategories;
     private static List <GeneralCategory> generalCategories;
-
-    @Autowired
-    private DataGenerator dataGenerator;
-
-    @Autowired
-    private LanguageRepository languageRepository;
-
-    @Autowired
-    private CurrencyRepository currencyRepository;
-
-    @Autowired
-    private GeneralCategoryRepository generalCategoryRepository;
-
-    @Autowired
-    private CustomCategoryRepository customCategoryRepository;
-
-    @Autowired
-    private AuthorityRepository authorityRepository;
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    @Autowired
-    private RecordRepository recordRepository;
 
     @BeforeClass
     public void generateData() {

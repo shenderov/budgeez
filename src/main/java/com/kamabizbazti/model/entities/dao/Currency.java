@@ -1,6 +1,7 @@
 package com.kamabizbazti.model.entities.dao;
 
 import javax.persistence.*;
+import javax.validation.constraints.Pattern;
 
 @SuppressWarnings({"UnusedDeclaration"})
 @Entity
@@ -74,5 +75,25 @@ public class Currency {
                 ", currencyName='" + currencyName + '\'' +
                 ", currencySymbol=" + currencySymbol +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Currency)) return false;
+
+        Currency currency = (Currency) o;
+
+        if (!currencyCode.equals(currency.currencyCode)) return false;
+        if (!currencyName.equals(currency.currencyName)) return false;
+        return currencySymbol != null ? currencySymbol.equals(currency.currencySymbol) : currency.currencySymbol == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = currencyCode.hashCode();
+        result = 31 * result + currencyName.hashCode();
+        result = 31 * result + (currencySymbol != null ? currencySymbol.hashCode() : 0);
+        return result;
     }
 }

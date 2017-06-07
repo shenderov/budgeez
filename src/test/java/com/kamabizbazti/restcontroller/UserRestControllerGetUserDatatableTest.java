@@ -1,13 +1,8 @@
 package com.kamabizbazti.restcontroller;
 
 import com.google.gson.JsonObject;
-import com.kamabizbazti.KamaBizbaztiBootApplication;
-import com.kamabizbazti.common.TestTools;
+import com.kamabizbazti.KamaBizbaztiBootApplicationTests;
 import com.kamabizbazti.common.entities.HttpResponseJson;
-import com.kamabizbazti.common.http.AuthenticationRestControllerConnectorHelper;
-import com.kamabizbazti.common.http.GeneralRestControllerConnectorHelper;
-import com.kamabizbazti.common.http.UserRestControllerConnectorHelper;
-import com.kamabizbazti.config.KamaBizbaztiApplicationConfig;
 import com.kamabizbazti.model.entities.dao.ChartSelection;
 import com.kamabizbazti.model.entities.external.ChartRequestWrapper;
 import com.kamabizbazti.model.entities.external.ChartWrapper;
@@ -18,17 +13,8 @@ import com.kamabizbazti.model.exceptions.codes.DataIntegrityErrorCode;
 import com.kamabizbazti.model.exceptions.codes.EntitiesErrorCode;
 import com.kamabizbazti.model.handlers.GeneralRequestHandler;
 import com.kamabizbazti.model.handlers.UserRequestHandler;
-import com.kamabizbazti.model.interfaces.IDateHelper;
-import com.kamabizbazti.model.repository.ChartSelectionRepository;
 import com.kamabizbazti.security.entities.SignUpWrapper;
-import com.kamabizbazti.security.repository.UserRepository;
 import com.kamabizbazti.security.service.JwtAuthenticationResponse;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.embedded.LocalServerPort;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -38,46 +24,20 @@ import java.util.List;
 
 import static org.testng.Assert.assertEquals;
 
-@SuppressWarnings({"UnusedDeclaration", "unchecked", "FieldCanBeLocal"})
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ContextConfiguration(classes = {KamaBizbaztiBootApplication.class, KamaBizbaztiApplicationConfig.class})
-@TestPropertySource(locations = "classpath:test.properties")
-public class UserRestControllerGetUserDatatableTest extends AbstractTestNGSpringContextTests {
-
-    @LocalServerPort
-    private int port;
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private ChartSelectionRepository chartSelectionRepository;
-
-    @Autowired
-    private TestTools testTools;
-
-    @Autowired
-    private IDateHelper dateHelper;
+public class UserRestControllerGetUserDatatableTest extends KamaBizbaztiBootApplicationTests {
 
     private String name = "User Datatable";
     private String email1 = "userdatatable1@kamabizbazti.com";
     private String password = "Password";
     private String token1;
 
-    private UserRestControllerConnectorHelper helper;
-    private AuthenticationRestControllerConnectorHelper authHelper;
-    private GeneralRestControllerConnectorHelper generalHelper;
-
     @BeforeClass
     public void setup() {
-        helper = new UserRestControllerConnectorHelper(port);
-        authHelper = new AuthenticationRestControllerConnectorHelper(port);
-        generalHelper = new GeneralRestControllerConnectorHelper(port);
         SignUpWrapper wrapper = new SignUpWrapper();
         wrapper.setName(name);
         wrapper.setEmail(email1);
         wrapper.setPassword(password);
-        JwtAuthenticationResponse jwtToken1 = (JwtAuthenticationResponse) authHelper.createUserPositive(wrapper).getObject();
+        JwtAuthenticationResponse jwtToken1 = (JwtAuthenticationResponse) authenticationRestControllerConnectorHelper.createUserPositive(wrapper).getObject();
         token1 = jwtToken1.getToken();
     }
 
@@ -88,7 +48,7 @@ public class UserRestControllerGetUserDatatableTest extends AbstractTestNGSpring
 
     @Test
     public void testGetUserDefaultDataTable() throws Exception {
-        ChartWrapper wrapper = (ChartWrapper) helper.getUserDefaultDataTablePositive(token1).getObject();
+        ChartWrapper wrapper = (ChartWrapper) userRestControllerConnectorHelper.getUserDefaultDataTablePositive(token1).getObject();
         ChartSelection selection = chartSelectionRepository.findOne(UserRequestHandler.DEFAULT_CHART_SELECTION);
         Assert.assertNotNull(wrapper);
         Assert.assertNotNull(wrapper.getDataTable());
@@ -99,7 +59,7 @@ public class UserRestControllerGetUserDatatableTest extends AbstractTestNGSpring
 
     @Test
     public void testGetUserGeneralDataTable() throws Exception {
-        List<ChartSelection> selections = (List<ChartSelection>) generalHelper.getUserChartSelectionsListPositive().getObject();
+        List<ChartSelection> selections = (List<ChartSelection>) generalRestControllerConnectorHelper.getUserChartSelectionsListPositive().getObject();
         DatePicker datePicker = new DatePicker();
         datePicker.setEndDate(dateHelper.getLastDayOfCurrentMonth());
         datePicker.setStartDate(dateHelper.getFirstDayOfCurrentMonth());
@@ -108,7 +68,7 @@ public class UserRestControllerGetUserDatatableTest extends AbstractTestNGSpring
             requestWrapper.setChartSelection(c);
             if(c.isDatePicker())
                 requestWrapper.setDatePicker(datePicker);
-            ChartWrapper wrapper = (ChartWrapper) helper.getGeneralDataTablePositive(requestWrapper, token1).getObject();
+            ChartWrapper wrapper = (ChartWrapper) userRestControllerConnectorHelper.getGeneralDataTablePositive(requestWrapper, token1).getObject();
             Assert.assertNotNull(wrapper);
             Assert.assertNotNull(wrapper.getDataTable());
             Assert.assertEquals(c.getChartType(), wrapper.getChartType());
@@ -125,7 +85,7 @@ public class UserRestControllerGetUserDatatableTest extends AbstractTestNGSpring
         JsonObject jsonObject = testTools.objectToJsonObject(requestWrapper);
         jsonObject.get("chartSelection").getAsJsonObject().remove("selectionId");
         jsonObject.get("chartSelection").getAsJsonObject().addProperty("selectionId", wrongSelectionId);
-        HttpResponseJson response = helper.getGeneralDataTableNegative(jsonObject.toString(), token1).convertToHttpResponseJson();
+        HttpResponseJson response = userRestControllerConnectorHelper.getGeneralDataTableNegative(jsonObject.toString(), token1).convertToHttpResponseJson();
         assertEquals(response.getHttpStatusCode(), 500);
         assertEquals(response.getObject().get("error").getAsString(), DataIntegrityErrorCode.INVALID_REQUEST_ENTITY.toString());
         assertEquals(response.getObject().get("message").getAsString(), "Invalid Request Entity");
@@ -138,7 +98,7 @@ public class UserRestControllerGetUserDatatableTest extends AbstractTestNGSpring
         selection.setSelectionId(ChartSelectionIdEnum.USER_CURRENT_MONTH);
         ChartRequestWrapper requestWrapper = new ChartRequestWrapper();
         requestWrapper.setChartSelection(selection);
-        ChartWrapper wrapper = (ChartWrapper) helper.getGeneralDataTablePositive(requestWrapper, token1).getObject();
+        ChartWrapper wrapper = (ChartWrapper) userRestControllerConnectorHelper.getGeneralDataTablePositive(requestWrapper, token1).getObject();
         Assert.assertNotNull(wrapper);
         Assert.assertNotNull(wrapper.getDataTable());
         Assert.assertEquals(selectionDB.getChartType(), wrapper.getChartType());
@@ -157,7 +117,7 @@ public class UserRestControllerGetUserDatatableTest extends AbstractTestNGSpring
         selection.setTitle("title");
         ChartRequestWrapper requestWrapper = new ChartRequestWrapper();
         requestWrapper.setChartSelection(selection);
-        ChartWrapper wrapper = (ChartWrapper) helper.getGeneralDataTablePositive(requestWrapper, token1).getObject();
+        ChartWrapper wrapper = (ChartWrapper) userRestControllerConnectorHelper.getGeneralDataTablePositive(requestWrapper, token1).getObject();
         Assert.assertNotNull(wrapper);
         Assert.assertNotNull(wrapper.getDataTable());
         Assert.assertEquals(selectionDB.getChartType(), wrapper.getChartType());
@@ -169,7 +129,7 @@ public class UserRestControllerGetUserDatatableTest extends AbstractTestNGSpring
     public void testGetUserGeneralDataTableNullSelection() throws Exception {
         ChartRequestWrapper requestWrapper = new ChartRequestWrapper();
         requestWrapper.setChartSelection(null);
-        HttpResponseJson response = helper.getGeneralDataTableNegative(testTools.objectToJson(requestWrapper), token1).convertToHttpResponseJson();
+        HttpResponseJson response = userRestControllerConnectorHelper.getGeneralDataTableNegative(testTools.objectToJson(requestWrapper), token1).convertToHttpResponseJson();
         assertEquals(response.getHttpStatusCode(), 500);
         assertEquals(response.getObject().get("error").getAsString(), DataIntegrityErrorCode.INVALID_PARAMETER.toString());
         assertEquals(response.getObject().get("message").getAsString(), "Chart selection can't be blank");
@@ -180,7 +140,7 @@ public class UserRestControllerGetUserDatatableTest extends AbstractTestNGSpring
         ChartSelection selectionDB = chartSelectionRepository.findOne(ChartSelectionIdEnum.USER_CUSTOM_PERIOD_AVG);
         ChartRequestWrapper requestWrapper = new ChartRequestWrapper();
         requestWrapper.setChartSelection(selectionDB);
-        HttpResponseJson response = helper.getGeneralDataTableNegative(testTools.objectToJson(requestWrapper), token1).convertToHttpResponseJson();
+        HttpResponseJson response = userRestControllerConnectorHelper.getGeneralDataTableNegative(testTools.objectToJson(requestWrapper), token1).convertToHttpResponseJson();
         System.out.println(response.getObject().toString());
         assertEquals(response.getHttpStatusCode(), 500);
         assertEquals(response.getObject().get("error").getAsString(), DataIntegrityErrorCode.INVALID_PARAMETER.toString());
@@ -196,7 +156,7 @@ public class UserRestControllerGetUserDatatableTest extends AbstractTestNGSpring
         ChartRequestWrapper requestWrapper = new ChartRequestWrapper();
         requestWrapper.setChartSelection(selectionDB);
         requestWrapper.setDatePicker(picker);
-        HttpResponseJson response = helper.getGeneralDataTableNegative(testTools.objectToJson(requestWrapper), token1).convertToHttpResponseJson();
+        HttpResponseJson response = userRestControllerConnectorHelper.getGeneralDataTableNegative(testTools.objectToJson(requestWrapper), token1).convertToHttpResponseJson();
         System.out.println(response.getObject().toString());
         assertEquals(response.getHttpStatusCode(), 500);
         assertEquals(response.getObject().get("error").getAsString(), DataIntegrityErrorCode.DATES_ARE_NOT_CHRONOLOGICAL.toString());
@@ -205,7 +165,7 @@ public class UserRestControllerGetUserDatatableTest extends AbstractTestNGSpring
 
     @Test
     public void testGetUserGeneralDataTableWithoutSelection() throws Exception {
-        HttpResponseJson response = helper.getGeneralDataTableNegative("{}", token1).convertToHttpResponseJson();
+        HttpResponseJson response = userRestControllerConnectorHelper.getGeneralDataTableNegative("{}", token1).convertToHttpResponseJson();
         assertEquals(response.getHttpStatusCode(), 500);
         assertEquals(response.getObject().get("error").getAsString(), DataIntegrityErrorCode.INVALID_PARAMETER.toString());
         assertEquals(response.getObject().get("message").getAsString(), "Chart selection can't be blank");
@@ -216,7 +176,7 @@ public class UserRestControllerGetUserDatatableTest extends AbstractTestNGSpring
         ChartSelection selection = chartSelectionRepository.findOne(GeneralRequestHandler.DEFAULT_CHART_SELECTION);
         ChartRequestWrapper requestWrapper = new ChartRequestWrapper();
         requestWrapper.setChartSelection(selection);
-        HttpResponseJson response = helper.getGeneralDataTableNegative(testTools.objectToJson(requestWrapper), token1).convertToHttpResponseJson();
+        HttpResponseJson response = userRestControllerConnectorHelper.getGeneralDataTableNegative(testTools.objectToJson(requestWrapper), token1).convertToHttpResponseJson();
         assertEquals(response.getHttpStatusCode(), 500);
         assertEquals(response.getObject().get("error").getAsString(), EntitiesErrorCode.UNKNOWN_CHART_SELECTION_ID.toString());
         assertEquals(response.getObject().get("message").getAsString(), "Unknown chart selection ID");
@@ -230,7 +190,7 @@ public class UserRestControllerGetUserDatatableTest extends AbstractTestNGSpring
         ChartRequestWrapper requestWrapper = new ChartRequestWrapper();
         requestWrapper.setChartSelection(selection);
         requestWrapper.setDatePicker(datePicker);
-        HttpResponseJson response = helper.getGeneralDataTableNegative(testTools.objectToJson(requestWrapper), token1).convertToHttpResponseJson();
+        HttpResponseJson response = userRestControllerConnectorHelper.getGeneralDataTableNegative(testTools.objectToJson(requestWrapper), token1).convertToHttpResponseJson();
         assertEquals(response.getHttpStatusCode(), 500);
         assertEquals(response.getObject().get("error").getAsString(), DataIntegrityErrorCode.INVALID_PARAMETER.toString());
         assertEquals(response.getObject().get("message").getAsString(), "End date can't be null");
@@ -244,7 +204,7 @@ public class UserRestControllerGetUserDatatableTest extends AbstractTestNGSpring
         ChartRequestWrapper requestWrapper = new ChartRequestWrapper();
         requestWrapper.setChartSelection(selection);
         requestWrapper.setDatePicker(datePicker);
-        HttpResponseJson response = helper.getGeneralDataTableNegative(testTools.objectToJson(requestWrapper), token1).convertToHttpResponseJson();
+        HttpResponseJson response = userRestControllerConnectorHelper.getGeneralDataTableNegative(testTools.objectToJson(requestWrapper), token1).convertToHttpResponseJson();
         assertEquals(response.getHttpStatusCode(), 500);
         assertEquals(response.getObject().get("error").getAsString(), DataIntegrityErrorCode.INVALID_PARAMETER.toString());
         assertEquals(response.getObject().get("message").getAsString(), "Start date can't be null");
@@ -259,7 +219,7 @@ public class UserRestControllerGetUserDatatableTest extends AbstractTestNGSpring
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("chartSelection", testTools.objectToJson(selection));
         jsonObject.addProperty("datePicker", datePicker.toString());
-        HttpResponseJson response = helper.getGeneralDataTableNegative(jsonObject.toString(), token1).convertToHttpResponseJson();
+        HttpResponseJson response = userRestControllerConnectorHelper.getGeneralDataTableNegative(jsonObject.toString(), token1).convertToHttpResponseJson();
         assertEquals(response.getHttpStatusCode(), 500);
         assertEquals(response.getObject().get("error").getAsString(), DataIntegrityErrorCode.INVALID_REQUEST_ENTITY.toString());
         assertEquals(response.getObject().get("message").getAsString(), "Invalid Request Entity");
@@ -274,7 +234,7 @@ public class UserRestControllerGetUserDatatableTest extends AbstractTestNGSpring
         ChartRequestWrapper requestWrapper = new ChartRequestWrapper();
         requestWrapper.setChartSelection(selection);
         requestWrapper.setDatePicker(datePicker);
-        HttpResponseJson response = helper.getGeneralDataTableNegative(testTools.objectToJson(requestWrapper), token1).convertToHttpResponseJson();
+        HttpResponseJson response = userRestControllerConnectorHelper.getGeneralDataTableNegative(testTools.objectToJson(requestWrapper), token1).convertToHttpResponseJson();
         assertEquals(response.getHttpStatusCode(), 500);
         assertEquals(response.getObject().get("error").getAsString(), DataIntegrityErrorCode.INVALID_PARAMETER.toString());
         assertEquals(response.getObject().get("message").getAsString(), "Start date should be positive number");

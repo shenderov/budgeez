@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 @Repository
-public interface LanguageRepository extends CrudRepository<Language, String> {
+public interface LanguageRepository extends CrudRepository<Language, Long> {
     Language save(Language language);
 
     Language findByLanguageCode(String languageCode);

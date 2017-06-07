@@ -8,8 +8,8 @@ import com.kamabizbazti.security.service.JwtAuthenticationResponse;
 
 public class AuthenticationRestControllerConnectorHelper extends HttpConnectorGeneral {
 
-    public AuthenticationRestControllerConnectorHelper(int port) {
-        super(port);
+    public AuthenticationRestControllerConnectorHelper(String hostname, int port, String basePath) {
+        super(hostname, port, basePath);
     }
 
     public HttpResponse createAuthenticationTokenPositive(JwtAuthenticationRequest authenticationRequest) {

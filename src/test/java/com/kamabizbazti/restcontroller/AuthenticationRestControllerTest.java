@@ -1,27 +1,16 @@
 package com.kamabizbazti.restcontroller;
 
 import com.google.gson.JsonObject;
-import com.kamabizbazti.KamaBizbaztiBootApplication;
-import com.kamabizbazti.common.TestConfiguration;
-import com.kamabizbazti.common.TestTools;
+import com.kamabizbazti.KamaBizbaztiBootApplicationTests;
 import com.kamabizbazti.common.entities.HttpResponse;
 import com.kamabizbazti.common.entities.HttpResponseJson;
-import com.kamabizbazti.common.http.AuthenticationRestControllerConnectorHelper;
-import com.kamabizbazti.config.KamaBizbaztiApplicationConfig;
 import com.kamabizbazti.model.exceptions.codes.AuthenticationErrorCode;
 import com.kamabizbazti.model.exceptions.codes.DataIntegrityErrorCode;
 import com.kamabizbazti.model.exceptions.codes.UserRegistrationErrorCode;
 import com.kamabizbazti.security.entities.JwtAuthenticationRequest;
 import com.kamabizbazti.security.entities.SignUpWrapper;
 import com.kamabizbazti.model.entities.dao.User;
-import com.kamabizbazti.security.repository.UserRepository;
 import com.kamabizbazti.security.service.JwtAuthenticationResponse;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.embedded.LocalServerPort;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 
 import static org.testng.Assert.*;
 
@@ -29,14 +18,7 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-@SuppressWarnings({"UnusedDeclaration"})
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ContextConfiguration(classes = {KamaBizbaztiBootApplication.class, KamaBizbaztiApplicationConfig.class, TestConfiguration.class})
-@TestPropertySource(locations = "classpath:test.properties")
-public class AuthenticationRestControllerTest extends AbstractTestNGSpringContextTests {
-
-    @LocalServerPort
-    private int port;
+public class AuthenticationRestControllerTest extends KamaBizbaztiBootApplicationTests {
 
     private String name = "Test";
     private String email1 = "test1@kamabizbazti.com";
@@ -56,24 +38,15 @@ public class AuthenticationRestControllerTest extends AbstractTestNGSpringContex
     private String maxLengthPassword = "passwordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpassword";
     private String token;
 
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private TestTools testTools;
-
-    private AuthenticationRestControllerConnectorHelper helper;
-
     @BeforeClass
     public void setup() {
-        helper = new AuthenticationRestControllerConnectorHelper(port);
         SignUpWrapper wrapper = new SignUpWrapper();
         wrapper.setName(name);
         wrapper.setEmail(email1);
         wrapper.setPassword(password);
-        helper.createUserPositive(wrapper);
+        authenticationRestControllerConnectorHelper.createUserPositive(wrapper);
         wrapper.setEmail(email3);
-        HttpResponse response = helper.createUserPositive(wrapper);
+        HttpResponse response = authenticationRestControllerConnectorHelper.createUserPositive(wrapper);
         JwtAuthenticationResponse token = (JwtAuthenticationResponse) response.getObject();
         this.token = token.getToken();
     }
@@ -92,7 +65,7 @@ public class AuthenticationRestControllerTest extends AbstractTestNGSpringContex
         wrapper.setName(name);
         wrapper.setEmail(email2);
         wrapper.setPassword(password);
-        HttpResponse response = helper.createUserPositive(wrapper);
+        HttpResponse response = authenticationRestControllerConnectorHelper.createUserPositive(wrapper);
         JwtAuthenticationResponse token = (JwtAuthenticationResponse) response.getObject();
         assertNotNull(token.getToken());
         assertNotNull(userRepository.findByUsername(email2));
@@ -106,7 +79,7 @@ public class AuthenticationRestControllerTest extends AbstractTestNGSpringContex
 
     @Test
     public void testRefreshToken() {
-        HttpResponse response = helper.refreshAndGetAuthenticationTokenPositive(token);
+        HttpResponse response = authenticationRestControllerConnectorHelper.refreshAndGetAuthenticationTokenPositive(token);
         JwtAuthenticationResponse token = (JwtAuthenticationResponse) response.getObject();
         assertNotNull(token.getToken());
         assertEquals(response.getHttpStatusCode(), 200);
@@ -133,7 +106,7 @@ public class AuthenticationRestControllerTest extends AbstractTestNGSpringContex
     @Test
     public void testLoginUpperCasePassword() {
         JwtAuthenticationRequest request = new JwtAuthenticationRequest(email1, password.toUpperCase());
-        HttpResponseJson response = helper.createAuthenticationTokenNegative(testTools.objectToJson(request)).convertToHttpResponseJson();
+        HttpResponseJson response = authenticationRestControllerConnectorHelper.createAuthenticationTokenNegative(testTools.objectToJson(request)).convertToHttpResponseJson();
         assertEquals(response.getHttpStatusCode(), 500);
         assertEquals(response.getObject().get("error").getAsString(), AuthenticationErrorCode.INVALID_USERNAME_OR_PASSWORD.toString());
         assertEquals(response.getObject().get("message").getAsString(), "Invalid Username or Password");
@@ -145,7 +118,7 @@ public class AuthenticationRestControllerTest extends AbstractTestNGSpringContex
         wrapper.setName(name);
         wrapper.setEmail(email2);
         wrapper.setPassword(password);
-        HttpResponseJson response = helper.createUserNegative(testTools.objectToJson(wrapper)).convertToHttpResponseJson();
+        HttpResponseJson response = authenticationRestControllerConnectorHelper.createUserNegative(testTools.objectToJson(wrapper)).convertToHttpResponseJson();
         assertEquals(response.getHttpStatusCode(), 500);
         assertEquals(response.getObject().get("error").getAsString(), UserRegistrationErrorCode.EMAIL_ALREADY_REGISTERED.toString());
         assertEquals(response.getObject().get("message").getAsString(), "Email Already Registered");
@@ -157,7 +130,7 @@ public class AuthenticationRestControllerTest extends AbstractTestNGSpringContex
         wrapper.setName(name);
         wrapper.setEmail(email4);
         wrapper.setPassword(cyrilicPwd);
-        HttpResponseJson response = helper.createUserNegative(testTools.objectToJson(wrapper)).convertToHttpResponseJson();
+        HttpResponseJson response = authenticationRestControllerConnectorHelper.createUserNegative(testTools.objectToJson(wrapper)).convertToHttpResponseJson();
         assertEquals(response.getHttpStatusCode(), 500);
         assertEquals(response.getObject().get("error").getAsString(), UserRegistrationErrorCode.PASSWORD_CONTAINS_NOT_ASCII_CHARACTERS.toString());
         assertEquals(response.getObject().get("message").getAsString(), "Password should contains only latin symbols");
@@ -169,7 +142,7 @@ public class AuthenticationRestControllerTest extends AbstractTestNGSpringContex
         wrapper.setName(name);
         wrapper.setEmail(emailMixed);
         wrapper.setPassword(password);
-        HttpResponse response = helper.createUserPositive(wrapper);
+        HttpResponse response = authenticationRestControllerConnectorHelper.createUserPositive(wrapper);
         JwtAuthenticationResponse token = (JwtAuthenticationResponse) response.getObject();
         assertNotNull(token.getToken());
         User user = userRepository.findByUsername(emailMixed.toLowerCase());
@@ -187,7 +160,7 @@ public class AuthenticationRestControllerTest extends AbstractTestNGSpringContex
     public void testLoginWithoutPassword() {
         JsonObject request = new JsonObject();
         request.addProperty("username", emailMixed);
-        HttpResponseJson response = helper.createAuthenticationTokenNegative(testTools.objectToJson(request)).convertToHttpResponseJson();
+        HttpResponseJson response = authenticationRestControllerConnectorHelper.createAuthenticationTokenNegative(testTools.objectToJson(request)).convertToHttpResponseJson();
         assertEquals(response.getHttpStatusCode(), 500);
         assertEquals(response.getObject().get("error").getAsString(), DataIntegrityErrorCode.INVALID_PARAMETER.toString());
         assertEquals(response.getObject().get("message").getAsString(), "Password can't be blank");
@@ -198,7 +171,7 @@ public class AuthenticationRestControllerTest extends AbstractTestNGSpringContex
         JsonObject request = new JsonObject();
         request.addProperty("username", emailMixed);
         request.addProperty("password", "      ");
-        HttpResponseJson response = helper.createAuthenticationTokenNegative(testTools.objectToJson(request)).convertToHttpResponseJson();
+        HttpResponseJson response = authenticationRestControllerConnectorHelper.createAuthenticationTokenNegative(testTools.objectToJson(request)).convertToHttpResponseJson();
         assertEquals(response.getHttpStatusCode(), 500);
         assertEquals(response.getObject().get("error").getAsString(), DataIntegrityErrorCode.INVALID_PARAMETER.toString());
         assertEquals(response.getObject().get("message").getAsString(), "Password can't be blank");
@@ -209,7 +182,7 @@ public class AuthenticationRestControllerTest extends AbstractTestNGSpringContex
         JwtAuthenticationRequest request = new JwtAuthenticationRequest();
         request.setUsername(invalidEmail);
         request.setPassword(password);
-        HttpResponseJson response = helper.createAuthenticationTokenNegative(testTools.objectToJson(request)).convertToHttpResponseJson();
+        HttpResponseJson response = authenticationRestControllerConnectorHelper.createAuthenticationTokenNegative(testTools.objectToJson(request)).convertToHttpResponseJson();
         assertEquals(response.getHttpStatusCode(), 500);
         assertEquals(response.getObject().get("error").getAsString(), DataIntegrityErrorCode.INVALID_PARAMETER.toString());
         assertEquals(response.getObject().get("message").getAsString(), "Invalid email format");
@@ -222,7 +195,7 @@ public class AuthenticationRestControllerTest extends AbstractTestNGSpringContex
             wrapper.setName(name);
             wrapper.setEmail(invalidEmail);
             wrapper.setPassword(password);
-            HttpResponseJson response = helper.createUserNegative(testTools.objectToJson(wrapper)).convertToHttpResponseJson();
+            HttpResponseJson response = authenticationRestControllerConnectorHelper.createUserNegative(testTools.objectToJson(wrapper)).convertToHttpResponseJson();
             assertEquals(response.getHttpStatusCode(), 500);
             assertEquals(response.getObject().get("error").getAsString(), DataIntegrityErrorCode.INVALID_PARAMETER.toString());
             assertEquals(response.getObject().get("message").getAsString(), "Invalid email format");
@@ -239,7 +212,7 @@ public class AuthenticationRestControllerTest extends AbstractTestNGSpringContex
         JsonObject wrapper = new JsonObject();
         wrapper.addProperty("name", name);
         wrapper.addProperty("password", password);
-        HttpResponseJson response = helper.createUserNegative(testTools.objectToJson(wrapper)).convertToHttpResponseJson();
+        HttpResponseJson response = authenticationRestControllerConnectorHelper.createUserNegative(testTools.objectToJson(wrapper)).convertToHttpResponseJson();
         assertEquals(response.getHttpStatusCode(), 500);
         assertEquals(response.getObject().get("error").getAsString(), DataIntegrityErrorCode.INVALID_PARAMETER.toString());
         assertEquals(response.getObject().get("message").getAsString(), "Email can't be blank");
@@ -252,7 +225,7 @@ public class AuthenticationRestControllerTest extends AbstractTestNGSpringContex
             wrapper.addProperty("name", name);
             wrapper.addProperty("password", password);
             wrapper.addProperty("email", "    ");
-            HttpResponseJson response = helper.createUserNegative(testTools.objectToJson(wrapper)).convertToHttpResponseJson();
+            HttpResponseJson response = authenticationRestControllerConnectorHelper.createUserNegative(testTools.objectToJson(wrapper)).convertToHttpResponseJson();
             assertEquals(response.getHttpStatusCode(), 500);
             assertEquals(response.getObject().get("error").getAsString(), DataIntegrityErrorCode.INVALID_PARAMETER.toString());
             assertEquals(response.getObject().get("message").getAsString().equals("Invalid email format") || response.getObject().get("message").getAsString().equals("Email can't be blank"), true);
@@ -271,7 +244,7 @@ public class AuthenticationRestControllerTest extends AbstractTestNGSpringContex
             wrapper.setName(name);
             wrapper.setEmail(minLengthEmail.substring(1));
             wrapper.setPassword(password);
-            HttpResponseJson response = helper.createUserNegative(testTools.objectToJson(wrapper)).convertToHttpResponseJson();
+            HttpResponseJson response = authenticationRestControllerConnectorHelper.createUserNegative(testTools.objectToJson(wrapper)).convertToHttpResponseJson();
             assertEquals(response.getHttpStatusCode(), 500);
             assertEquals(response.getObject().get("error").getAsString(), DataIntegrityErrorCode.INVALID_PARAMETER.toString());
             assertEquals(response.getObject().get("message").getAsString(), "Email length should be between 4 and 254 chars");
@@ -290,7 +263,7 @@ public class AuthenticationRestControllerTest extends AbstractTestNGSpringContex
             wrapper.setName(name);
             wrapper.setEmail(maxLengthEmail + "c");
             wrapper.setPassword(password);
-            HttpResponseJson response = helper.createUserNegative(testTools.objectToJson(wrapper)).convertToHttpResponseJson();
+            HttpResponseJson response = authenticationRestControllerConnectorHelper.createUserNegative(testTools.objectToJson(wrapper)).convertToHttpResponseJson();
             assertEquals(response.getHttpStatusCode(), 500);
             assertEquals(response.getObject().get("error").getAsString(), DataIntegrityErrorCode.INVALID_PARAMETER.toString());
             assertEquals(response.getObject().get("message").getAsString(), "Email length should be between 4 and 254 chars");
@@ -318,7 +291,7 @@ public class AuthenticationRestControllerTest extends AbstractTestNGSpringContex
             JsonObject wrapper = new JsonObject();
             wrapper.addProperty("email", email5);
             wrapper.addProperty("password", password);
-            HttpResponseJson response = helper.createUserNegative(testTools.objectToJson(wrapper)).convertToHttpResponseJson();
+            HttpResponseJson response = authenticationRestControllerConnectorHelper.createUserNegative(testTools.objectToJson(wrapper)).convertToHttpResponseJson();
             assertEquals(response.getHttpStatusCode(), 500);
             assertEquals(response.getObject().get("error").getAsString(), DataIntegrityErrorCode.INVALID_PARAMETER.toString());
             assertEquals(response.getObject().get("message").getAsString(), "Name can't be blank");
@@ -337,7 +310,7 @@ public class AuthenticationRestControllerTest extends AbstractTestNGSpringContex
             wrapper.addProperty("email", email5);
             wrapper.addProperty("password", password);
             wrapper.addProperty("name", "  ");
-            HttpResponseJson response = helper.createUserNegative(testTools.objectToJson(wrapper)).convertToHttpResponseJson();
+            HttpResponseJson response = authenticationRestControllerConnectorHelper.createUserNegative(testTools.objectToJson(wrapper)).convertToHttpResponseJson();
             assertEquals(response.getHttpStatusCode(), 500);
             assertEquals(response.getObject().get("error").getAsString(), DataIntegrityErrorCode.INVALID_PARAMETER.toString());
             assertEquals(response.getObject().get("message").getAsString(), "Name can't be blank");
@@ -356,7 +329,7 @@ public class AuthenticationRestControllerTest extends AbstractTestNGSpringContex
             wrapper.setName(minLengthName.substring(1));
             wrapper.setEmail(email5);
             wrapper.setPassword(password);
-            HttpResponseJson response = helper.createUserNegative(testTools.objectToJson(wrapper)).convertToHttpResponseJson();
+            HttpResponseJson response = authenticationRestControllerConnectorHelper.createUserNegative(testTools.objectToJson(wrapper)).convertToHttpResponseJson();
             assertEquals(response.getHttpStatusCode(), 500);
             assertEquals(response.getObject().get("error").getAsString(), DataIntegrityErrorCode.INVALID_PARAMETER.toString());
             assertEquals(response.getObject().get("message").getAsString(), "Name length should be between 2 and 70 chars");
@@ -375,7 +348,7 @@ public class AuthenticationRestControllerTest extends AbstractTestNGSpringContex
             wrapper.setName(maxLengthName + "e");
             wrapper.setEmail(email5);
             wrapper.setPassword(password);
-            HttpResponseJson response = helper.createUserNegative(testTools.objectToJson(wrapper)).convertToHttpResponseJson();
+            HttpResponseJson response = authenticationRestControllerConnectorHelper.createUserNegative(testTools.objectToJson(wrapper)).convertToHttpResponseJson();
             assertEquals(response.getHttpStatusCode(), 500);
             assertEquals(response.getObject().get("error").getAsString(), DataIntegrityErrorCode.INVALID_PARAMETER.toString());
             assertEquals(response.getObject().get("message").getAsString(), "Name length should be between 2 and 70 chars");
@@ -403,7 +376,7 @@ public class AuthenticationRestControllerTest extends AbstractTestNGSpringContex
             JsonObject wrapper = new JsonObject();
             wrapper.addProperty("email", email5);
             wrapper.addProperty("name", name);
-            HttpResponseJson response = helper.createUserNegative(testTools.objectToJson(wrapper)).convertToHttpResponseJson();
+            HttpResponseJson response = authenticationRestControllerConnectorHelper.createUserNegative(testTools.objectToJson(wrapper)).convertToHttpResponseJson();
             assertEquals(response.getHttpStatusCode(), 500);
             assertEquals(response.getObject().get("error").getAsString(), DataIntegrityErrorCode.INVALID_PARAMETER.toString());
             assertEquals(response.getObject().get("message").getAsString(), "Password can't be blank");
@@ -422,7 +395,7 @@ public class AuthenticationRestControllerTest extends AbstractTestNGSpringContex
             wrapper.addProperty("email", email5);
             wrapper.addProperty("name", name);
             wrapper.addProperty("password", "      ");
-            HttpResponseJson response = helper.createUserNegative(testTools.objectToJson(wrapper)).convertToHttpResponseJson();
+            HttpResponseJson response = authenticationRestControllerConnectorHelper.createUserNegative(testTools.objectToJson(wrapper)).convertToHttpResponseJson();
             assertEquals(response.getHttpStatusCode(), 500);
             assertEquals(response.getObject().get("error").getAsString(), DataIntegrityErrorCode.INVALID_PARAMETER.toString());
             assertEquals(response.getObject().get("message").getAsString(), "Password can't be blank");
@@ -441,7 +414,7 @@ public class AuthenticationRestControllerTest extends AbstractTestNGSpringContex
             wrapper.setName(name);
             wrapper.setEmail(email5);
             wrapper.setPassword(minLengthPassword.substring(1));
-            HttpResponseJson response = helper.createUserNegative(testTools.objectToJson(wrapper)).convertToHttpResponseJson();
+            HttpResponseJson response = authenticationRestControllerConnectorHelper.createUserNegative(testTools.objectToJson(wrapper)).convertToHttpResponseJson();
             assertEquals(response.getHttpStatusCode(), 500);
             assertEquals(response.getObject().get("error").getAsString(), DataIntegrityErrorCode.INVALID_PARAMETER.toString());
             assertEquals(response.getObject().get("message").getAsString(), "Password length should be between 6 and 128 chars");
@@ -460,7 +433,7 @@ public class AuthenticationRestControllerTest extends AbstractTestNGSpringContex
             wrapper.setName(name);
             wrapper.setEmail(email5);
             wrapper.setPassword(maxLengthPassword + "d");
-            HttpResponseJson response = helper.createUserNegative(testTools.objectToJson(wrapper)).convertToHttpResponseJson();
+            HttpResponseJson response = authenticationRestControllerConnectorHelper.createUserNegative(testTools.objectToJson(wrapper)).convertToHttpResponseJson();
             assertEquals(response.getHttpStatusCode(), 500);
             assertEquals(response.getObject().get("error").getAsString(), DataIntegrityErrorCode.INVALID_PARAMETER.toString());
             assertEquals(response.getObject().get("message").getAsString(), "Password length should be between 6 and 128 chars");
@@ -483,12 +456,12 @@ public class AuthenticationRestControllerTest extends AbstractTestNGSpringContex
     }
 
     private HttpResponseJson refreshTokenJson(String token) {
-        return helper.refreshAndGetAuthenticationTokenNegative(token).convertToHttpResponseJson();
+        return authenticationRestControllerConnectorHelper.refreshAndGetAuthenticationTokenNegative(token).convertToHttpResponseJson();
     }
 
     private void validateLogin(String username, String password) {
         JwtAuthenticationRequest request = new JwtAuthenticationRequest(username, password);
-        HttpResponse response = helper.createAuthenticationTokenPositive(request);
+        HttpResponse response = authenticationRestControllerConnectorHelper.createAuthenticationTokenPositive(request);
         JwtAuthenticationResponse token = (JwtAuthenticationResponse) response.getObject();
         assertNotNull(token.getToken());
         assertEquals(response.getHttpStatusCode(), 200);
@@ -500,7 +473,7 @@ public class AuthenticationRestControllerTest extends AbstractTestNGSpringContex
             wrapper.setName(name);
             wrapper.setEmail(email);
             wrapper.setPassword(password);
-            HttpResponse response = helper.createUserPositive(wrapper);
+            HttpResponse response = authenticationRestControllerConnectorHelper.createUserPositive(wrapper);
             JwtAuthenticationResponse token = (JwtAuthenticationResponse) response.getObject();
             assertEquals(response.getHttpStatusCode(), 200);
             assertNotNull(token.getToken());

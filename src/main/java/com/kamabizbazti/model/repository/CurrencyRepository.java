@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 @Repository
-public interface CurrencyRepository extends CrudRepository<Currency, String> {
+public interface CurrencyRepository extends CrudRepository<Currency, Long> {
     Currency save(Currency currency);
 
     Currency findByCurrencyCode(String currencyCode);

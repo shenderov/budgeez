@@ -1,13 +1,9 @@
 package com.kamabizbazti.restcontroller;
 
 import com.google.gson.JsonObject;
-import com.kamabizbazti.KamaBizbaztiBootApplication;
-import com.kamabizbazti.common.TestTools;
+import com.kamabizbazti.KamaBizbaztiBootApplicationTests;
 import com.kamabizbazti.common.entities.HttpResponse;
 import com.kamabizbazti.common.entities.HttpResponseJson;
-import com.kamabizbazti.common.http.AuthenticationRestControllerConnectorHelper;
-import com.kamabizbazti.common.http.UserRestControllerConnectorHelper;
-import com.kamabizbazti.config.KamaBizbaztiApplicationConfig;
 import com.kamabizbazti.model.entities.dao.GeneralCategory;
 import com.kamabizbazti.model.entities.dao.Record;
 import com.kamabizbazti.model.entities.external.DatePicker;
@@ -16,16 +12,8 @@ import com.kamabizbazti.model.entities.external.ERecord;
 import com.kamabizbazti.model.entities.external.EditRecordWrapper;
 import com.kamabizbazti.model.exceptions.codes.DataIntegrityErrorCode;
 import com.kamabizbazti.model.exceptions.codes.EntitiesErrorCode;
-import com.kamabizbazti.model.repository.RecordRepository;
 import com.kamabizbazti.security.entities.SignUpWrapper;
-import com.kamabizbazti.security.repository.UserRepository;
 import com.kamabizbazti.security.service.JwtAuthenticationResponse;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.embedded.LocalServerPort;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -36,23 +24,7 @@ import java.util.List;
 
 import static org.testng.Assert.assertEquals;
 
-@SuppressWarnings({"UnusedDeclaration", "unchecked", "FieldCanBeLocal"})
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ContextConfiguration(classes = {KamaBizbaztiBootApplication.class, KamaBizbaztiApplicationConfig.class})
-@TestPropertySource(locations = "classpath:test.properties")
-public class UserRestControllerRecordsTest extends AbstractTestNGSpringContextTests {
-
-    @LocalServerPort
-    private int port;
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private RecordRepository recordRepository;
-
-    @Autowired
-    private TestTools testTools;
+public class UserRestControllerRecordsTest extends KamaBizbaztiBootApplicationTests {
 
     private String name = "User Records";
     private String email1 = "userrecords1@kamabizbazti.com";
@@ -66,33 +38,28 @@ public class UserRestControllerRecordsTest extends AbstractTestNGSpringContextTe
     private Record record1;
     private String maxComment = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean m";
 
-    private UserRestControllerConnectorHelper helper;
-    private AuthenticationRestControllerConnectorHelper authHelper;
-
     @BeforeClass
     public void setup() {
-        helper = new UserRestControllerConnectorHelper(port);
-        authHelper = new AuthenticationRestControllerConnectorHelper(port);
         SignUpWrapper wrapper = new SignUpWrapper();
         wrapper.setName(name);
         wrapper.setEmail(email1);
         wrapper.setPassword(password);
-        JwtAuthenticationResponse jwtToken1 = (JwtAuthenticationResponse) authHelper.createUserPositive(wrapper).getObject();
+        JwtAuthenticationResponse jwtToken1 = (JwtAuthenticationResponse) authenticationRestControllerConnectorHelper.createUserPositive(wrapper).getObject();
         token1 = jwtToken1.getToken();
         wrapper.setEmail(email2);
-        JwtAuthenticationResponse jwtToken2 = (JwtAuthenticationResponse) authHelper.createUserPositive(wrapper).getObject();
+        JwtAuthenticationResponse jwtToken2 = (JwtAuthenticationResponse) authenticationRestControllerConnectorHelper.createUserPositive(wrapper).getObject();
         token2 = jwtToken2.getToken();
-        List<GeneralCategory> categoriesUser1 = (List<GeneralCategory>) helper.getCategoriesListPositive(token1).getObject();
+        List<GeneralCategory> categoriesUser1 = (List<GeneralCategory>) userRestControllerConnectorHelper.getCategoriesListPositive(token1).getObject();
         category = categoriesUser1.get(0);
         ECustomCategory cat = new ECustomCategory();
         cat.setName("User2 category");
-        userCategory = (GeneralCategory) helper.addCustomCategoryPositive(cat, token2).getObject();
+        userCategory = (GeneralCategory) userRestControllerConnectorHelper.addCustomCategoryPositive(cat, token2).getObject();
         ERecord record = new ERecord();
         record.setAmount(10.5);
         record.setCategoryId(category.getCategoryId());
         record.setComment("Comment");
         record.setDate(System.currentTimeMillis());
-        this.record1 = (Record) helper.addRecordPositive(record, token1).getObject();
+        this.record1 = (Record) userRestControllerConnectorHelper.addRecordPositive(record, token1).getObject();
     }
 
     @AfterClass
@@ -108,7 +75,7 @@ public class UserRestControllerRecordsTest extends AbstractTestNGSpringContextTe
         record.setCategoryId(category.getCategoryId());
         record.setComment("Comment");
         record.setDate(System.currentTimeMillis());
-        Record res = (Record) helper.addRecordPositive(record, token1).getObject();
+        Record res = (Record) userRestControllerConnectorHelper.addRecordPositive(record, token1).getObject();
         this.record = res;
         Record r = recordRepository.findOne(1L);
         Assert.assertEquals(res.getAmount(), record.getAmount());
@@ -124,7 +91,7 @@ public class UserRestControllerRecordsTest extends AbstractTestNGSpringContextTe
         record.setCategoryId(category.getCategoryId());
         record.setComment("Комментарий");
         record.setDate(System.currentTimeMillis());
-        Record res = (Record) helper.addRecordPositive(record, token1).getObject();
+        Record res = (Record) userRestControllerConnectorHelper.addRecordPositive(record, token1).getObject();
         this.record = res;
         Record r = recordRepository.findOne(1L);
         Assert.assertEquals(res.getAmount(), record.getAmount());
@@ -138,7 +105,7 @@ public class UserRestControllerRecordsTest extends AbstractTestNGSpringContextTe
         DatePicker picker = new DatePicker();
         picker.setStartDate(System.currentTimeMillis() - 1000000);
         picker.setEndDate(System.currentTimeMillis());
-        HttpResponseJson response = helper.getRecordsListJson(picker, token1);
+        HttpResponseJson response = userRestControllerConnectorHelper.getRecordsListJson(picker, token1);
         Assert.assertTrue(response.getObject().get("totalElements").getAsInt() > 0);
         Record record = (Record) testTools.stringToObject(response.getObject().getAsJsonArray("content").get(0).toString(), Record.class);
         Assert.assertNotNull(record);
@@ -149,7 +116,7 @@ public class UserRestControllerRecordsTest extends AbstractTestNGSpringContextTe
         DatePicker picker = new DatePicker();
         picker.setStartDate(System.currentTimeMillis());
         picker.setEndDate(null);
-        HttpResponseJson response = helper.getRecordsListJson(picker, token1);
+        HttpResponseJson response = userRestControllerConnectorHelper.getRecordsListJson(picker, token1);
         assertEquals(response.getHttpStatusCode(), 500);
         assertEquals(response.getObject().get("error").getAsString(), DataIntegrityErrorCode.INVALID_PARAMETER.toString());
         assertEquals(response.getObject().get("message").getAsString(), "End date can't be null");
@@ -160,7 +127,7 @@ public class UserRestControllerRecordsTest extends AbstractTestNGSpringContextTe
         DatePicker picker = new DatePicker();
         picker.setStartDate(null);
         picker.setEndDate(System.currentTimeMillis());
-        HttpResponseJson response = helper.getRecordsListJson(picker, token1);
+        HttpResponseJson response = userRestControllerConnectorHelper.getRecordsListJson(picker, token1);
         assertEquals(response.getHttpStatusCode(), 500);
         assertEquals(response.getObject().get("error").getAsString(), DataIntegrityErrorCode.INVALID_PARAMETER.toString());
         assertEquals(response.getObject().get("message").getAsString(), "Start date can't be null");
@@ -170,7 +137,7 @@ public class UserRestControllerRecordsTest extends AbstractTestNGSpringContextTe
     public void testGetRecordsListEndDateNotProvided() throws IOException {
         DatePicker picker = new DatePicker();
         picker.setStartDate(System.currentTimeMillis());
-        HttpResponseJson response = helper.getRecordsListJson(picker, token1);
+        HttpResponseJson response = userRestControllerConnectorHelper.getRecordsListJson(picker, token1);
         assertEquals(response.getHttpStatusCode(), 500);
         assertEquals(response.getObject().get("error").getAsString(), DataIntegrityErrorCode.INVALID_PARAMETER.toString());
         assertEquals(response.getObject().get("message").getAsString(), "End date can't be null");
@@ -180,7 +147,7 @@ public class UserRestControllerRecordsTest extends AbstractTestNGSpringContextTe
     public void testGetRecordsListStartDateNotProvided() throws IOException {
         DatePicker picker = new DatePicker();
         picker.setEndDate(System.currentTimeMillis());
-        HttpResponseJson response = helper.getRecordsListJson(picker, token1);
+        HttpResponseJson response = userRestControllerConnectorHelper.getRecordsListJson(picker, token1);
         assertEquals(response.getHttpStatusCode(), 500);
         assertEquals(response.getObject().get("error").getAsString(), DataIntegrityErrorCode.INVALID_PARAMETER.toString());
         assertEquals(response.getObject().get("message").getAsString(), "Start date can't be null");
@@ -188,7 +155,7 @@ public class UserRestControllerRecordsTest extends AbstractTestNGSpringContextTe
 
     @Test(dependsOnMethods = {"testAddRecord"})
     public void testGetRecordsListDatePickerNull() {
-        HttpResponseJson response = helper.getRecordsListJson("{}", token1);
+        HttpResponseJson response = userRestControllerConnectorHelper.getRecordsListJson("{}", token1);
         Assert.assertTrue(response.getObject().get("totalElements").getAsInt() > 0);
         Record record = (Record) testTools.stringToObject(response.getObject().getAsJsonArray("content").get(0).toString(), Record.class);
         Assert.assertNotNull(record);
@@ -199,7 +166,7 @@ public class UserRestControllerRecordsTest extends AbstractTestNGSpringContextTe
         DatePicker picker = new DatePicker();
         picker.setStartDate(System.currentTimeMillis());
         picker.setEndDate(System.currentTimeMillis() - 100000);
-        HttpResponseJson response = helper.getRecordsListJson(picker, token1);
+        HttpResponseJson response = userRestControllerConnectorHelper.getRecordsListJson(picker, token1);
         assertEquals(response.getHttpStatusCode(), 500);
         assertEquals(response.getObject().get("error").getAsString(), DataIntegrityErrorCode.DATES_ARE_NOT_CHRONOLOGICAL.toString());
         assertEquals(response.getObject().get("message").getAsString(), "End date before start date");
@@ -215,7 +182,7 @@ public class UserRestControllerRecordsTest extends AbstractTestNGSpringContextTe
         EditRecordWrapper wrapper = new EditRecordWrapper();
         wrapper.setRecordId(this.record.getRecordId());
         wrapper.setRecord(record);
-        Record res = (Record) helper.editRecordPositive(wrapper, token1).getObject();
+        Record res = (Record) userRestControllerConnectorHelper.editRecordPositive(wrapper, token1).getObject();
         Assert.assertEquals(res.getAmount(), record.getAmount());
         Assert.assertEquals(res.getComment(), record.getComment());
         Assert.assertEquals(res.getDate(), record.getDate());
@@ -232,7 +199,7 @@ public class UserRestControllerRecordsTest extends AbstractTestNGSpringContextTe
         EditRecordWrapper wrapper = new EditRecordWrapper();
         wrapper.setRecordId(this.record.getRecordId());
         wrapper.setRecord(record);
-        HttpResponseJson response = helper.editRecordNegative(testTools.objectToJson(wrapper), token2).convertToHttpResponseJson();
+        HttpResponseJson response = userRestControllerConnectorHelper.editRecordNegative(testTools.objectToJson(wrapper), token2).convertToHttpResponseJson();
         assertEquals(response.getHttpStatusCode(), 500);
         assertEquals(response.getObject().get("error").getAsString(), EntitiesErrorCode.RECORD_DOES_NOT_EXIST.toString());
         assertEquals(response.getObject().get("message").getAsString(), "Record Does Not Exist");
@@ -248,7 +215,7 @@ public class UserRestControllerRecordsTest extends AbstractTestNGSpringContextTe
         EditRecordWrapper wrapper = new EditRecordWrapper();
         wrapper.setRecordId(Long.MAX_VALUE);
         wrapper.setRecord(record);
-        HttpResponseJson response = helper.editRecordNegative(testTools.objectToJson(wrapper), token2).convertToHttpResponseJson();
+        HttpResponseJson response = userRestControllerConnectorHelper.editRecordNegative(testTools.objectToJson(wrapper), token2).convertToHttpResponseJson();
         assertEquals(response.getHttpStatusCode(), 500);
         assertEquals(response.getObject().get("error").getAsString(), EntitiesErrorCode.RECORD_DOES_NOT_EXIST.toString());
         assertEquals(response.getObject().get("message").getAsString(), "Record Does Not Exist");
@@ -256,7 +223,7 @@ public class UserRestControllerRecordsTest extends AbstractTestNGSpringContextTe
 
     @Test(dependsOnMethods = {"testAddRecord"})
     public void testDeleteRecordCreatedByAnotherUser() {
-        HttpResponseJson response = helper.deleteRecordNegative(String.valueOf(this.record.getRecordId()), token2).convertToHttpResponseJson();
+        HttpResponseJson response = userRestControllerConnectorHelper.deleteRecordNegative(String.valueOf(this.record.getRecordId()), token2).convertToHttpResponseJson();
         assertEquals(response.getHttpStatusCode(), 500);
         assertEquals(response.getObject().get("error").getAsString(), EntitiesErrorCode.RECORD_DOES_NOT_EXIST.toString());
         assertEquals(response.getObject().get("message").getAsString(), "Record Does Not Exist");
@@ -264,7 +231,7 @@ public class UserRestControllerRecordsTest extends AbstractTestNGSpringContextTe
 
     @Test
     public void testDeleteNotExistingRecord() {
-        HttpResponseJson response = helper.deleteRecordNegative(String.valueOf(999L), token1).convertToHttpResponseJson();
+        HttpResponseJson response = userRestControllerConnectorHelper.deleteRecordNegative(String.valueOf(999L), token1).convertToHttpResponseJson();
         assertEquals(response.getHttpStatusCode(), 500);
         assertEquals(response.getObject().get("error").getAsString(), EntitiesErrorCode.RECORD_DOES_NOT_EXIST.toString());
         assertEquals(response.getObject().get("message").getAsString(), "Record Does Not Exist");
@@ -276,7 +243,7 @@ public class UserRestControllerRecordsTest extends AbstractTestNGSpringContextTe
         record.setAmount(10.5);
         record.setCategoryId(category.getCategoryId());
         record.setDate(System.currentTimeMillis());
-        Record res = (Record) helper.addRecordPositive(record, token1).getObject();
+        Record res = (Record) userRestControllerConnectorHelper.addRecordPositive(record, token1).getObject();
         Assert.assertEquals(res.getAmount(), record.getAmount());
         Assert.assertEquals(res.getComment(), record.getComment());
         Assert.assertEquals(res.getDate(), record.getDate());
@@ -290,7 +257,7 @@ public class UserRestControllerRecordsTest extends AbstractTestNGSpringContextTe
         record.setCategoryId(category.getCategoryId());
         record.setComment(null);
         record.setDate(System.currentTimeMillis());
-        Record res = (Record) helper.addRecordPositive(record, token1).getObject();
+        Record res = (Record) userRestControllerConnectorHelper.addRecordPositive(record, token1).getObject();
         Assert.assertEquals(res.getAmount(), record.getAmount());
         Assert.assertEquals(res.getComment(), record.getComment());
         Assert.assertEquals(res.getDate(), record.getDate());
@@ -304,7 +271,7 @@ public class UserRestControllerRecordsTest extends AbstractTestNGSpringContextTe
         record.setCategoryId(category.getCategoryId());
         record.setComment(maxComment);
         record.setDate(System.currentTimeMillis());
-        Record res = (Record) helper.addRecordPositive(record, token1).getObject();
+        Record res = (Record) userRestControllerConnectorHelper.addRecordPositive(record, token1).getObject();
         Assert.assertEquals(res.getAmount(), record.getAmount());
         Assert.assertEquals(res.getComment(), record.getComment());
         Assert.assertEquals(res.getDate(), record.getDate());
@@ -318,7 +285,7 @@ public class UserRestControllerRecordsTest extends AbstractTestNGSpringContextTe
         record.setCategoryId(category.getCategoryId());
         record.setComment(maxComment + "n");
         record.setDate(System.currentTimeMillis());
-        HttpResponseJson response = helper.addRecordNegative(testTools.objectToJson(record), token1).convertToHttpResponseJson();
+        HttpResponseJson response = userRestControllerConnectorHelper.addRecordNegative(testTools.objectToJson(record), token1).convertToHttpResponseJson();
         assertEquals(response.getHttpStatusCode(), 500);
         assertEquals(response.getObject().get("error").getAsString(), DataIntegrityErrorCode.INVALID_PARAMETER.toString());
         assertEquals(response.getObject().get("message").getAsString(), "Comment length should be less than 100 chars");
@@ -330,7 +297,7 @@ public class UserRestControllerRecordsTest extends AbstractTestNGSpringContextTe
         record.addProperty("amount", 10.3);
         record.addProperty("comment", maxComment);
         record.addProperty("date", System.currentTimeMillis());
-        HttpResponseJson response = helper.addRecordNegative(record.toString(), token1).convertToHttpResponseJson();
+        HttpResponseJson response = userRestControllerConnectorHelper.addRecordNegative(record.toString(), token1).convertToHttpResponseJson();
         assertEquals(response.getHttpStatusCode(), 500);
         assertEquals(response.getObject().get("error").getAsString(), DataIntegrityErrorCode.INVALID_PARAMETER.toString());
         assertEquals(response.getObject().get("message").getAsString(), "Category id can't be blank");
@@ -343,7 +310,7 @@ public class UserRestControllerRecordsTest extends AbstractTestNGSpringContextTe
         record.addProperty("categoryId", (String) null);
         record.addProperty("comment", maxComment);
         record.addProperty("date", System.currentTimeMillis());
-        HttpResponseJson response = helper.addRecordNegative(testTools.objectToJson(record), token1).convertToHttpResponseJson();
+        HttpResponseJson response = userRestControllerConnectorHelper.addRecordNegative(testTools.objectToJson(record), token1).convertToHttpResponseJson();
         assertEquals(response.getHttpStatusCode(), 500);
         assertEquals(response.getObject().get("error").getAsString(), DataIntegrityErrorCode.INVALID_PARAMETER.toString());
         assertEquals(response.getObject().get("message").getAsString(), "Category id can't be blank");
@@ -356,7 +323,7 @@ public class UserRestControllerRecordsTest extends AbstractTestNGSpringContextTe
         record.addProperty("comment", maxComment);
         record.addProperty("categoryId", category.getCategoryId());
         record.addProperty("date", System.currentTimeMillis());
-        HttpResponseJson response = helper.addRecordNegative(record.toString(), token1).convertToHttpResponseJson();
+        HttpResponseJson response = userRestControllerConnectorHelper.addRecordNegative(record.toString(), token1).convertToHttpResponseJson();
         assertEquals(response.getHttpStatusCode(), 500);
         assertEquals(response.getObject().get("error").getAsString(), DataIntegrityErrorCode.INVALID_PARAMETER.toString());
         assertEquals(response.getObject().get("message").getAsString(), "Amount can't be null");
@@ -368,7 +335,7 @@ public class UserRestControllerRecordsTest extends AbstractTestNGSpringContextTe
         record.addProperty("comment", maxComment);
         record.addProperty("categoryId", category.getCategoryId());
         record.addProperty("date", System.currentTimeMillis());
-        HttpResponseJson response = helper.addRecordNegative(record.toString(), token1).convertToHttpResponseJson();
+        HttpResponseJson response = userRestControllerConnectorHelper.addRecordNegative(record.toString(), token1).convertToHttpResponseJson();
         assertEquals(response.getHttpStatusCode(), 500);
         assertEquals(response.getObject().get("error").getAsString(), DataIntegrityErrorCode.INVALID_PARAMETER.toString());
         assertEquals(response.getObject().get("message").getAsString(), "Amount can't be null");
@@ -381,7 +348,7 @@ public class UserRestControllerRecordsTest extends AbstractTestNGSpringContextTe
         record.addProperty("categoryId", category.getCategoryId());
         record.addProperty("comment", maxComment);
         record.addProperty("date", System.currentTimeMillis());
-        HttpResponseJson response = helper.addRecordNegative(record.toString(), token1).convertToHttpResponseJson();
+        HttpResponseJson response = userRestControllerConnectorHelper.addRecordNegative(record.toString(), token1).convertToHttpResponseJson();
         assertEquals(response.getHttpStatusCode(), 500);
         assertEquals(response.getObject().get("error").getAsString(), DataIntegrityErrorCode.INVALID_REQUEST_ENTITY.toString());
         assertEquals(response.getObject().get("message").getAsString(), "Invalid Request Entity");
@@ -394,7 +361,7 @@ public class UserRestControllerRecordsTest extends AbstractTestNGSpringContextTe
         record.addProperty("categoryId", category.getCategoryId());
         record.addProperty("comment", maxComment);
         record.addProperty("date", (Long) null);
-        HttpResponseJson response = helper.addRecordNegative(testTools.objectToJson(record), token1).convertToHttpResponseJson();
+        HttpResponseJson response = userRestControllerConnectorHelper.addRecordNegative(testTools.objectToJson(record), token1).convertToHttpResponseJson();
         assertEquals(response.getHttpStatusCode(), 500);
         assertEquals(response.getObject().get("error").getAsString(), DataIntegrityErrorCode.INVALID_PARAMETER.toString());
         assertEquals(response.getObject().get("message").getAsString(), "Date can't be null");
@@ -406,7 +373,7 @@ public class UserRestControllerRecordsTest extends AbstractTestNGSpringContextTe
         record.addProperty("amount", 10.3);
         record.addProperty("categoryId", category.getCategoryId());
         record.addProperty("comment", maxComment);
-        HttpResponseJson response = helper.addRecordNegative(record.toString(), token1).convertToHttpResponseJson();
+        HttpResponseJson response = userRestControllerConnectorHelper.addRecordNegative(record.toString(), token1).convertToHttpResponseJson();
         assertEquals(response.getHttpStatusCode(), 500);
         assertEquals(response.getObject().get("error").getAsString(), DataIntegrityErrorCode.INVALID_PARAMETER.toString());
         assertEquals(response.getObject().get("message").getAsString(), "Date can't be null");
@@ -419,7 +386,7 @@ public class UserRestControllerRecordsTest extends AbstractTestNGSpringContextTe
         record.addProperty("categoryId", category.getCategoryId());
         record.addProperty("comment", maxComment);
         record.addProperty("date", "string");
-        HttpResponseJson response = helper.addRecordNegative(record.toString(), token1).convertToHttpResponseJson();
+        HttpResponseJson response = userRestControllerConnectorHelper.addRecordNegative(record.toString(), token1).convertToHttpResponseJson();
         assertEquals(response.getHttpStatusCode(), 500);
         assertEquals(response.getObject().get("error").getAsString(), DataIntegrityErrorCode.INVALID_REQUEST_ENTITY.toString());
         assertEquals(response.getObject().get("message").getAsString(), "Invalid Request Entity");
@@ -434,7 +401,7 @@ public class UserRestControllerRecordsTest extends AbstractTestNGSpringContextTe
         EditRecordWrapper wrapper = new EditRecordWrapper();
         wrapper.setRecordId(this.record.getRecordId());
         wrapper.setRecord(record);
-        Record res = (Record) helper.editRecordPositive(wrapper, token1).getObject();
+        Record res = (Record) userRestControllerConnectorHelper.editRecordPositive(wrapper, token1).getObject();
         Assert.assertEquals(res.getAmount(), record.getAmount());
         Assert.assertEquals(res.getComment(), record.getComment());
         Assert.assertEquals(res.getDate(), record.getDate());
@@ -451,7 +418,7 @@ public class UserRestControllerRecordsTest extends AbstractTestNGSpringContextTe
         EditRecordWrapper wrapper = new EditRecordWrapper();
         wrapper.setRecordId(this.record.getRecordId());
         wrapper.setRecord(record);
-        Record res = (Record) helper.editRecordPositive(wrapper, token1).getObject();
+        Record res = (Record) userRestControllerConnectorHelper.editRecordPositive(wrapper, token1).getObject();
         Assert.assertEquals(res.getAmount(), record.getAmount());
         Assert.assertEquals(res.getComment(), record.getComment());
         Assert.assertEquals(res.getDate(), record.getDate());
@@ -468,7 +435,7 @@ public class UserRestControllerRecordsTest extends AbstractTestNGSpringContextTe
         EditRecordWrapper wrapper = new EditRecordWrapper();
         wrapper.setRecordId(this.record.getRecordId());
         wrapper.setRecord(record);
-        Record res = (Record) helper.editRecordPositive(wrapper, token1).getObject();
+        Record res = (Record) userRestControllerConnectorHelper.editRecordPositive(wrapper, token1).getObject();
         Assert.assertEquals(res.getAmount(), record.getAmount());
         Assert.assertEquals(res.getComment(), record.getComment());
         Assert.assertEquals(res.getDate(), record.getDate());
@@ -485,7 +452,7 @@ public class UserRestControllerRecordsTest extends AbstractTestNGSpringContextTe
         EditRecordWrapper wrapper = new EditRecordWrapper();
         wrapper.setRecordId(this.record.getRecordId());
         wrapper.setRecord(record);
-        HttpResponseJson response = helper.editRecordNegative(testTools.objectToJson(wrapper), token1).convertToHttpResponseJson();
+        HttpResponseJson response = userRestControllerConnectorHelper.editRecordNegative(testTools.objectToJson(wrapper), token1).convertToHttpResponseJson();
         assertEquals(response.getHttpStatusCode(), 500);
         assertEquals(response.getObject().get("error").getAsString(), DataIntegrityErrorCode.INVALID_PARAMETER.toString());
         assertEquals(response.getObject().get("message").getAsString(), "Comment length should be less than 100 chars");
@@ -501,7 +468,7 @@ public class UserRestControllerRecordsTest extends AbstractTestNGSpringContextTe
         JsonObject wrapper = new JsonObject();
         wrapper.addProperty("recordId", this.record.getRecordId());
         wrapper.add("record", record);
-        HttpResponseJson response = helper.editRecordNegative(testTools.objectToJson(wrapper), token1).convertToHttpResponseJson();
+        HttpResponseJson response = userRestControllerConnectorHelper.editRecordNegative(testTools.objectToJson(wrapper), token1).convertToHttpResponseJson();
         assertEquals(response.getHttpStatusCode(), 500);
         assertEquals(response.getObject().get("error").getAsString(), DataIntegrityErrorCode.INVALID_PARAMETER.toString());
         assertEquals(response.getObject().get("message").getAsString(), "Category id can't be blank");
@@ -517,7 +484,7 @@ public class UserRestControllerRecordsTest extends AbstractTestNGSpringContextTe
         EditRecordWrapper wrapper = new EditRecordWrapper();
         wrapper.setRecordId(this.record.getRecordId());
         wrapper.setRecord(record);
-        HttpResponseJson response = helper.editRecordNegative(testTools.objectToJson(wrapper), token1).convertToHttpResponseJson();
+        HttpResponseJson response = userRestControllerConnectorHelper.editRecordNegative(testTools.objectToJson(wrapper), token1).convertToHttpResponseJson();
         assertEquals(response.getHttpStatusCode(), 500);
         assertEquals(response.getObject().get("error").getAsString(), DataIntegrityErrorCode.INVALID_PARAMETER.toString());
         assertEquals(response.getObject().get("message").getAsString(), "Amount can't be null");
@@ -533,7 +500,7 @@ public class UserRestControllerRecordsTest extends AbstractTestNGSpringContextTe
         JsonObject wrapper = new JsonObject();
         wrapper.addProperty("recordId", this.record.getRecordId());
         wrapper.add("record", record);
-        HttpResponseJson response = helper.editRecordNegative(testTools.objectToJson(wrapper), token1).convertToHttpResponseJson();
+        HttpResponseJson response = userRestControllerConnectorHelper.editRecordNegative(testTools.objectToJson(wrapper), token1).convertToHttpResponseJson();
         assertEquals(response.getHttpStatusCode(), 500);
         assertEquals(response.getObject().get("error").getAsString(), DataIntegrityErrorCode.INVALID_REQUEST_ENTITY.toString());
         assertEquals(response.getObject().get("message").getAsString(), "Invalid Request Entity");
@@ -549,7 +516,7 @@ public class UserRestControllerRecordsTest extends AbstractTestNGSpringContextTe
         EditRecordWrapper wrapper = new EditRecordWrapper();
         wrapper.setRecordId(this.record.getRecordId());
         wrapper.setRecord(record);
-        HttpResponseJson response = helper.editRecordNegative(testTools.objectToJson(wrapper), token1).convertToHttpResponseJson();
+        HttpResponseJson response = userRestControllerConnectorHelper.editRecordNegative(testTools.objectToJson(wrapper), token1).convertToHttpResponseJson();
         assertEquals(response.getHttpStatusCode(), 500);
         assertEquals(response.getObject().get("error").getAsString(), DataIntegrityErrorCode.INVALID_PARAMETER.toString());
         assertEquals(response.getObject().get("message").getAsString(), "Date can't be null");
@@ -565,7 +532,7 @@ public class UserRestControllerRecordsTest extends AbstractTestNGSpringContextTe
         JsonObject wrapper = new JsonObject();
         wrapper.addProperty("recordId", this.record.getRecordId());
         wrapper.add("record", record);
-        HttpResponseJson response = helper.editRecordNegative(testTools.objectToJson(wrapper), token1).convertToHttpResponseJson();
+        HttpResponseJson response = userRestControllerConnectorHelper.editRecordNegative(testTools.objectToJson(wrapper), token1).convertToHttpResponseJson();
         assertEquals(response.getHttpStatusCode(), 500);
         assertEquals(response.getObject().get("error").getAsString(), DataIntegrityErrorCode.INVALID_REQUEST_ENTITY.toString());
         assertEquals(response.getObject().get("message").getAsString(), "Invalid Request Entity");
@@ -578,7 +545,7 @@ public class UserRestControllerRecordsTest extends AbstractTestNGSpringContextTe
         record.setCategoryId(Long.MAX_VALUE);
         record.setComment("Comment");
         record.setDate(System.currentTimeMillis());
-        HttpResponseJson response = helper.addRecordNegative(testTools.objectToJson(record), token1).convertToHttpResponseJson();
+        HttpResponseJson response = userRestControllerConnectorHelper.addRecordNegative(testTools.objectToJson(record), token1).convertToHttpResponseJson();
         assertEquals(response.getHttpStatusCode(), 500);
         assertEquals(response.getObject().get("error").getAsString(), EntitiesErrorCode.CATEGORY_DOES_NOT_EXIST.toString());
         assertEquals(response.getObject().get("message").getAsString(), "Category Does Not Exist");
@@ -591,7 +558,7 @@ public class UserRestControllerRecordsTest extends AbstractTestNGSpringContextTe
         record.setCategoryId(category.getCategoryId());
         record.setComment("Comment");
         record.setDate(System.currentTimeMillis());
-        Record res = (Record) helper.addRecordPositive(record, token1).getObject();
+        Record res = (Record) userRestControllerConnectorHelper.addRecordPositive(record, token1).getObject();
         Assert.assertEquals(res.getAmount(), record.getAmount());
         Assert.assertEquals(res.getComment(), record.getComment());
         Assert.assertEquals(res.getDate(), record.getDate());
@@ -602,14 +569,14 @@ public class UserRestControllerRecordsTest extends AbstractTestNGSpringContextTe
     public void testAddRecordWithAnotherUserCategory() {
         ECustomCategory category = new ECustomCategory();
         category.setName("Test pps");
-        GeneralCategory res = (GeneralCategory) helper.addCustomCategoryPositive(category, token2).getObject();
+        GeneralCategory res = (GeneralCategory) userRestControllerConnectorHelper.addCustomCategoryPositive(category, token2).getObject();
         Assert.assertNotNull(res);
         ERecord record = new ERecord();
         record.setAmount(10.5);
         record.setCategoryId(res.getCategoryId());
         record.setComment("Comment");
         record.setDate(System.currentTimeMillis());
-        HttpResponseJson response = helper.addRecordNegative(testTools.objectToJson(record), token1).convertToHttpResponseJson();
+        HttpResponseJson response = userRestControllerConnectorHelper.addRecordNegative(testTools.objectToJson(record), token1).convertToHttpResponseJson();
         assertEquals(response.getHttpStatusCode(), 500);
         assertEquals(response.getObject().get("error").getAsString(), EntitiesErrorCode.CATEGORY_DOES_NOT_EXIST.toString());
         assertEquals(response.getObject().get("message").getAsString(), "Category Does Not Exist");
@@ -617,7 +584,7 @@ public class UserRestControllerRecordsTest extends AbstractTestNGSpringContextTe
 
     @Test
     public void testDeleteRecord() {
-        HttpResponse response = helper.deleteRecordPositive(this.record1.getRecordId(), token1);
+        HttpResponse response = userRestControllerConnectorHelper.deleteRecordPositive(this.record1.getRecordId(), token1);
         assertEquals(response.getHttpStatusCode(), 200);
     }
 
@@ -631,7 +598,7 @@ public class UserRestControllerRecordsTest extends AbstractTestNGSpringContextTe
         EditRecordWrapper wrapper = new EditRecordWrapper();
         wrapper.setRecordId(null);
         wrapper.setRecord(record);
-        HttpResponseJson response = helper.editRecordNegative(testTools.objectToJson(wrapper), token2).convertToHttpResponseJson();
+        HttpResponseJson response = userRestControllerConnectorHelper.editRecordNegative(testTools.objectToJson(wrapper), token2).convertToHttpResponseJson();
         assertEquals(response.getHttpStatusCode(), 500);
         assertEquals(response.getObject().get("error").getAsString(), DataIntegrityErrorCode.INVALID_PARAMETER.toString());
         assertEquals(response.getObject().get("message").getAsString(), "Record id can't be null");
@@ -646,7 +613,7 @@ public class UserRestControllerRecordsTest extends AbstractTestNGSpringContextTe
         record.setDate(System.currentTimeMillis());
         EditRecordWrapper wrapper = new EditRecordWrapper();
         wrapper.setRecord(record);
-        HttpResponseJson response = helper.editRecordNegative(testTools.objectToJson(wrapper), token2).convertToHttpResponseJson();
+        HttpResponseJson response = userRestControllerConnectorHelper.editRecordNegative(testTools.objectToJson(wrapper), token2).convertToHttpResponseJson();
         assertEquals(response.getHttpStatusCode(), 500);
         assertEquals(response.getObject().get("error").getAsString(), DataIntegrityErrorCode.INVALID_PARAMETER.toString());
         assertEquals(response.getObject().get("message").getAsString(), "Record id can't be null");
@@ -657,7 +624,7 @@ public class UserRestControllerRecordsTest extends AbstractTestNGSpringContextTe
         EditRecordWrapper wrapper = new EditRecordWrapper();
         wrapper.setRecordId(this.record.getRecordId());
         wrapper.setRecord(null);
-        HttpResponseJson response = helper.editRecordNegative(testTools.objectToJson(wrapper), token2).convertToHttpResponseJson();
+        HttpResponseJson response = userRestControllerConnectorHelper.editRecordNegative(testTools.objectToJson(wrapper), token2).convertToHttpResponseJson();
         assertEquals(response.getHttpStatusCode(), 500);
         assertEquals(response.getObject().get("error").getAsString(), DataIntegrityErrorCode.INVALID_PARAMETER.toString());
         assertEquals(response.getObject().get("message").getAsString(), "Record can't be null");
@@ -667,7 +634,7 @@ public class UserRestControllerRecordsTest extends AbstractTestNGSpringContextTe
     public void validateEditWrapperWithoutRecord() {
         EditRecordWrapper wrapper = new EditRecordWrapper();
         wrapper.setRecordId(this.record.getRecordId());
-        HttpResponseJson response = helper.editRecordNegative(testTools.objectToJson(wrapper), token2).convertToHttpResponseJson();
+        HttpResponseJson response = userRestControllerConnectorHelper.editRecordNegative(testTools.objectToJson(wrapper), token2).convertToHttpResponseJson();
         assertEquals(response.getHttpStatusCode(), 500);
         assertEquals(response.getObject().get("error").getAsString(), DataIntegrityErrorCode.INVALID_PARAMETER.toString());
         assertEquals(response.getObject().get("message").getAsString(), "Record can't be null");
