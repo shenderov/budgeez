@@ -105,7 +105,7 @@ app.controller('RecordsController', function($scope, $rootScope, $http, Connecto
     };
 
     $scope.setRecordDate = function(recordDate){
-        $scope.recordDate = recordDate;
+        $scope.recordDate = recordDate.getTime();
     };
 
     $scope.openRecordDate = function() {
