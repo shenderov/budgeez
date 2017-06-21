@@ -9,6 +9,8 @@ import com.kamabizbazti.model.exceptions.codes.DataIntegrityErrorCode;
 import com.kamabizbazti.model.exceptions.codes.EntitiesErrorCode;
 import com.kamabizbazti.security.entities.SignUpWrapper;
 import com.kamabizbazti.security.service.JwtAuthenticationResponse;
+import org.junit.runner.RunWith;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -18,6 +20,7 @@ import java.util.List;
 
 import static org.testng.Assert.assertEquals;
 
+@RunWith(SpringRunner.class)
 public class UserRestControllerCategoriesTest extends KamaBizbaztiBootApplicationTests {
 
     private String name = "User Categories";
@@ -93,7 +96,6 @@ public class UserRestControllerCategoriesTest extends KamaBizbaztiBootApplicatio
     @Test
     public void testAddCategoriesEmptyRequest() {
         HttpResponseJson response = userRestControllerConnectorHelper.addCustomCategoryNegative("{}", token1).convertToHttpResponseJson();
-        System.out.println(response.getObject().toString());
         assertEquals(response.getHttpStatusCode(), 500);
         assertEquals(response.getObject().get("error").getAsString(), DataIntegrityErrorCode.INVALID_PARAMETER.toString());
         assertEquals(response.getObject().get("message").getAsString(), "Category name can't be blank");
@@ -124,7 +126,6 @@ public class UserRestControllerCategoriesTest extends KamaBizbaztiBootApplicatio
         GeneralCategory category = new GeneralCategory();
         category.setName(maxLengthCategoryName + "n");
         HttpResponseJson response = userRestControllerConnectorHelper.addCustomCategoryNegative(testTools.objectToJson(category), token1).convertToHttpResponseJson();
-        System.out.println(response.getObject().toString());
         assertEquals(response.getHttpStatusCode(), 500);
         assertEquals(response.getObject().get("error").getAsString(), DataIntegrityErrorCode.INVALID_PARAMETER.toString());
         assertEquals(response.getObject().get("message").getAsString(), "Category name length should be between 1 and 30 chars");

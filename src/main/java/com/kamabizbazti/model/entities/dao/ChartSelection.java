@@ -108,4 +108,15 @@ public class ChartSelection {
         result = 31 * result + authRequired.hashCode();
         return result;
     }
+
+    @Override
+    public String toString() {
+        return "ChartSelection{" +
+                "selectionId=" + selectionId +
+                ", title='" + title + '\'' +
+                ", chartType=" + chartType.toString() +
+                ", datePicker=" + datePicker +
+                ", authRequired=" + authRequired +
+                '}';
+    }
 }

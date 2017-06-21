@@ -15,6 +15,8 @@ import com.kamabizbazti.model.handlers.GeneralRequestHandler;
 import com.kamabizbazti.model.handlers.UserRequestHandler;
 import com.kamabizbazti.security.entities.SignUpWrapper;
 import com.kamabizbazti.security.service.JwtAuthenticationResponse;
+import org.junit.runner.RunWith;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -24,6 +26,7 @@ import java.util.List;
 
 import static org.testng.Assert.assertEquals;
 
+@RunWith(SpringRunner.class)
 public class UserRestControllerGetUserDatatableTest extends KamaBizbaztiBootApplicationTests {
 
     private String name = "User Datatable";
@@ -141,7 +144,6 @@ public class UserRestControllerGetUserDatatableTest extends KamaBizbaztiBootAppl
         ChartRequestWrapper requestWrapper = new ChartRequestWrapper();
         requestWrapper.setChartSelection(selectionDB);
         HttpResponseJson response = userRestControllerConnectorHelper.getGeneralDataTableNegative(testTools.objectToJson(requestWrapper), token1).convertToHttpResponseJson();
-        System.out.println(response.getObject().toString());
         assertEquals(response.getHttpStatusCode(), 500);
         assertEquals(response.getObject().get("error").getAsString(), DataIntegrityErrorCode.INVALID_PARAMETER.toString());
         assertEquals(response.getObject().get("message").getAsString(), "Date picker can't be blank");
@@ -157,7 +159,6 @@ public class UserRestControllerGetUserDatatableTest extends KamaBizbaztiBootAppl
         requestWrapper.setChartSelection(selectionDB);
         requestWrapper.setDatePicker(picker);
         HttpResponseJson response = userRestControllerConnectorHelper.getGeneralDataTableNegative(testTools.objectToJson(requestWrapper), token1).convertToHttpResponseJson();
-        System.out.println(response.getObject().toString());
         assertEquals(response.getHttpStatusCode(), 500);
         assertEquals(response.getObject().get("error").getAsString(), DataIntegrityErrorCode.DATES_ARE_NOT_CHRONOLOGICAL.toString());
         assertEquals(response.getObject().get("message").getAsString(), "End date before start date");
@@ -172,7 +173,7 @@ public class UserRestControllerGetUserDatatableTest extends KamaBizbaztiBootAppl
     }
 
     @Test
-    public void testGetUserDataTableWithGeneralSelection() throws Exception {
+    public void testGetUserDataTableWithGeneralSelection() {
         ChartSelection selection = chartSelectionRepository.findOne(GeneralRequestHandler.DEFAULT_CHART_SELECTION);
         ChartRequestWrapper requestWrapper = new ChartRequestWrapper();
         requestWrapper.setChartSelection(selection);

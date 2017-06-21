@@ -29,7 +29,7 @@ public class ChartRequestWrapper {
     @Override
     public String toString() {
         return "ChartRequestWrapper{" +
-                "chartSelection=" + chartSelection +
+                "chartSelection=" + chartSelection.toString() +
                 ", datePicker=" + datePicker +
                 '}';
     }

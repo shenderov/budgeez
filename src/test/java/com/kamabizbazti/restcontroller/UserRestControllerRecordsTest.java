@@ -14,6 +14,8 @@ import com.kamabizbazti.model.exceptions.codes.DataIntegrityErrorCode;
 import com.kamabizbazti.model.exceptions.codes.EntitiesErrorCode;
 import com.kamabizbazti.security.entities.SignUpWrapper;
 import com.kamabizbazti.security.service.JwtAuthenticationResponse;
+import org.junit.runner.RunWith;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -24,6 +26,7 @@ import java.util.List;
 
 import static org.testng.Assert.assertEquals;
 
+@RunWith(SpringRunner.class)
 public class UserRestControllerRecordsTest extends KamaBizbaztiBootApplicationTests {
 
     private String name = "User Records";
