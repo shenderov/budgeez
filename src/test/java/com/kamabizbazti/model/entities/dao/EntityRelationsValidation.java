@@ -34,6 +34,8 @@ public class EntityRelationsValidation extends KamaBizbaztiBootApplicationTests 
         dataGenerator.insertCustomCategories(userRepository, generalCategoryRepository, customCategoryRepository);
         dataGenerator.insertRecords(userRepository, recordRepository, customCategoryRepository, 2, 150);
         users = userRepository.findAll();
+        System.out.println("userRepository: " + userRepository.toString());
+        System.out.println("users count: " + users.size());
     }
 
     @Test

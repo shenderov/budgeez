@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.embedded.LocalServerPort;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
@@ -25,12 +26,13 @@ import org.testng.annotations.BeforeClass;
 import java.sql.Connection;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@DirtiesContext
 @ContextConfiguration(classes = {KamaBizbaztiBootApplication.class, KamaBizbaztiApplicationConfig.class, TestConfiguration.class})
 @TestPropertySource(locations="classpath:test.properties")
-public class KamaBizbaztiBootApplicationTests extends AbstractTestNGSpringContextTests {
+public abstract class KamaBizbaztiBootApplicationTests extends AbstractTestNGSpringContextTests {
 
     @LocalServerPort
-    protected int port;
+    protected int port = 0;
 
     @Value(value = "${test.env.hostname}")
     protected String hostname;

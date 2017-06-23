@@ -14,13 +14,10 @@ import com.kamabizbazti.security.service.JwtAuthenticationResponse;
 
 import static org.testng.Assert.*;
 
-import org.junit.runner.RunWith;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-@RunWith(SpringRunner.class)
 public class AuthenticationRestControllerTest extends KamaBizbaztiBootApplicationTests {
 
     private String name = "Test";

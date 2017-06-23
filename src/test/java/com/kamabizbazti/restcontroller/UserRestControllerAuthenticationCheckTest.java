@@ -12,15 +12,12 @@ import com.kamabizbazti.model.enumerations.ChartSelectionIdEnum;
 import com.kamabizbazti.security.entities.SignUpWrapper;
 import com.kamabizbazti.model.entities.dao.User;
 import com.kamabizbazti.security.service.JwtAuthenticationResponse;
-import org.junit.runner.RunWith;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import static org.testng.Assert.assertEquals;
 
-@RunWith(SpringRunner.class)
 public class UserRestControllerAuthenticationCheckTest extends KamaBizbaztiBootApplicationTests {
 
     private String name = "User Test Auth";

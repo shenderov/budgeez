@@ -13,8 +13,6 @@ import com.kamabizbazti.model.exceptions.codes.DataIntegrityErrorCode;
 import com.kamabizbazti.model.exceptions.codes.EntitiesErrorCode;
 import com.kamabizbazti.model.handlers.GeneralRequestHandler;
 import com.kamabizbazti.model.handlers.UserRequestHandler;
-import org.junit.runner.RunWith;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -22,7 +20,6 @@ import java.util.List;
 
 import static org.testng.Assert.assertEquals;
 
-@RunWith(SpringRunner.class)
 public class GeneralRestControllerTest extends KamaBizbaztiBootApplicationTests {
 
     @Test

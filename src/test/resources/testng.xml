@@ -1,0 +1,30 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+<suite name="Server" verbose="1" >
+    <!--<test name="Handlers" verbose="">-->
+        <!--<classes>-->
+            <!--<class name="com.kamabizbazti.handlers.UserStatisticsHandlerTest" />-->
+        <!--</classes>-->
+    <!--</test>-->
+    <test name="Dao">
+        <classes>
+            <class name="com.kamabizbazti.model.entities.dao.ChartSelectionTest"/>
+            <class name="com.kamabizbazti.model.entities.dao.CurrencyTest"/>
+            <!--<class name="com.kamabizbazti.model.entities.dao.CustomCategoryTest"/>-->
+            <class name="com.kamabizbazti.model.entities.dao.EntityRelationsValidation"/>
+            <!--<class name="com.kamabizbazti.model.entities.dao.GeneralCategoryTest"/>-->
+            <class name="com.kamabizbazti.model.entities.dao.LanguageTest"/>
+            <!--<class name="com.kamabizbazti.model.entities.dao.RecordTest"/>-->
+            <!--<class name="com.kamabizbazti.model.entities.dao.UserTest"/>-->
+        </classes>
+    </test>
+    <test name="RestController" >
+        <classes>
+            <class name="com.kamabizbazti.restcontroller.AuthenticationRestControllerTest" />
+            <class name="com.kamabizbazti.restcontroller.GeneralRestControllerTest" />
+            <class name="com.kamabizbazti.restcontroller.UserRestControllerAuthenticationCheckTest" />
+            <class name="com.kamabizbazti.restcontroller.UserRestControllerCategoriesTest" />
+            <class name="com.kamabizbazti.restcontroller.UserRestControllerGetUserDatatableTest" />
+            <class name="com.kamabizbazti.restcontroller.UserRestControllerRecordsTest" />
+        </classes>
+    </test>
+</suite>
