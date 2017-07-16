@@ -7,13 +7,13 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" ui-sref="main" id="navbar-brand">{{buildInfo.description}}</a>
+        <a class="navbar-brand" ui-sref="main" id="navbar-brand">{{buildInfo.name}}</a>
     </div>
     <div class="collapse navbar-collapse navbar-ex1-collapse" ng-if="isAutorized">
         <ul class="nav navbar-nav">
             <li><a href="#/main" data-toggle="collapse" data-target=".navbar-ex1-collapse">Home</a></li>
             <li><a href="#/user-home" data-toggle="collapse" data-target=".navbar-ex1-collapse">User Home</a></li>
-            <!--<li><a href="#/settings" ng-if="isAutorized">Settings</a></li>-->
+            <li><a href="#/settings" data-toggle="collapse" data-target=".navbar-ex1-collapse">Settings</a></li>
         </ul>
         <ul class="nav navbar-nav navbar-right">
             <li><a href="" ng-click="logout()" data-toggle="collapse" data-target=".navbar-ex1-collapse"><span

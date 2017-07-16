@@ -1,0 +1,60 @@
+<div id="settings-module">
+    <div class="col-md-6">
+        <h4 class="settings-module-header" id="settings-account-header">Account Settings</h4><br>
+        <form class="form-user-details" role="form" name="userDetailsForm">
+            <div uib-alert ng-repeat="alert in settingsAlerts" ng-class="'alert-' + (alert.type || 'warning')"
+                 close="closeSettingsAlert($index)" dismiss-on-timeout="5000">{{alert.msg}}
+            </div>
+            <div class="static-content-group">
+                <span class="static-content-label">Status:</span>
+                <span class="{{status.statusClass}}"><span class="glyphicon {{status.statusGlyphicon}}"></span> {{status.statusName}}</span>
+            </div>
+            <div class="form-group form-group-sm"
+                 ng-class="{ 'has-error has-feedback': userDetailsForm.inputAccountName.$touched && userDetailsForm.inputAccountName.$dirty && userDetailsForm.inputAccountName.$invalid, 'has-success has-feedback' : userDetailsForm.inputAccountName.$touched && userDetailsForm.inputAccountName.$dirty && userDetailsForm.inputAccountName.$valid}">
+                <label for="inputAccountName" autocomplete="off">Name:</label>
+                <input type="text" id="inputAccountName" class="form-control has-error " placeholder="Enter name" required
+                       ng-model="accountDetails.name" maxlength="70" minlength="2" name="inputAccountName">
+                <span ng-class="{ 'glyphicon glyphicon-remove form-control-feedback': userDetailsForm.inputAccountName.$touched && userDetailsForm.inputAccountName.$dirty && userDetailsForm.inputAccountName.$invalid, 'glyphicon glyphicon-ok form-control-feedback' : userDetailsForm.inputAccountName.$touched && userDetailsForm.inputAccountName.$dirty && userDetailsForm.inputAccountName.$valid}"></span>
+            <p class="input-form-error" ng-if="userDetailsForm.inputAccountName.$touched && userDetailsForm.inputAccountName.$dirty && userDetailsForm.inputAccountName.$invalid">Name should be in range between 2 and 70 characters</p>
+            </div>
+            <div class="form-group form-group-sm">
+                <label for="accountLanguage">Language:</label>
+                <select class="form-control" id="accountLanguage"
+                        ng-options="language as language.languageName for language in languages track by language.languageCode"
+                        required ng-model="accountDetails.language" name="accountLanguage"></select>
+                <p class="input-form-warning" ng-if="userDetailsForm.accountLanguage.$dirty">Change language does not affect on custom categories and record comments</p>
+            </div>
+            <div class="form-group form-group-sm">
+                <label for="accountCurrency">Currency:</label>
+                <select class="form-control" id="accountCurrency"
+                        ng-options="currency as currency.currencyName for currency in currencies track by currency.currencyCode"
+                        required ng-model="accountDetails.currency" name="accountCurrency"></select>
+                <p class="input-form-warning" ng-if="userDetailsForm.accountCurrency.$dirty">Change currency only changes currency name and doesn't convert values of the records</p>
+            </div>
+            <div class="form-group form-group-sm">
+                <label for="startDay">Start Day:</label>
+                <select class="form-control" id="startDay"
+                        ng-options="n for n in [] | range:1:31"
+                        required ng-model="accountDetails.startDay" name="startDay"></select>
+            </div>
+            <button class="btn btn-default btn-block" type="submit"
+                    ng-click="userDetailsForm.$valid && updateUserDetails()"
+                    ng-disabled="(userDetailsForm.inputAccountName.$invalid && userDetailsForm.inputAccountName.$touched)
+                    || updateAccountDetailsSubmitButtonDisabled">
+                Save
+            </button>
+        </form>
+        <br>
+        <div><button class="btn btn-link" ng-click="openChangeEmailModal()">Change E-Mail</button></div>
+        <div><button class="btn btn-link" ng-click="openChangePasswordModal()">Change Password</button></div>
+        <div><button class="btn btn-link" ng-click="openDeleteAccountModal()">Delete Account</button></div>
+    </div>
+    <div class="col-md-6">
+        <h4 class="settings-module-header" id="settings-data-header">User Data</h4><br>
+        <div><button class="btn btn-link" ng-click="action">Edit Custom Categories</button></div>
+        <div><button class="btn btn-link" ng-click="action">Export Records</button></div>
+        <div><button class="btn btn-link" ng-click="action">Import Records</button></div>
+        <div><button class="btn btn-link" ng-click="action">Load Demo Data</button></div>
+        <div><button class="btn btn-link" ng-click="action">Delete All Records</button></div>
+    </div>
+</div>

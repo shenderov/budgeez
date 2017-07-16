@@ -97,6 +97,47 @@ html {
     border-radius: 0 0 0 0 !important;
 }
 
+.static-content-group {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    margin-bottom: 15px;
+}
+
+.static-content-label {
+    font-weight: bold;
+    margin-right: 15px;
+}
+
+.input-form-error {
+     font-size: smaller;
+     color: #9f191f;
+ }
+
+.input-form-warning {
+    font-size: smaller;
+    color: #f4731c;
+}
+
+.input-form-success {
+    font-size: smaller;
+    color: green;
+}
+
+.text-error {
+    color: #9f191f;
+}
+
+.text-warning {
+    color: #f4731c;
+}
+
+.text-success {
+    color: green;
+}
+
+.text-info {
+
+}
+
 /* Testing */
 .pink{
 background-color: #e4b9b9;
@@ -138,6 +179,10 @@ background-color: #e4b9b9;
 .alert {
     padding: 5px;
     margin-bottom: 5px;
+}
+
+.no-bottom-margin {
+    margin-bottom: 0 !important;
 }
 
  a, button, input{

@@ -2,29 +2,34 @@
 <suite name="Server" verbose="1" >
     <!--<test name="Handlers" verbose="">-->
         <!--<classes>-->
-            <!--<class name="com.kamabizbazti.handlers.UserStatisticsHandlerTest" />-->
+            <!--<class nacom.budgeezhandlers.UserStatisticsHandlerTest" />-->
         <!--</classes>-->
     <!--</test>-->
+    <test name="Helpers" verbose="1">
+        <classes>
+            <class name="com.budgeez.helpers.TextHelperTest" />
+        </classes>
+    </test>
     <test name="Dao">
         <classes>
-            <class name="com.kamabizbazti.model.entities.dao.ChartSelectionTest"/>
-            <class name="com.kamabizbazti.model.entities.dao.CurrencyTest"/>
-            <!--<class name="com.kamabizbazti.model.entities.dao.CustomCategoryTest"/>-->
-            <class name="com.kamabizbazti.model.entities.dao.EntityRelationsValidation"/>
-            <!--<class name="com.kamabizbazti.model.entities.dao.GeneralCategoryTest"/>-->
-            <class name="com.kamabizbazti.model.entities.dao.LanguageTest"/>
-            <!--<class name="com.kamabizbazti.model.entities.dao.RecordTest"/>-->
-            <!--<class name="com.kamabizbazti.model.entities.dao.UserTest"/>-->
+            <class name="com.budgeez.model.entities.dao.ChartSelectionTest"/>
+            <class name="com.budgeez.model.entities.dao.CurrencyTest"/>
+            <!--<class nacom.budgeezmodel.entities.dao.CustomCategoryTest"/>-->
+            <class name="com.budgeez.model.entities.dao.EntityRelationsValidation"/>
+            <!--<class nacom.budgeezmodel.entities.dao.GeneralCategoryTest"/>-->
+            <class name="com.budgeez.model.entities.dao.LanguageTest"/>
+            <!--<class nacom.budgeezmodel.entities.dao.RecordTest"/>-->
+            <!--<class nacom.budgeezmodel.entities.dao.UserTest"/>-->
         </classes>
     </test>
     <test name="RestController" >
         <classes>
-            <class name="com.kamabizbazti.restcontroller.AuthenticationRestControllerTest" />
-            <class name="com.kamabizbazti.restcontroller.GeneralRestControllerTest" />
-            <class name="com.kamabizbazti.restcontroller.UserRestControllerAuthenticationCheckTest" />
-            <class name="com.kamabizbazti.restcontroller.UserRestControllerCategoriesTest" />
-            <class name="com.kamabizbazti.restcontroller.UserRestControllerGetUserDatatableTest" />
-            <class name="com.kamabizbazti.restcontroller.UserRestControllerRecordsTest" />
+            <class name="com.budgeez.restcontroller.AuthenticationRestControllerTest" />
+            <class name="com.budgeez.restcontroller.GeneralRestControllerTest" />
+            <class name="com.budgeez.restcontroller.UserRestControllerAuthenticationCheckTest" />
+            <class name="com.budgeez.restcontroller.UserRestControllerCategoriesTest" />
+            <class name="com.budgeez.restcontroller.UserRestControllerGetUserDatatableTest" />
+            <class name="com.budgeez.restcontroller.UserRestControllerRecordsTest" />
         </classes>
     </test>
 </suite>

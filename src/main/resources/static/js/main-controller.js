@@ -1,7 +1,6 @@
 'use strict';
 
 app.controller('MainController', function ($scope, $rootScope, $http, $templateCache, Connector) {
-    console.log("MainController");
     $scope.chartSelectionsList = null;
     $scope.activeChartSelection = {};
     $scope.chartDatePicker = {};

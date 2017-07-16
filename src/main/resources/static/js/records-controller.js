@@ -1,7 +1,6 @@
 'use strict';
 
 app.controller('RecordsController', function($scope, $rootScope, $http, Connector) {
-    console.log("RecordsController");
     $scope.chartsCtrl = {};
     $scope.recordsListCtrl = {};
     $rootScope.categoriesList = {};

@@ -17,6 +17,17 @@ security:
       login: login
       refresh: refresh
       signup: signup
+      confirm: confirm
+      verify: verify
+    userDetails:
+      isEmailRegistered: isEmailRegistered
+      getUserDetails: getUserDetails
+      updateUserDetails: updateUserDetails
+      changeEmail: changeEmail
+      changePassword: changePassword
+    account:
+      deleteAccount: deleteAccount
+      reviveUser: reviveUser
 
 general:
   path: general
@@ -26,6 +37,8 @@ general:
     getDefaultDataTable: getDefaultDataTable
     getGeneralDataTable: getGeneralDataTable
     getVersion: getVersion
+    getLanguages: getLanguages
+    getCurrencies: getCurrencies
 
 user:
   path: user
@@ -39,7 +52,7 @@ user:
     deleteRecord: deleteRecord
     editRecord: editRecord
 
-logging:
-  level:
-    org.springframework:
-      security: DEBUG
+#logging:
+#  level:
+#    org.springframework:
+#      security: DEBUG

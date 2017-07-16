@@ -1,0 +1,32 @@
+<div class="modal-header">
+    <h3 class="modal-title" id="modal-title">Delete Account</h3>
+</div>
+<div class="modal-body" id="modal-body">
+    <form class="form-delete-account" role="form" name="deleteAccountForm">
+        <div class="form-group form-group-sm"
+             ng-class="{ 'has-error has-feedback': deleteAccountForm.inputEmail.$touched && deleteAccountForm.inputEmail.$invalid ,
+             'has-success has-feedback' : deleteAccountForm.inputEmail.$touched && deleteAccountForm.inputEmail.$valid}">
+            <label for="inputEmail" autocomplete="off">Email:</label>
+            <input type="email" id="inputEmail" class="form-control invalid" placeholder="Enter email" required
+                   ng-model="deleteAccountWrapper.username" maxlength="254" minlength="4" name="inputEmail">
+            <span ng-class="{ 'glyphicon glyphicon-remove form-control-feedback': deleteAccountForm.inputEmail.$touched && deleteAccountForm.inputEmail.$invalid,
+            'glyphicon glyphicon-ok form-control-feedback' : deleteAccountForm.inputEmail.$touched && deleteAccountForm.inputEmail.$valid}"></span>
+        </div>
+        <div class="form-group form-group-sm"
+             ng-class="{ 'has-error has-feedback': deleteAccountForm.inputPassword.$touched && deleteAccountForm.inputPassword.$invalid,
+              'has-success has-feedback' : deleteAccountForm.inputPassword.$touched && deleteAccountForm.inputPassword.$valid}">
+            <label for="inputPassword">Password:</label>
+            <input type="password" id="inputPassword" class="form-control" placeholder="Enter password" required
+                   ng-model="deleteAccountWrapper.password" maxlength="128" minlength="6" name="inputPassword">
+            <span ng-class="{ 'glyphicon glyphicon-remove form-control-feedback': deleteAccountForm.inputPassword.$touched &&
+            deleteAccountForm.inputPassword.$invalid, 'glyphicon glyphicon-ok form-control-feedback' :
+            deleteAccountForm.inputPassword.$touched && deleteAccountForm.inputPassword.$valid}"></span>
+        </div>
+    </form>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-danger" type="button"
+            ng-disabled="(deleteAccountForm.$invalid && (deleteAccountForm.inputEmail.$dirty || deleteAccountForm.inputPassword.$dirty)) || deleteAccountSubmitDisable"
+            ng-click="deleteAccountForm.$valid && ok()">Delete Acount</button>
+    <button class="btn btn-default" type="button" ng-click="cancel()">Cancel</button>
+</div>

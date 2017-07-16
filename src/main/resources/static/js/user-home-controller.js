@@ -1,7 +1,6 @@
 'use strict';
 
 app.controller('UserHomeController', function ($scope, $rootScope, $http, $templateCache, $location, $state, Connector) {
-    console.log('UserHomeController');
     $scope.chartSelectionsList = null;
     $scope.activeChartSelection = {};
     $scope.chartWrapper = {};

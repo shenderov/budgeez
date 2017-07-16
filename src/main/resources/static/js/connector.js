@@ -1,10 +1,33 @@
 'use strict';
 
 app.factory('Connector', ['$http', '$q', function ($http, $q) {
-    console.log("Connector");
     return {
         getVersion: function () {
             return $http.get(serverPath + 'general/getVersion')
+                .then(
+                    function (response) {
+                        return response.data;
+                    },
+                    function (errResponse) {
+                        return $q.reject(errResponse.data);
+                    }
+                );
+        },
+
+        getLanguages: function () {
+            return $http.get(serverPath + 'general/getLanguages')
+                .then(
+                    function (response) {
+                        return response.data;
+                    },
+                    function (errResponse) {
+                        return $q.reject(errResponse.data);
+                    }
+                );
+        },
+
+        getCurrencies: function () {
+            return $http.get(serverPath + 'general/getCurrencies')
                 .then(
                     function (response) {
                         return response.data;
@@ -159,6 +182,30 @@ app.factory('Connector', ['$http', '$q', function ($http, $q) {
                 );
         },
 
+        getUserDetails: function (token) {
+            return $http.get(serverPath + 'getUserDetails', {headers: token})
+                .then(
+                    function (response) {
+                        return response.data;
+                    },
+                    function (errResponse) {
+                        return $q.reject(errResponse.data);
+                    }
+                );
+        },
+
+        updateUserDetails: function (userDetails, token) {
+            return $http.post(serverPath + 'updateUserDetails', userDetails, {headers: token})
+                .then(
+                    function (response) {
+                        return response.data;
+                    },
+                    function (errResponse) {
+                        return $q.reject(errResponse.data);
+                    }
+                );
+        },
+
         login: function (credentials) {
             return $http.post(serverPath + 'login', credentials)
                 .then(
@@ -183,8 +230,92 @@ app.factory('Connector', ['$http', '$q', function ($http, $q) {
                 );
         },
 
+        reviveUser: function (credentials) {
+            return $http.post(serverPath + 'reviveUser', credentials)
+                .then(
+                    function (result) {
+                        return result.data;
+                    },
+                    function (errResponse) {
+                        return $q.reject(errResponse.data);
+                    }
+                );
+        },
+
+        isEmailRegistered: function (email) {
+            return $http.post(serverPath + 'isEmailRegistered', email)
+                .then(
+                    function (result) {
+                        return result.data;
+                    },
+                    function (errResponse) {
+                        return $q.reject(errResponse.data);
+                    }
+                );
+        },
+
         refreshToken: function (token) {
             return $http.get(serverPath + 'refresh', {headers: token})
+                .then(
+                    function (response) {
+                        return response.data;
+                    },
+                    function (errResponse) {
+                        return $q.reject(errResponse.data);
+                    }
+                );
+        },
+
+        changeEmail: function (changeEmailWrapper, token) {
+            return $http.post(serverPath + 'changeEmail', changeEmailWrapper, {headers: token})
+                .then(
+                    function (response) {
+                        return response.data;
+                    },
+                    function (errResponse) {
+                        return $q.reject(errResponse.data);
+                    }
+                );
+        },
+
+        changePassword: function (changePasswordWrapper, token) {
+            return $http.post(serverPath + 'changePassword', changePasswordWrapper, {headers: token})
+                .then(
+                    function (response) {
+                        return response.data;
+                    },
+                    function (errResponse) {
+                        return $q.reject(errResponse.data);
+                    }
+                );
+        },
+
+        deleteAccount: function (credentials, token) {
+            return $http.post(serverPath + 'deleteAccount', credentials, {headers: token})
+                .then(
+                    function (response) {
+                        return response.data;
+                    },
+                    function (errResponse) {
+                        return $q.reject(errResponse.data);
+                    }
+                );
+        },
+
+        confirm: function (token) {
+            return $http.get(serverPath + 'confirm', {params:{token:token}})
+                .then(
+                    function (response) {
+                        return response.data;
+                    },
+                    function (errResponse) {
+                        return $q.reject(errResponse.data);
+                    }
+                );
+        },
+
+        verify: function (token) {
+            return $http.get(serverPath + 'verify', {params:{token:token}})
                 .then(
                     function (response) {
                         return response.data;

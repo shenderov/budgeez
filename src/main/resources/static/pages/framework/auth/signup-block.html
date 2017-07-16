@@ -12,11 +12,12 @@
             <span ng-class="{ 'glyphicon glyphicon-remove form-control-feedback': signUp.inputName.$touched && signUp.inputName.$invalid, 'glyphicon glyphicon-ok form-control-feedback' : signUp.inputName.$touched && signUp.inputName.$valid}"></span>
         </div>
         <div class="form-group"
-             ng-class="{ 'has-error has-feedback': signUp.inputEmail.$touched && signUp.inputEmail.$invalid, 'has-success has-feedback' : signUp.inputEmail.$touched && signUp.inputEmail.$valid}">
+             ng-class="{ 'has-error has-feedback': signUp.inputEmail.$touched && signUp.inputEmail.$invalid || !emailAvailable, 'has-success has-feedback' : signUp.inputEmail.$touched && signUp.inputEmail.$valid && emailAvailable}">
             <label for="inputEmail" autocomplete="off">Email:</label>
             <input type="email" id="inputEmail" class="form-control invalid" placeholder="Enter email" required
-                   ng-model="userDetails.email" maxlength="254" minlength="4" name="inputEmail">
-            <span ng-class="{ 'glyphicon glyphicon-remove form-control-feedback': signUp.inputEmail.$touched && signUp.inputEmail.$invalid, 'glyphicon glyphicon-ok form-control-feedback' : signUp.inputEmail.$touched && signUp.inputEmail.$valid}"></span>
+                   ng-model="userDetails.email" maxlength="254" minlength="4" name="inputEmail" ng-change="checkEmail(userDetails.email)">
+            <span ng-class="{ 'glyphicon glyphicon-remove form-control-feedback': signUp.inputEmail.$touched && signUp.inputEmail.$invalid || !emailAvailable, 'glyphicon glyphicon-ok form-control-feedback' : signUp.inputEmail.$touched && signUp.inputEmail.$valid && emailAvailable}"></span>
+            <p class="input-form-error" ng-if="signUp.inputEmail.$touched && signUp.inputEmail.$invalid || !emailAvailable">Email already registered</p>
         </div>
         <div class="form-group"
              ng-class="{ 'has-error has-feedback': signUp.inputPassword.$touched && signUp.inputPassword.$invalid, 'has-success has-feedback' : signUp.inputPassword.$touched && signUp.inputPassword.$valid}">
@@ -26,7 +27,7 @@
             <span ng-class="{ 'glyphicon glyphicon-remove form-control-feedback': signUp.inputPassword.$touched && signUp.inputPassword.$invalid, 'glyphicon glyphicon-ok form-control-feedback' : signUp.inputPassword.$touched && signUp.inputPassword.$valid}"></span>
         </div>
         <button class="btn btn-lg btn-default btn-block" type="submit" ng-click="signUp.$valid && signup(userDetails)"
-                ng-disabled="(signUp.$invalid && (signUp.inputName.$touched || signUp.inputEmail.$touched || signUp.inputPassword.$touched)) || signUpSubmitButtomDisabled">
+                ng-disabled="(signUp.$invalid && (signUp.inputName.$touched || signUp.inputEmail.$touched || signUp.inputPassword.$touched)) || signUpSubmitButtomDisabled || !emailAvailable">
             GET STARTED
         </button>
     </form>

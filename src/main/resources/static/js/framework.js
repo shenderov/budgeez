@@ -1,6 +1,6 @@
 'use strict';
 
-var app = angular.module('KamaBizbazti', ['ngRoute', 'ngAnimate', 'ui.bootstrap', 'ui.router', 'dialogs.main', 'angular.filter']);
+var app = angular.module('Budgeez', ['ngRoute', 'ngAnimate', 'ui.bootstrap', 'ui.router', 'dialogs.main', 'angular.filter']);
 
 app.config(function ($stateProvider, $urlRouterProvider) {
 
@@ -26,10 +26,26 @@ app.config(function ($stateProvider, $urlRouterProvider) {
             url: '/records',
             templateUrl: 'pages/framework/statistics/records-list-module.html',
             controller: 'RecordListController'
+        })
+        .state('settings', {
+            url: '/settings',
+            templateUrl: 'pages/settings/settings-tab.html',
+            controller: 'SettingsController'
+        })
+        .state('confirm', {
+            url: '/confirm?token',
+            controller: 'ConfirmController'
+        })
+        .state('verify', {
+            url: '/verify?token',
+            controller: 'VerifyEmailController'
+        })
+        .state('confirmation-page', {
+            url: '/confirmation-page',
+            templateUrl: 'pages/system/confirmation-tab.html',
+            controller: 'ConfirmationPageCtrl'
         });
 });
 app.config(['$httpProvider', function ($httpProvider) {
     $httpProvider.defaults.withCredentials = true;
 }]);
-
-

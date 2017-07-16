@@ -1,0 +1,30 @@
+<div class="modal-header">
+    <h3 class="modal-title" id="modal-title">Change E-Mail</h3>
+</div>
+<div class="modal-body" id="modal-body">
+    <form class="form-change-email" role="form" name="changeEmailForm">
+        <div class="form-group form-group-sm no-bottom-margin"
+             ng-class="{ 'has-error has-feedback': changeEmailForm.inputEmail.$touched && changeEmailForm.inputEmail.$invalid || !emailAvailable, 'has-success has-feedback' : changeEmailForm.inputEmail.$touched && changeEmailForm.inputEmail.$valid && emailAvailable}">
+            <label for="inputEmail" autocomplete="off">New Email:</label>
+            <input type="email" id="inputEmail" class="form-control invalid" placeholder="Enter new email" required
+                   ng-model="changeEmailWrapper.email" maxlength="254" minlength="4" name="inputEmail" ng-change="checkEmail(changeEmailWrapper.email)">
+            <span ng-class="{ 'glyphicon glyphicon-remove form-control-feedback': changeEmailForm.inputEmail.$touched && changeEmailForm.inputEmail.$invalid || !emailAvailable, 'glyphicon glyphicon-ok form-control-feedback' : changeEmailForm.inputEmail.$touched && changeEmailForm.inputEmail.$valid && emailAvailable}"></span>
+            <p class="input-form-error" ng-if="changeEmailForm.inputEmail.$touched && changeEmailForm.inputEmail.$invalid || !emailAvailable">Email already registered</p>
+        </div>
+        <p class="help-block"><small>Current email: {{currentEmail}}</small></p>
+        <div class="form-group form-group-sm"
+             ng-class="{ 'has-error has-feedback': changeEmailForm.inputPassword.$touched && changeEmailForm.inputPassword.$invalid, 'has-success has-feedback' : changeEmailForm.inputPassword.$touched && changeEmailForm.inputPassword.$valid}">
+            <label for="inputPassword">Password:</label>
+            <input type="password" id="inputPassword" class="form-control" placeholder="Enter password" required
+                   ng-model="changeEmailWrapper.password" maxlength="128" minlength="6" name="inputPassword">
+            <span ng-class="{ 'glyphicon glyphicon-remove form-control-feedback': changeEmailForm.inputPassword.$touched && changeEmailForm.inputPassword.$invalid, 'glyphicon glyphicon-ok form-control-feedback' : changeEmailForm.inputPassword.$touched && changeEmailForm.inputPassword.$valid}"></span>
+        </div>
+    </form>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-primary" type="button"
+            ng-disabled="(changeEmailForm.$invalid && (changeEmailForm.inputEmail.$dirty ||
+            changeEmailForm.inputPassword.$dirty)) || changeEmailSubmitDisable || !emailAvailable"
+            ng-click="changeEmailForm.$valid && emailAvailable && ok()">OK</button>
+    <button class="btn btn-default" type="button" ng-click="cancel()">Cancel</button>
+</div>

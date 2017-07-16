@@ -23,18 +23,19 @@ function createAuthorizationTokenHeader() {
     }
 }
 
-app.controller('AuthorizationController', function($scope, $rootScope, $location, Connector){
-    console.log("AuthorizationController");
+app.controller('AuthorizationController', function($scope, $rootScope, $location, Connector, AlertsService){
     $scope.isAutorized = false;
     $scope.formats = ['dd/MM/yyyy', 'dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'];
     $rootScope.format = $scope.formats[0];
     $scope.buildInfo = {};
     $scope.signUpSubmitButtomDisabled = false;
     $scope.loginSubmitButtomDisabled = false;
+    $scope.emailAvailable = true;
     $scope.userDetails = {};
     $scope.credentials = {};
     $rootScope.mainWindowAlerts = [];
     $rootScope.authAddRecordBlockAlerts = [];
+    $rootScope.settingsAlerts = [];
 
     $scope.setToken = function (token) {
         setToken(token);
@@ -42,7 +43,7 @@ app.controller('AuthorizationController', function($scope, $rootScope, $location
     };
 
     $scope.checkToken = function(){
-        if(getToken() != null) {
+        if(getToken() !== null) {
             return Connector.refreshToken(createAuthorizationTokenHeader())
                 .then(
                     function (result) {
@@ -58,6 +59,10 @@ app.controller('AuthorizationController', function($scope, $rootScope, $location
     };
     $scope.checkToken();
 
+    $rootScope.updateToken = function () {
+        $scope.checkToken();
+    };
+
     $scope.login = function(credentials){
         $scope.loginSubmitButtomDisabled = true;
         return Connector.login(credentials)
@@ -70,8 +75,16 @@ app.controller('AuthorizationController', function($scope, $rootScope, $location
                 },
                 function(errResponse){
                     $scope.loginSubmitButtomDisabled = false;
-                    $rootScope.addAuthAddRecordBlockAlert("danger", errResponse.message);
-                    console.error('Error while fetching dataTable');
+                    if(errResponse.error === 'USER_DISABLED'){
+                        $scope.model = {};
+                        $scope.model.credentials = credentials;
+                        $scope.model.scope = $scope;
+                        $scope.model.title = 'User Disabled';
+                        $scope.model.body = 'User has been disabled and waiting for permanent deletion. If you want revive your account, please, click "Revive" button';
+                        AlertsService.openAlertModal('alert-user-revive.html', AlertsService.setModelTitleClassByStatus($scope.model));
+                    }else{
+                        $rootScope.addAuthAddRecordBlockAlert("danger", errResponse.message);
+                    }
                 }
             );
     };
@@ -94,9 +107,45 @@ app.controller('AuthorizationController', function($scope, $rootScope, $location
             );
     };
 
+    $scope.reviveUser = function(credentials){
+        return Connector.reviveUser(credentials)
+            .then(
+                function(result) {
+                    $scope.login(credentials);
+                    return result;
+                },
+                function(errResponse){
+                    $rootScope.addAuthAddRecordBlockAlert("danger", errResponse.message);
+                }
+            );
+    };
+
+    var resizeTimer;
+    $scope.checkEmail = function (email) {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(function () {
+            if(typeof email !== 'undefined'){
+                Connector.isEmailRegistered(email).then(
+                    function (result) {
+                        $scope.emailAvailable = !result;
+                    },
+                    function () {
+                        console.error('Error while fetching isEmailRegistered');
+                    }
+                )
+
+            }
+        }, 1000);
+    };
+
     $scope.logout = function(){
         $scope.isAutorized = false;
         $location.path('/');
+        removeToken();
+    };
+
+    $rootScope.deAuthorize = function () {
+        $scope.isAutorized = false;
         removeToken();
     };
 
@@ -130,8 +179,16 @@ app.controller('AuthorizationController', function($scope, $rootScope, $location
         $rootScope.authAddRecordBlockAlerts.splice(index, 1);
     };
 
+    $rootScope.addSettingsAlert = function (type, msg) {
+        $rootScope.settingsAlerts.push({type: type, msg: msg});
+    };
+
+    $rootScope.closeSettingsAlert = function (index) {
+        $rootScope.settingsAlerts.splice(index, 1);
+    };
+
     $rootScope.authCheck = function () {
-        if($scope.isAutorized == false) {
+        if($scope.isAutorized === false) {
             $scope.logout();
             $rootScope.mainWindowAlerts = [];
             $rootScope.authAddRecordBlockAlerts = [];
@@ -139,7 +196,7 @@ app.controller('AuthorizationController', function($scope, $rootScope, $location
     };
 
     $rootScope.authExceptionCheck = function (errResponse) {
-        if(errResponse.error == 'Unauthorized'){
+        if(errResponse.error === 'Unauthorized'){
             $scope.isAutorized = false;
             $rootScope.authCheck();
         }

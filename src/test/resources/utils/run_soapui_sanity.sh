@@ -2,7 +2,7 @@
 
 #drop all tables
 echo "Dropping database tables"
-mysql -h localhost -u kamabizbazti -pkamabizbazti -e "SET FOREIGN_KEY_CHECKS = 0; DROP TABLE IF EXISTS kamabizbazti.record; DROP TABLE IF EXISTS kamabizbazti.purpose; DROP TABLE IF EXISTS kamabizbazti.user_authority; DROP TABLE IF EXISTS kamabizbazti.user; DROP TABLE IF EXISTS kamabizbazti.selection; DROP TABLE IF EXISTS kamabizbazti.language; DROP TABLE IF EXISTS kamabizbazti.currency; DROP TABLE IF EXISTS kamabizbazti.authority; SET FOREIGN_KEY_CHECKS = 1"
+mysql -h localhost -u kamabizbazti -pkamabizbazti -e "SET FOREIGN_KEY_CHECKS = 0; DROP TABLE IF EXISTS budgeez.record; DROP TABLE IF EXISTS budgeez.purpose; DROP TABLE IF EXISTS budgeez.user_authority; DROP TABLE IF EXISTS budgeez.user; DROP TABLE IF EXISTS budgeez.selection; DROP TABLE IF EXISTS budgeez.language; DROP TABLE IF EXISTS budgeez.currency; DROP TABLE IF EXISTS budgeez.authority; SET FOREIGN_KEY_CHECKS = 1"
 
 #sleep for 5 seconds
 sleep 5
@@ -19,7 +19,7 @@ echo
 
 #generate purposes and records for users
 echo "Generate purposes and record for test users"
-curl -m 200 -X GET 'http://localhost:8080/kamabizbazti/test/insertData?generateRecordsForAllUsers=true&generatePurposesForAllUsers=true&generateUsers=false'
+curl -m 200 -X GET 'http://localhost:8080/budgeez/test/insertData?generateRecordsForAllUsers=true&generatePurposesForAllUsers=true&generateUsers=false'
 echo
 
 #run soapui project
@@ -28,4 +28,4 @@ sudo -i -u cubie /home/cubie/SoapUI-5.3.0/bin/testrunner.sh '/var/lib/jenkins/jo
 
 #clean database afrer sanity
 echo "Clean database after sanity"
-mysql -h localhost -u kamabizbazti -pkamabizbazti -e "DELETE FROM kamabizbazti.record; DELETE FROM kamabizbazti.purpose WHERE type ='CUSTOM'; DELETE FROM kamabizbazti.user_authority; DELETE FROM kamabizbazti.user;"
+mysql -h localhost -u kamabizbazti -pkamabizbazti -e "DELETE FROM budgeez.record; DELETE FROM budgeez.purpose WHERE type ='CUSTOM'; DELETE FROM budgeez.user_authority; DELETE FROM budgeez.user;"

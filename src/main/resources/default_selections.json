@@ -7,15 +7,15 @@
     "authRequired":false
   },
   {
-    "selectionId": "LAST_SIX_MONTH_AVG_DETAILED",
-    "title": "Last 6 Month Average Detailed",
+    "selectionId": "LAST_SIX_MONTHS_AVG_DETAILED",
+    "title": "Last 6 Months Average Detailed",
     "chartType": "COLUMNCHART",
     "datePicker": false,
     "authRequired":false
   },
   {
-    "selectionId": "LAST_THREE_MONTH_AVG_DETAILED",
-    "title": "Last 3 Month Average Detailed",
+    "selectionId": "LAST_THREE_MONTHS_AVG_DETAILED",
+    "title": "Last 3 Months Average Detailed",
     "chartType": "COLUMNCHART",
     "datePicker": false,
     "authRequired":false
@@ -42,8 +42,8 @@
     "authRequired":false
   },
   {
-    "selectionId": "PREV_THREE_MONTH_AVG",
-    "title": "Previous 3 Month Average",
+    "selectionId": "PREV_THREE_MONTHS_AVG",
+    "title": "Previous 3 Months Average",
     "chartType": "PIECHART",
     "datePicker": false,
     "authRequired":false
@@ -77,15 +77,15 @@
     "authRequired":true
   },
   {
-    "selectionId": "USER_LAST_SIX_MONTH_DETAILED",
-    "title": "Last 6 Month Average Detailed",
+    "selectionId": "USER_LAST_SIX_MONTHS_DETAILED",
+    "title": "Last 6 Months Average Detailed",
     "chartType": "COLUMNCHART",
     "datePicker": false,
     "authRequired":true
   },
   {
-    "selectionId": "USER_LAST_THREE_MONTH_DETAILED",
-    "title": "Last 3 Month Average Detailed",
+    "selectionId": "USER_LAST_THREE_MONTHS_DETAILED",
+    "title": "Last 3 Months Average Detailed",
     "chartType": "COLUMNCHART",
     "datePicker": false,
     "authRequired":true
@@ -105,15 +105,15 @@
     "authRequired":true
   },
   {
-    "selectionId": "USER_PREV_THREE_MONTH_AVG",
-    "title": "Previous 3 Month Average",
+    "selectionId": "USER_PREV_THREE_MONTHS_AVG",
+    "title": "Previous 3 Months Average",
     "chartType": "PIECHART",
     "datePicker": false,
     "authRequired":true
   },
   {
-    "selectionId": "USER_PREV_THREE_MONTH_TOTAL",
-    "title": "Previous 3 Month Total",
+    "selectionId": "USER_PREV_THREE_MONTHS_TOTAL",
+    "title": "Previous 3 Months Total",
     "chartType": "PIECHART",
     "datePicker": false,
     "authRequired":true

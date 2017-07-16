@@ -9,7 +9,6 @@ var isChartsLoaded = false;
 var chartAuth = false;
 
 app.controller('ChartsController', function($scope, $http, $q, $rootScope) {
-    console.log("ChartsController");
     var date = new Date();
     $scope.containerId = "chart-canvas";
     $scope.chartRequestWrapper = {};
@@ -178,7 +177,6 @@ app.controller('ChartsController', function($scope, $http, $q, $rootScope) {
 
 function drawDefaultChart() {
     if(chartAuth) {
-        console.log("drawDefaultChart");
         //noinspection JSUnresolvedVariable,JSCheckFunctionSignatures
         var scope = angular.element(
             document.getElementById("charts-view-module")).scope();

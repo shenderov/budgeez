@@ -9,7 +9,7 @@ time=0
 valid_code=200
 while true
 do
-code=$(curl -m 2 -s -o /dev/null -I -w "%{http_code}" -X GET 'http://localhost:8080/kamabizbazti/general/getGeneralChartSelectionsList')
+code=$(curl -m 2 -s -o /dev/null -I -w "%{http_code}" -X GET 'http://localhost:8080/budgeez/general/getGeneralChartSelectionsList')
         if [ "${code}" -ne "${valid_code}" ] && [ "${timeout}" -gt "${time}" ]
         then
         count=5
