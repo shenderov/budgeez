@@ -21,6 +21,6 @@ public class TextHelperTest extends BudgeezBootApplicationTests {
     @Test
     public void validateConvertForNormalEmail() {
         String email = "budgeez@domain.com";
-        Assert.assertEquals(textHelper.getSecretEmail(email), "k...i@domain.com");
+        Assert.assertEquals(textHelper.getSecretEmail(email), "b...z@domain.com");
     }
 }

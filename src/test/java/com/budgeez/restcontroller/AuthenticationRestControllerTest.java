@@ -59,7 +59,7 @@ public class AuthenticationRestControllerTest extends BudgeezBootApplicationTest
     public void tearDown() {
         userRepository.delete(userRepository.findByUsername(email1).getId());
         userRepository.delete(userRepository.findByUsername(email2).getId());
-        userRepository.delete(userRepository.findByUsername(email3).getId());
+        //userRepository.delete(userRepository.findByUsername(email3).getId());
         userRepository.delete(userRepository.findByUsername(emailMixed.toLowerCase()).getId());
     }
 
