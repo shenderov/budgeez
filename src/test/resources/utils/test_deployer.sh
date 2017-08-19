@@ -4,22 +4,39 @@ database=$DB_NAME
 database_host=$DB_HOST
 database_username=$DB_USERNAME
 database_password=$DB_PASSWORD
+application_server_host=$SERVER_HOST
+application_server_username=$SERVER_USERNAME
+application_server_password=$SERVER_PASSWORD
+application_server_port=$TOMCAT_PORT
+application_webapp_path=$WEBAPP_PATH
+application_target_filename=$TARGET_FILE_NAME
+tomcat_manager_username=$TOMCAT_MANAGER_USERNAME
+tomcat_manager_password=$TOMCAT_MANAGER_PASSWORD
+tomcat_context="/"
+is_upgrade=$UPGRADE_TEST
+load_test_data=$LOAD_TEST_DATA
+workspace=$WORKSPACE
+config_file=$CONFIG_FILE
+build_properties=$WORKSPACE/build.properties
+build_package_name="budgeez-1.1.war"
+names_database="/home/kamabizbazti/tools/names_database.csv"
 users_count=10
 custom_categories_count=3
 records_per_day=3
 records_days_ago=365
-names_database="/home/budgeez/tools/names_database.csv"
-tomcat_start_command="/home/budgeez/tomcat/bin/startup.sh"
-tomcat_stop_command="/home/budgeez/tomcat/bin/shutdown.sh"
-build_package_name="budgeez-1.0.war"
-tmp_dir="/home/budgeez/tmp/"
-get_version_url="http://localhost:8180/budgeez/general/getVersion"
+tmp_dir="/home/kamabizbazti/tmp/"
+get_version_url="http://""${application_server_host}"":""${application_server_port}""/general/getVersion"
 timeout=500
+valid_code=200
 version_validated=false
+
+function set_context {
+    tomcat_context=/${application_target_filename%.*}
+}
 
 function clean_db {
     echo "Clean database"
-    mysql -h "${database_host}" -u "${database_username}" -p"${database_password}" "${database}" -e "DELETE FROM "${database}".record;
+    mysql -h "${database_host}" -u "${database_username}" -p"${database_password}" "${database}" -v -v -v -e "DELETE FROM "${database}".record;
     DELETE FROM "${database}".category;
     DELETE FROM "${database}".user_authorities;
     DELETE FROM "${database}".user;
@@ -39,14 +56,14 @@ function clean_db {
         then
             echo "Clean database failed"
             echo "Roll back"
-            roll_back
+            restore_database
             exit 1
     fi
 }
 
 function drop_db {
     echo "Drop database"
-    mysql -h "${database_host}" -u "${database_username}" -p"${database_password}" "${database}" -e "SET FOREIGN_KEY_CHECKS = 0;
+    mysql -h "${database_host}" -u "${database_username}" -p"${database_password}" "${database}" -v -v -v -e "SET FOREIGN_KEY_CHECKS = 0;
     DROP TABLE IF EXISTS "${database}".record;
     DROP TABLE IF EXISTS "${database}".category;
     DROP TABLE IF EXISTS "${database}".user_authorities;
@@ -55,20 +72,21 @@ function drop_db {
     DROP TABLE IF EXISTS "${database}".language;
     DROP TABLE IF EXISTS "${database}".currency;
     DROP TABLE IF EXISTS "${database}".authority;
+    DROP TABLE IF EXISTS "${database}".activation_token;
+    DROP TABLE IF EXISTS "${database}".verification_token;
     SET FOREIGN_KEY_CHECKS = 1"
-    tables_count=$(mysql -h "${database_host}" -u "${database_username}" -p"${database_password}" "${database}" -se "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema='kb_test'")
+    tables_count=$(mysql -h "${database_host}" -u "${database_username}" -p"${database_password}" "${database}" -se "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema='"${database}"'")
     if [ "${tables_count}" -ne 0 ];
         then
             echo "Drop database failed"
             echo "Roll back"
-            roll_back
+            restore_database
             exit 1
     fi
 }
 
 function waiting {
 time=0
-valid_code=200
 while true
 do
 code=$(curl -m 2 -s -o /dev/null -I -w "%{http_code}" -X GET "${get_version_url}")
@@ -97,10 +115,22 @@ code=$(curl -m 2 -s -o /dev/null -I -w "%{http_code}" -X GET "${get_version_url}
 done
 }
 
+function is_running {
+code=$(curl -m 2 -s -o /dev/null -I -w "%{http_code}" -X GET "${get_version_url}")
+        if [ "${code}" -eq "${valid_code}" ]
+            then
+            echo "Application is running"
+            return 0
+            else
+            echo "Application is NOT running"
+            return 1
+        fi
+}
+
 function load_data {
     echo "Load test data"
     categories_count_before=$(mysql -h "${database_host}" -u "${database_username}" -p"${database_password}" "${database}" -se "SELECT COUNT(*) FROM category")
-    mysql -h "${database_host}" -u "${database_username}" -p"${database_password}" "${database}" -e "# Ver. Kamabizbazti 1.0
+    mysql -h "${database_host}" -u "${database_username}" -p"${database_password}" "${database}" -v -v -v -e "# Ver. Buggeez 1.1
     DELIMITER //
     DROP PROCEDURE IF EXISTS "${database}".generator//
     CREATE DEFINER = "${database}"@localhost PROCEDURE generator(IN usersCount INT, IN customCategoriesCount INT, IN recordsPerDay INT, IN recordsDaysAgo INT)
@@ -129,7 +159,7 @@ function load_data {
           SET cat_count = 1;
           SET rec_days_ago_count = 1;
           SET time_stamp = (SELECT UNIX_TIMESTAMP()) * 1000;
-          INSERT INTO "${database}".user (id, creation_date, enabled, is_activated, last_password_reset_date, name, password, start_day, username, currency_code, language_code) VALUES (NULL, CURRENT_TIME(), b'1', b'0', CURRENT_TIME(),CONCAT(f_name, ' ', l_name), '$2a$10$hDxjZ8W1R/al7Pik07ilt.Nvxvs6C7kDG7vtobmUDH5n/etxr587C', '1',e_mail, '3', '1');
+          INSERT INTO "${database}".user (id, creation_date, enabled, is_activated, status, last_password_reset_date, name, password, start_day, username, uuid, currency_code, language_code) VALUES (NULL, CURRENT_TIME(), b'1', b'1', 'ACTIVE', CURRENT_TIME(),CONCAT(f_name, ' ', l_name), '$2a$10$hDxjZ8W1R/al7Pik07ilt.Nvxvs6C7kDG7vtobmUDH5n/etxr587C', '1',e_mail, e_mail, '3', '1');
           SET uid = (SELECT LAST_INSERT_ID());
           INSERT INTO "${database}".user_authorities (users_id, authorities_id) VALUES (uid, 2);
           WHILE cat_count <= customCategoriesCount DO
@@ -186,23 +216,61 @@ function load_data {
         else
             echo "Data loading failed"
             echo "Roll back"
-            roll_back
+            restore_database
             exit 1
     fi
 }
 
-function deploy {
-    cd $WORKSPACE
-    jar -xvf "${build_package_name}"
-    rm -rf WEB-INF/classes/application.properties
-    cp $CONFIG_FILE WEB-INF/classes/application.properties
-    jar -uvf "${build_package_name}" WEB-INF/classes/application.properties
-    rm -rf META-INF/ org/ WEB-INF/
-    mv "${build_package_name}" $WEBAPP_PATH$TARGET_FILE_NAME
+#Parameter $1 is replace properties file
+function deploy() {
+echo $1
+if [ $1 = true ]
+    then
+        echo "Deploy from artifacts"
+        cd "${workspace}"
+        jar -xvf "${build_package_name}"
+        rm -f WEB-INF/classes/application.properties
+        cp "${config_file}" WEB-INF/classes/application.properties
+        jar -uvf "${build_package_name}" WEB-INF/classes/application.properties
+        rm -rf META-INF/ org/ WEB-INF/
+        mv "${build_package_name}" "${tmp_dir}""${application_target_filename}"
+fi
+    echo 'curl --upload-file '"${tmp_dir}""${application_target_filename}"' --user '"${tomcat_manager_username}"':'"${tomcat_manager_password}"' http://'"${application_server_host}"':'"${application_server_port}"'/manager/text/deploy?path='"${tomcat_context}"'&update=true'
+    if curl -v --upload-file "${tmp_dir}""${application_target_filename}" --user "${tomcat_manager_username}":"${tomcat_manager_password}" http://"${application_server_host}":"${application_server_port}"/manager/text/deploy?path="${tomcat_context}"&update=true;
+    then
+        echo "Container deploy success"
+        return 0
+    else
+        echo "Container deploy fail"
+        return 1
+    fi
+}
+
+function undeploy {
+echo 'curl --user '"${tomcat_manager_username}"':'"${tomcat_manager_password}"' http://'"${application_server_host}"':'"${application_server_port}"'/manager/text/undeploy?path='"${tomcat_context}"
+    if curl -v --user "${tomcat_manager_username}":"${tomcat_manager_password}" http://"${application_server_host}":"${application_server_port}"/manager/text/undeploy?path="${tomcat_context}";
+    then
+        echo "Container undeploy success"
+        return 0
+    else
+        echo "Container undeploy fail"
+        return 1
+    fi
+}
+
+function restart_container {
+echo 'curl --user '"${tomcat_manager_username}"':'"${tomcat_manager_password}"' http://'"${application_server_host}"':'"${application_server_port}"'/manager/text/reload?path='"${tomcat_context}"
+    if curl -v --user "${tomcat_manager_username}":"${tomcat_manager_password}" http://"${application_server_host}":"${application_server_port}"/manager/text/reload?path="${tomcat_context}";
+    then
+        echo "Container restart success"
+        return 0
+    else
+        echo "Container restart fail"
+        return 1
+    fi
 }
 
 function validate_version {
-    build_properties=$WORKSPACE/build.properties
     source <(grep -v '^ *#' "${build_properties}" | grep '[^ ] *=' | awk '{split($0,a,"="); print gensub(/\./, "_", "g", a[1]) "=" a[2]}')
     war_version="${build_version}"."${build_number}"."${build_timestamp}"
     installed_version=$(curl -s "${get_version_url}" | jq -r '.version').$(curl -s "${get_version_url}" | jq -r '.timestamp')
@@ -216,21 +284,16 @@ function validate_version {
 }
 
 function roll_back {
-    # Stop Tomcat
-    echo "Stop Tomcat"
-    sudo "${tomcat_stop_command}"
-
-    # Restore old build from backup
-    echo "Restore old build from backup"
-    cp "${tmp_dir}"$TARGET_FILE_NAME.TEST_BACKUP $WEBAPP_PATH$TARGET_FILE_NAME
+    #Undeploy and delete current build
+    undeploy
 
     # Restore DB from dump
     echo "Restore DB from dump"
-    mysql -h "${database_host}" -u "${database_username}" -p"${database_password}" "${database}" < "${tmp_dir}""${database}".sql
+    restore_database
 
-    # Start Tomcat
-    echo "Start tomcat"
-    sudo "${tomcat_start_command}"
+    # Restore old build from backup
+    echo "Restore old build from backup"
+    deploy false
     sleep 5
     echo "Waiting for application startup:"
     waiting
@@ -239,42 +302,97 @@ function roll_back {
     exit 1
 }
 
-# Stop Tomcat
-echo "Stop Tomcat"
-"${tomcat_stop_command}"
+function restore_database {
+    echo "Restore DB from dump"
+    if mysql -h "${database_host}" -u "${database_username}" -p"${database_password}" "${database}" < "${tmp_dir}""${database}".sql;
+    then
+        echo "Restore database success"
+        return 0
+    else
+        echo "Restore database fail"
+        exit 1
+    fi
+}
+
+function backup_war {
+if [ "${is_upgrade}" = true ]
+    then
+    if sshpass -p "${application_server_password}" scp -o StrictHostKeyChecking=no "${application_server_username}"@"${application_server_host}":"${application_webapp_path}""${application_target_filename}" "${tmp_dir}""${application_target_filename}";
+    then
+        echo "War file backup success"
+        return 0
+    else
+        echo "War file backup fail"
+        exit 1
+    fi
+else
+    echo "No need to back up war file"
+    return 0
+fi
+}
+
+function backup_database {
+if [ "${is_upgrade}" = true ]
+    then
+    if mysqldump -h "${database_host}" -u "${database_username}" -p"${database_password}" "${database}" > "${tmp_dir}""${database}".sql;
+    then
+        echo "Database backup success"
+        return 0
+    else
+        echo "Database backup fail"
+        exit 1
+    fi
+else
+    echo "No need to back up database"
+    return 0
+fi
+}
+
+set_context
+
+#Is running
+if [ "${is_upgrade}" = true ]
+    then
+        if is_running; then
+        echo "Upgrade flow is running"
+        else
+        echo "Upgrade mode is selected, but the application is not running. Cancel deploy process"
+        exit 1
+        fi
+fi
 
 # Backup previous build
 echo "Backup previous war file"
-cp $WEBAPP_PATH$TARGET_FILE_NAME "${tmp_dir}"$TARGET_FILE_NAME.TEST_BACKUP
+backup_war
 
 # Take DB dump
 echo "Take DB dump"
-mysqldump -h "${database_host}" -u "${database_username}" -p"${database_password}" "${database}" > "${tmp_dir}""${database}".sql
+backup_database
 
 # Clear database
-if [ "$UPGRADE_TEST" = true ]
+echo "Clear database"
+if [ "${is_upgrade}" = true ]
     then
-        echo "Upgrading application version"
+        echo "Database upgrade"
         drop_db
-        echo "Start tomcat"
-        "${tomcat_start_command}"
+        echo "Restart application"
+        restart_container
         sleep 5
         echo "Waiting for application startup:"
         waiting
-        echo "Stop tomcat"
-        "${tomcat_stop_command}"
-        sleep 5
+        echo "Load demo data"
         load_data
 else
     drop_db
 fi
 
+# Undeploy build
+echo "Undeploy current build"
+undeploy
+
 # Deploying new build
 echo "Deploying new build"
-deploy
-echo "Start tomcat"
-"${tomcat_start_command}"
-sleep 5
+deploy true
 echo "Waiting for application startup:"
 waiting
 
@@ -283,7 +401,7 @@ echo "Validate new version"
 validate_version
 
 # Load test data
-if [ "$LOAD_TEST_DATA" = true ] && [ "$UPGRADE_TEST" = false ]
+if [ "${load_test_data}" = true ] && [ "${is_upgrade}" = false ]
     then
     echo "Load test data without upgrade test"
     load_data
