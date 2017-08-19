@@ -12,6 +12,7 @@ import com.budgeez.security.entities.VerificationToken;
 import com.budgeez.security.interfaces.IVerificationService;
 import com.budgeez.security.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -32,22 +33,23 @@ public class VerificationService implements IVerificationService {
     private ITextHelper textHelper;
 
     @Autowired
-    IMailingService mailingService;
+    private IMailingService mailingService;
 
     @Autowired
-    IMailingHelper mailingHelper;
-
-    @Autowired
-    private IDateHelper dateHelper;
+    private IMailingHelper mailingHelper;
 
     @Autowired
     private IExceptionMessagesHelper exceptionMessagesHelper;
 
-    //TODO parameters
-    private boolean isAccountActivationEnabled = true;
-    private boolean isEmailVerificationEnabled = true;
+    @Value("${budgeez.verification.is-account-activation-required}")
+    private boolean isAccountActivationEnabled;
+
+    @Value("${budgeez.verification.is-email-verification-required}")
+    private boolean isEmailVerificationEnabled;
 
     public EGeneralResponse createAccountActivationToken(User user){
+        System.out.println("isAccountActivationEnabled: " + isAccountActivationEnabled);
+        System.out.println("isEmailVerificationEnabled: " + isEmailVerificationEnabled);
         EGeneralResponse response;
         if(isAccountActivationEnabled){
             if(!user.isActivated()){
