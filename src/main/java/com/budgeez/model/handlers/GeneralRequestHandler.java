@@ -5,6 +5,7 @@ import com.budgeez.model.entities.dao.Language;
 import com.budgeez.model.entities.external.ChartRequestWrapper;
 import com.budgeez.model.entities.dao.ChartSelection;
 import com.budgeez.model.entities.external.EVersion;
+import com.budgeez.model.entities.internal.CacheWrapper;
 import com.budgeez.model.enumerations.ChartSelectionIdEnum;
 import com.budgeez.model.entities.external.ChartWrapper;
 import com.budgeez.model.exceptions.UnknownSelectionIdException;
@@ -44,6 +45,30 @@ public class GeneralRequestHandler implements IGeneralRequestHandler {
 
     private EVersion version = null;
 
+    private List<Language> languages = null;
+
+    private List<Currency> currencies = null;
+
+    private List<ChartSelection> generalChartSelections = null;
+
+    private List<ChartSelection> userChartSelections = null;
+
+    private CacheWrapper currentMonthAvg = null;
+
+    private CacheWrapper prevMonthAvg = null;
+
+    private CacheWrapper prevThreeMonthsAvg = null;
+
+    private CacheWrapper lastYearAvg = null;
+
+    private CacheWrapper lastThreeMonthsAvgDetailed = null;
+
+    private CacheWrapper lastSixMonthsAvgDetailed = null;
+
+    private CacheWrapper lastYearAvgDetailed = null;
+
+    private static final long CHART_WRAPPERS_CACHE_EXPIRATION_TIME = 5 * 60 * 1000;
+
     public static final ChartSelectionIdEnum DEFAULT_CHART_SELECTION = ChartSelectionIdEnum.CURRENT_MONTH_AVG;
 
     public ChartWrapper getGeneralDatatable(ChartRequestWrapper chartRequestWrapper) throws UnknownSelectionIdException {
@@ -52,30 +77,100 @@ public class GeneralRequestHandler implements IGeneralRequestHandler {
         ChartWrapper wrapper;
         switch (chartRequestWrapper.getChartSelection().getSelectionId()) {
             case CURRENT_MONTH_AVG:
-                wrapper = generalStatisticsHandler.getCurrentMonthAverage(chartRequestWrapper);
+                wrapper = getCurrentMonthAvg(chartRequestWrapper);
                 break;
             case PREV_MONTH_AVG:
-                wrapper = generalStatisticsHandler.getNMonthAgoAverage(chartRequestWrapper, 1);
+                wrapper = getPrevMonthAvg(chartRequestWrapper);
                 break;
             case PREV_THREE_MONTHS_AVG:
-                wrapper = generalStatisticsHandler.getNMonthAgoAverage(chartRequestWrapper, 3);
+                wrapper = getPrevThreeMonthsAvg(chartRequestWrapper);
                 break;
             case LAST_YEAR_AVG:
-                wrapper = generalStatisticsHandler.getNMonthAgoAverage(chartRequestWrapper, 12);
+                wrapper = getLastYearAvg(chartRequestWrapper);
                 break;
             case LAST_THREE_MONTHS_AVG_DETAILED:
-                wrapper = generalStatisticsHandler.getLastNMonthsAverageDetailed(chartRequestWrapper, 3);
+                wrapper = getLastThreeMonthsAvgDetailed(chartRequestWrapper);
                 break;
             case LAST_SIX_MONTHS_AVG_DETAILED:
-                wrapper = generalStatisticsHandler.getLastNMonthsAverageDetailed(chartRequestWrapper, 6);
+                wrapper = getLastSixMonthsAvgDetailed(chartRequestWrapper);
                 break;
             case LAST_YEAR_AVG_DETAILED:
-                wrapper = generalStatisticsHandler.getLastNMonthsAverageDetailed(chartRequestWrapper, 12);
+                wrapper = getLastYearAvgDetailed(chartRequestWrapper);
                 break;
             default:
                 throw new UnknownSelectionIdException(EntitiesErrorCode.UNKNOWN_CHART_SELECTION_ID, exceptionMessagesHelper.getLocalizedMessage("error.chartselection.unknown"));
         }
         return wrapper;
+    }
+
+    private ChartWrapper getCurrentMonthAvg(ChartRequestWrapper chartRequestWrapper){
+        if(currentMonthAvg != null && currentMonthAvg.getExpirationTime() <= System.currentTimeMillis()){
+            currentMonthAvg = null;
+        }
+        if(currentMonthAvg == null){
+            currentMonthAvg = new CacheWrapper(generalStatisticsHandler.getCurrentMonthAverage(chartRequestWrapper), CHART_WRAPPERS_CACHE_EXPIRATION_TIME);
+        }
+        return (ChartWrapper) currentMonthAvg.getObject();
+    }
+
+    private ChartWrapper getPrevMonthAvg(ChartRequestWrapper chartRequestWrapper){
+        if(prevMonthAvg != null && prevMonthAvg.getExpirationTime() <= System.currentTimeMillis()){
+            prevMonthAvg = null;
+        }
+        if(prevMonthAvg == null){
+            prevMonthAvg = new CacheWrapper(generalStatisticsHandler.getNMonthAgoAverage(chartRequestWrapper, 1), CHART_WRAPPERS_CACHE_EXPIRATION_TIME);
+        }
+        return (ChartWrapper) prevMonthAvg.getObject();
+    }
+
+    private ChartWrapper getPrevThreeMonthsAvg(ChartRequestWrapper chartRequestWrapper){
+        if(prevThreeMonthsAvg != null && prevThreeMonthsAvg.getExpirationTime() <= System.currentTimeMillis()){
+            prevThreeMonthsAvg = null;
+        }
+        if(prevThreeMonthsAvg == null){
+            prevThreeMonthsAvg = new CacheWrapper(generalStatisticsHandler.getNMonthAgoAverage(chartRequestWrapper, 3), CHART_WRAPPERS_CACHE_EXPIRATION_TIME);
+        }
+        return (ChartWrapper) prevThreeMonthsAvg.getObject();
+    }
+
+    private ChartWrapper getLastYearAvg(ChartRequestWrapper chartRequestWrapper){
+        if(lastYearAvg != null && lastYearAvg.getExpirationTime() <= System.currentTimeMillis()){
+            lastYearAvg = null;
+        }
+        if(lastYearAvg == null){
+            lastYearAvg = new CacheWrapper(generalStatisticsHandler.getNMonthAgoAverage(chartRequestWrapper, 12), CHART_WRAPPERS_CACHE_EXPIRATION_TIME);
+        }
+        return (ChartWrapper) lastYearAvg.getObject();
+    }
+
+    private ChartWrapper getLastThreeMonthsAvgDetailed(ChartRequestWrapper chartRequestWrapper){
+        if(lastThreeMonthsAvgDetailed != null && lastThreeMonthsAvgDetailed.getExpirationTime() <= System.currentTimeMillis()){
+            lastThreeMonthsAvgDetailed = null;
+        }
+        if(lastThreeMonthsAvgDetailed == null){
+            lastThreeMonthsAvgDetailed = new CacheWrapper(generalStatisticsHandler.getLastNMonthsAverageDetailed(chartRequestWrapper, 3), CHART_WRAPPERS_CACHE_EXPIRATION_TIME);
+        }
+        return (ChartWrapper) lastThreeMonthsAvgDetailed.getObject();
+    }
+
+    private ChartWrapper getLastSixMonthsAvgDetailed(ChartRequestWrapper chartRequestWrapper){
+        if(lastSixMonthsAvgDetailed != null && lastSixMonthsAvgDetailed.getExpirationTime() <= System.currentTimeMillis()){
+            lastSixMonthsAvgDetailed = null;
+        }
+        if(lastSixMonthsAvgDetailed == null){
+            lastSixMonthsAvgDetailed = new CacheWrapper(generalStatisticsHandler.getLastNMonthsAverageDetailed(chartRequestWrapper, 6), CHART_WRAPPERS_CACHE_EXPIRATION_TIME);
+        }
+        return (ChartWrapper) lastSixMonthsAvgDetailed.getObject();
+    }
+
+    private ChartWrapper getLastYearAvgDetailed(ChartRequestWrapper chartRequestWrapper){
+        if(lastYearAvgDetailed != null && lastYearAvgDetailed.getExpirationTime() <= System.currentTimeMillis()){
+            lastYearAvgDetailed = null;
+        }
+        if(lastYearAvgDetailed == null){
+            lastYearAvgDetailed = new CacheWrapper(generalStatisticsHandler.getLastNMonthsAverageDetailed(chartRequestWrapper, 12), CHART_WRAPPERS_CACHE_EXPIRATION_TIME);
+        }
+        return (ChartWrapper) lastYearAvgDetailed.getObject();
     }
 
     public ChartWrapper getDefaultDataTable() throws UnknownSelectionIdException {
@@ -90,24 +185,50 @@ public class GeneralRequestHandler implements IGeneralRequestHandler {
         }
         return version;
     }
-//
-//    public void refreshCache() {
-//        version = null;
-//    }
 
     public List<Language> getLanguages() {
-        return (List<Language>) languageRepository.findAll();
+        if(languages == null){
+            languages = (List<Language>) languageRepository.findAll();
+        }
+        return languages;
+    }
+
+    public void refreshLanguagesCache() {
+        languages = null;
     }
 
     public List<Currency> getCurrencies() {
-        return (List<Currency>) currencyRepository.findAll();
+        if(currencies == null){
+            currencies = (List<Currency>) currencyRepository.findAll();
+        }
+        return currencies;
+    }
+
+    public void refreshCurrenciesCache() {
+        currencies = null;
     }
 
     public List<ChartSelection> getGeneralChartSelectionsList() {
-        return chartSelectionRepository.findAllGeneralSelections();
+        if(generalChartSelections == null){
+            generalChartSelections = chartSelectionRepository.findAllGeneralSelections();
+        }
+        return generalChartSelections;
+    }
+
+    public void refreshGeneralChartSelectionsCache() {
+        generalChartSelections = null;
     }
 
     public List<ChartSelection> getUserChartSelectionsList() {
-        return chartSelectionRepository.findAllUserSelections();
+        if(userChartSelections == null){
+            userChartSelections = chartSelectionRepository.findAllUserSelections();
+        }
+        return userChartSelections;
     }
+
+    public void refreshUserChartSelectionsCache() {
+        userChartSelections = null;
+    }
+
+
 }
