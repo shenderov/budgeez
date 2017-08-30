@@ -17,14 +17,14 @@
                 <span ng-class="{ 'glyphicon glyphicon-remove form-control-feedback': userDetailsForm.inputAccountName.$touched && userDetailsForm.inputAccountName.$dirty && userDetailsForm.inputAccountName.$invalid, 'glyphicon glyphicon-ok form-control-feedback' : userDetailsForm.inputAccountName.$touched && userDetailsForm.inputAccountName.$dirty && userDetailsForm.inputAccountName.$valid}"></span>
             <p class="input-form-error" ng-if="userDetailsForm.inputAccountName.$touched && userDetailsForm.inputAccountName.$dirty && userDetailsForm.inputAccountName.$invalid">Name should be in range between 2 and 70 characters</p>
             </div>
-            <div class="form-group form-group-sm">
+            <div class="form-group form-group-sm" ng-if="false">
                 <label for="accountLanguage">Language:</label>
                 <select class="form-control" id="accountLanguage"
                         ng-options="language as language.languageName for language in languages track by language.languageCode"
                         required ng-model="accountDetails.language" name="accountLanguage"></select>
                 <p class="input-form-warning" ng-if="userDetailsForm.accountLanguage.$dirty">Change language does not affect on custom categories and record comments</p>
             </div>
-            <div class="form-group form-group-sm">
+            <div class="form-group form-group-sm" ng-if="false">
                 <label for="accountCurrency">Currency:</label>
                 <select class="form-control" id="accountCurrency"
                         ng-options="currency as currency.currencyName for currency in currencies track by currency.currencyCode"
@@ -49,7 +49,7 @@
         <div><button class="btn btn-link" ng-click="openChangePasswordModal()">Change Password</button></div>
         <div><button class="btn btn-link" ng-click="openDeleteAccountModal()">Delete Account</button></div>
     </div>
-    <div class="col-md-6">
+    <div class="col-md-6" ng-if="false">
         <h4 class="settings-module-header" id="settings-data-header">User Data</h4><br>
         <div><button class="btn btn-link" ng-click="action">Edit Custom Categories</button></div>
         <div><button class="btn btn-link" ng-click="action">Export Records</button></div>
