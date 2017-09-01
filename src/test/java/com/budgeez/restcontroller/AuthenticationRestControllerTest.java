@@ -31,6 +31,8 @@ public class AuthenticationRestControllerTest extends BudgeezBootApplicationTest
     private String email4 = "test4@budgeez.com";
     private String emailMixed = "tEsTmIxEd@BuDgEeZ.CoM";
     private String email5 = "test5@budgeez.com";
+    private String email6 = "test6@budgeez.com";
+    private String email7 = "test7@budgeez.com";
     private String minLengthEmail = "ab@c";
     private String maxLengthEmail = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa@bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb.cc";
     private String invalidEmail = "budgeez.com";
@@ -83,9 +85,16 @@ public class AuthenticationRestControllerTest extends BudgeezBootApplicationTest
 
     @Test
     public void testRefreshToken() {
+        SignUpWrapper wrapper = new SignUpWrapper();
+        wrapper.setName(name);
+        wrapper.setEmail(email7);
+        wrapper.setPassword(password);
+        HttpResponse response1 = authenticationRestControllerConnectorHelper.createUserPositive(wrapper);
+        JwtAuthenticationResponse jar = (JwtAuthenticationResponse) response1.getObject();
+        String token = jar.getToken();
         HttpResponse response = authenticationRestControllerConnectorHelper.refreshAndGetAuthenticationTokenPositive(token);
-        JwtAuthenticationResponse token = (JwtAuthenticationResponse) response.getObject();
-        assertNotNull(token.getToken());
+        JwtAuthenticationResponse token1 = (JwtAuthenticationResponse) response.getObject();
+        assertNotNull(token1.getToken());
         assertEquals(response.getHttpStatusCode(), 200);
     }
 
@@ -495,10 +504,17 @@ public class AuthenticationRestControllerTest extends BudgeezBootApplicationTest
 
     @Test
     public void testGetUserDetailsPositive() {
+        SignUpWrapper wrapper = new SignUpWrapper();
+        wrapper.setName(name);
+        wrapper.setEmail(email6);
+        wrapper.setPassword(password);
+        HttpResponse response = authenticationRestControllerConnectorHelper.createUserPositive(wrapper);
+        JwtAuthenticationResponse jar = (JwtAuthenticationResponse) response.getObject();
+        String token = jar.getToken();
         EUserDetails userDetails = (EUserDetails) authenticationRestControllerConnectorHelper.getUserDetailsPositive(token).getObject();
-        Assert.assertEquals(userDetails.getStatus(), UserStatus.PENDING_ACTIVATION);
+        Assert.assertEquals(userDetails.getStatus(), UserStatus.ACTIVE);
         Assert.assertEquals(userDetails.getName(), name);
-        Assert.assertEquals(userDetails.getEmail(), textHelper.getSecretEmail(email3));
+        Assert.assertEquals(userDetails.getEmail(), textHelper.getSecretEmail(email6));
         Assert.assertEquals(userDetails.getCurrency(), currencyRepository.findByCurrencyCode("USD"));
         Assert.assertEquals(userDetails.getLanguage(), languageRepository.findByLanguageCode("ENG"));
         Assert.assertEquals(userDetails.getStartDay(), Integer.valueOf(1));

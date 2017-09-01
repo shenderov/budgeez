@@ -77,7 +77,7 @@ public class HttpResponse {
     @Override
     public String toString() {
         return "HttpResponse{" +
-                "object=" + object +
+                "object=" + object.toString() +
                 ", cookies=" + cookies +
                 ", headers=" + headers +
                 ", httpStatusCode=" + httpStatusCode +
