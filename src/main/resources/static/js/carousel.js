@@ -3,18 +3,18 @@
 app.controller('Carousel', function ($scope) {
     $scope.slides = [
         {
-            "url": "images/carousel/slide1.jpg",
-            "header": "Track all your expenses and bills",
-            "text": null
-        },
-        {
             "url": "images/carousel/slide2.jpg",
-            "header": "Get statistics by multiple chart types",
+            "header": "Track and analyze your expenses and bills",
             "text": null
         },
         {
             "url": "images/carousel/slide4.jpg",
-            "header": "Stop to waste money and start to save",
+            "header": "Take control of your spending",
+            "text": null
+        },
+        {
+            "url": "images/carousel/slide5.jpg",
+            "header": "Save for the extras that make life enjoyable",
             "text": null
         }]
 });
