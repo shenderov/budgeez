@@ -6,7 +6,9 @@ import com.budgeez.model.entities.external.ChartRequestWrapper;
 import com.budgeez.model.entities.external.ChartWrapper;
 import com.budgeez.model.enumerations.ChartType;
 import com.budgeez.model.exceptions.DateRangeException;
+import com.budgeez.model.exceptions.codes.DataIntegrityErrorCode;
 import com.budgeez.model.interfaces.IDateHelper;
+import com.budgeez.model.interfaces.IExceptionMessagesHelper;
 import com.budgeez.model.interfaces.IStatisticsHelper;
 import com.budgeez.model.interfaces.IUserStatisticsHandler;
 import com.budgeez.model.repository.CustomCategoryRepository;
@@ -26,6 +28,9 @@ public class UserStatisticsHandler implements IUserStatisticsHandler {
 
     @Autowired
     private IStatisticsHelper statisticsHelper;
+
+    @Autowired
+    private IExceptionMessagesHelper exceptionMessagesHelper;
 
     @Autowired
     private CustomCategoryRepository customCategoryRepository;
@@ -90,7 +95,7 @@ public class UserStatisticsHandler implements IUserStatisticsHandler {
     private List<Object[]> getGeneralAvgDetailedWeeks(List<GeneralCategory> categories, long userId, ChartRequestWrapper chartRequestWrapper, boolean isTheSameYear) throws DateRangeException {
         int weeksCount = (int) dateHelper.weeksBetweenTwoDates(chartRequestWrapper.getDatePicker().getStartDate(), chartRequestWrapper.getDatePicker().getEndDate()) + 1;
         if (weeksCount < 2)
-            throw new DateRangeException("DATE_RANGE_IS_TOO_SHORT");
+            throw new DateRangeException(DataIntegrityErrorCode.DATE_RANGE_IS_TOO_SHORT, exceptionMessagesHelper.getLocalizedMessage("error.date-range.too-short"));
         List<Object[]> rows = new ArrayList<>();
         List<Object> row = new LinkedList<>();
         long startDate = dateHelper.getFirstDayOfWeekByDate(chartRequestWrapper.getDatePicker().getEndDate());
@@ -144,7 +149,7 @@ public class UserStatisticsHandler implements IUserStatisticsHandler {
     private List<Object[]> getGeneralAvgDetailedYears(List<GeneralCategory> categories, long userId, ChartRequestWrapper chartRequestWrapper) throws DateRangeException {
         int yearsCount = (int) dateHelper.yearsBetweenTwoDates(chartRequestWrapper.getDatePicker().getStartDate(), chartRequestWrapper.getDatePicker().getEndDate());
         if (yearsCount >= 12)
-            throw new DateRangeException("DATE_RANGE_IS_TOO_LONG");
+            throw new DateRangeException(DataIntegrityErrorCode.DATE_RANGE_IS_TOO_LONG, exceptionMessagesHelper.getLocalizedMessage("error.date-range.too-long"));
         List<Object[]> rows = new ArrayList<>();
         List<Object> row = new LinkedList<>();
         long startDate = dateHelper.getFirstDayOfYearByDate(chartRequestWrapper.getDatePicker().getEndDate());
