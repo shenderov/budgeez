@@ -512,7 +512,7 @@ public class AuthenticationRestControllerTest extends BudgeezBootApplicationTest
         JwtAuthenticationResponse jar = (JwtAuthenticationResponse) response.getObject();
         String token = jar.getToken();
         EUserDetails userDetails = (EUserDetails) authenticationRestControllerConnectorHelper.getUserDetailsPositive(token).getObject();
-        Assert.assertEquals(userDetails.getStatus(), UserStatus.ACTIVE);
+        Assert.assertEquals(userDetails.getStatus(), UserStatus.PENDING_ACTIVATION);
         Assert.assertEquals(userDetails.getName(), name);
         Assert.assertEquals(userDetails.getEmail(), textHelper.getSecretEmail(email6));
         Assert.assertEquals(userDetails.getCurrency(), currencyRepository.findByCurrencyCode("USD"));
