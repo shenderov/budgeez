@@ -61,35 +61,30 @@ public class DataInitializer {
     private void insertChartSelections() throws IOException {
         Iterable<ChartSelection> selections = mapper.readValue(new File(classLoader.getResource(DEFAULT_CHART_SELECTIONS).getFile()), new TypeReference<Iterable<ChartSelection>>() {
         });
-        for (ChartSelection selection : selections)
-            chartSelectionRepository.save(selection);
+        chartSelectionRepository.save(selections);
     }
 
     private void insertLanguages() throws IOException {
         Iterable<Language> languages = mapper.readValue(new File(classLoader.getResource(DEFAULT_LANGUAGES).getFile()), new TypeReference<Iterable<Language>>() {
         });
-        for (Language language : languages)
-            languageRepository.save(language);
+        languageRepository.save(languages);
     }
 
     private void insertCurrencies() throws IOException {
         Iterable<Currency> currencies = mapper.readValue(new File(classLoader.getResource(DEFAULT_CURRENCIES).getFile()), new TypeReference<Iterable<Currency>>() {
         });
-        for (Currency currency : currencies)
-            currencyRepository.save(currency);
+        currencyRepository.save(currencies);
     }
 
     private void insertAuthorities() throws IOException {
         Iterable<Authority> authorities = mapper.readValue(new File(classLoader.getResource(DEFAULT_AUTHORITIES).getFile()), new TypeReference<Iterable<Authority>>() {
         });
-        for (Authority authority : authorities)
-            authorityRepository.save(authority);
+        authorityRepository.save(authorities);
     }
 
     private void insertCategories() throws IOException {
         Iterable<GeneralCategory> categories = mapper.readValue(new File(classLoader.getResource(DEFAULT_CATEGORIES).getFile()), new TypeReference<Iterable<GeneralCategory>>() {
         });
-        for (GeneralCategory category : categories)
-            generalCategoryRepository.save(category);
+        generalCategoryRepository.save(categories);
     }
 }

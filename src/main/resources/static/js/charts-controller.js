@@ -21,7 +21,7 @@ app.controller('ChartsController', function($scope, $http, $q, $rootScope) {
     $scope.drawChart = function(chartWrapper){
         var chartType;
         var options;
-        if (chartWrapper.chartType == "PIECHART"){
+        if (chartWrapper.chartType === "PIECHART"){
             chartType = "PieChart";
             options = {
                 title: chartWrapper.title,
@@ -35,7 +35,7 @@ app.controller('ChartsController', function($scope, $http, $q, $rootScope) {
                 },
                 pieSliceText: 'label'
             };
-        }else if (chartWrapper.chartType == "COLUMNCHART"){
+        }else if (chartWrapper.chartType === "COLUMNCHART"){
             chartType = "ColumnChart";
             options = {
                 title: chartWrapper.title,

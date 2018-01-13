@@ -42,6 +42,7 @@ public class UserStatisticsHandler implements IUserStatisticsHandler {
         long startDate = dateHelper.getFirstDayOfCurrentMonth();
         long endDate = dateHelper.getLastDayOfCurrentMonth();
         DataTable data = new DataTable(statisticsHelper.setLabels(), recordRepository.getTotalForAllActualCategoriesForUser(userId, startDate, endDate));
+        data = statisticsHelper.deleteNullOthers(data);
         return new ChartWrapper(ChartType.PIECHART, data.getDataTableAsArray(), chartRequestWrapper.getChartSelection().getTitle());
     }
 
@@ -49,6 +50,7 @@ public class UserStatisticsHandler implements IUserStatisticsHandler {
         long startDate = dateHelper.getFirstDayOfNMonthAgo(monthsAgo);
         long endDate = dateHelper.getLastDayOfPreviousMonth();
         DataTable data = new DataTable(statisticsHelper.setLabels(), recordRepository.getAverageForAllActualCategoriesForUser(userId, startDate, endDate));
+        data = statisticsHelper.deleteNullOthers(data);
         return new ChartWrapper(ChartType.PIECHART, data.getDataTableAsArray(), chartRequestWrapper.getChartSelection().getTitle());
     }
 
@@ -56,28 +58,33 @@ public class UserStatisticsHandler implements IUserStatisticsHandler {
         long startDate = dateHelper.getFirstDayOfNMonthAgo(monthsAgo);
         long endDate = dateHelper.getLastDayOfPreviousMonth();
         DataTable data = new DataTable(statisticsHelper.setLabels(), recordRepository.getTotalForAllActualCategoriesForUser(userId, startDate, endDate));
+        data = statisticsHelper.deleteNullOthers(data);
         return new ChartWrapper(ChartType.PIECHART, data.getDataTableAsArray(), chartRequestWrapper.getChartSelection().getTitle());
     }
 
     public ChartWrapper getCustomPeriodAverage(ChartRequestWrapper chartRequestWrapper, long userId) {
         DataTable data = new DataTable(statisticsHelper.setLabels(), recordRepository.getAverageForAllActualCategoriesForUser(userId, chartRequestWrapper.getDatePicker().getStartDate(), chartRequestWrapper.getDatePicker().getEndDate()));
+        data = statisticsHelper.deleteNullOthers(data);
         return new ChartWrapper(ChartType.PIECHART, data.getDataTableAsArray(), chartRequestWrapper.getChartSelection().getTitle());
     }
 
     public ChartWrapper getCustomPeriodTotal(ChartRequestWrapper chartRequestWrapper, long userId) {
         DataTable data = new DataTable(statisticsHelper.setLabels(), recordRepository.getTotalForAllActualCategoriesForUser(userId, chartRequestWrapper.getDatePicker().getStartDate(), chartRequestWrapper.getDatePicker().getEndDate()));
+        data = statisticsHelper.deleteNullOthers(data);
         return new ChartWrapper(ChartType.PIECHART, data.getDataTableAsArray(), chartRequestWrapper.getChartSelection().getTitle());
     }
 
     public ChartWrapper getLastNMonthsDetailed(ChartRequestWrapper chartRequestWrapper, long userId, int monthsAgo) {
-        List<GeneralCategory> categories = customCategoryRepository.getAllActualUserCategories(userId);
+        long startDate = dateHelper.getFirstDayOfNMonthAgo(monthsAgo);
+        long endDate = dateHelper.getLastDayOfPreviousMonth();
+        List<GeneralCategory> categories = customCategoryRepository.getAllActualUserCategories(userId, startDate, endDate);
         boolean isTheSameYear = dateHelper.getYear(dateHelper.getLastDayOfPreviousMonth()).equals(dateHelper.getYear(dateHelper.getFirstDayOfNMonthAgo(monthsAgo)));
         DataTable data = new DataTable(statisticsHelper.setLabelsForCategories(categories, false), getGeneralAvgDetailedNMonthsAgo(categories, userId, monthsAgo, isTheSameYear));
         return new ChartWrapper(ChartType.COLUMNCHART, data.getDataTableAsArray(), chartRequestWrapper.getChartSelection().getTitle());
     }
 
     public ChartWrapper getCustomPeriodDetailed(ChartRequestWrapper chartRequestWrapper, long userId) throws DateRangeException {
-        List<GeneralCategory> categories = customCategoryRepository.getAllActualUserCategories(userId);
+        List<GeneralCategory> categories = customCategoryRepository.getAllActualUserCategories(userId, chartRequestWrapper.getDatePicker().getStartDate(), chartRequestWrapper.getDatePicker().getEndDate());
         List<Object[]> rows = null;
         boolean isTheSameYear = dateHelper.getYear(chartRequestWrapper.getDatePicker().getStartDate()).equals(chartRequestWrapper.getDatePicker().getEndDate());
         if (dateHelper.weeksBetweenTwoDates(chartRequestWrapper.getDatePicker().getStartDate(), chartRequestWrapper.getDatePicker().getEndDate()) + 1 <= 12) {

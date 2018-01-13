@@ -43,8 +43,6 @@ public class GeneralRequestHandler implements IGeneralRequestHandler {
     @Autowired
     private ISystemHelper systemHelper;
 
-    private EVersion version = null;
-
     private List<Language> languages = null;
 
     private List<Currency> currencies = null;
@@ -52,6 +50,8 @@ public class GeneralRequestHandler implements IGeneralRequestHandler {
     private List<ChartSelection> generalChartSelections = null;
 
     private List<ChartSelection> userChartSelections = null;
+
+    private CacheWrapper defaultDataTable = null;
 
     private CacheWrapper currentMonthAvg = null;
 
@@ -67,9 +67,11 @@ public class GeneralRequestHandler implements IGeneralRequestHandler {
 
     private CacheWrapper lastYearAvgDetailed = null;
 
+    private CacheWrapper versionCache = null;
+
     private static final long CHART_WRAPPERS_CACHE_EXPIRATION_TIME = 5 * 60 * 1000;
 
-    public static final ChartSelectionIdEnum DEFAULT_CHART_SELECTION = ChartSelectionIdEnum.CURRENT_MONTH_AVG;
+    private static final long VERSION_CACHE_EXPIRATION_TIME = 60 * 60 * 1000;
 
     public ChartWrapper getGeneralDatatable(ChartRequestWrapper chartRequestWrapper) throws UnknownSelectionIdException {
         ChartSelection selection = chartSelectionRepository.findOne(chartRequestWrapper.getChartSelection().getSelectionId());
@@ -174,16 +176,34 @@ public class GeneralRequestHandler implements IGeneralRequestHandler {
     }
 
     public ChartWrapper getDefaultDataTable() throws UnknownSelectionIdException {
-        ChartRequestWrapper requestWrapper = new ChartRequestWrapper();
-        requestWrapper.setChartSelection(chartSelectionRepository.findOne(DEFAULT_CHART_SELECTION));
-        return getGeneralDatatable(requestWrapper);
+        return (ChartWrapper) getDefaultDataTableCache().getObject();
+    }
+
+    private CacheWrapper getDefaultDataTableCache(){
+        if(defaultDataTable != null && defaultDataTable.getExpirationTime() <= System.currentTimeMillis()){
+            defaultDataTable = null;
+        }
+        if(defaultDataTable == null){
+            ChartRequestWrapper requestWrapper = new ChartRequestWrapper();
+            requestWrapper.setChartSelection(chartSelectionRepository.findOne(ChartSelectionIdEnum.CURRENT_MONTH_AVG));
+            ChartWrapper wrapper = generalStatisticsHandler.getCurrentMonthAverage(requestWrapper);
+            Object [] dataTable = (Object[]) wrapper.getDataTable();
+            if(dataTable.length == 1){
+                wrapper = generalStatisticsHandler.getCurrentMonthAverageDummy(requestWrapper);
+            }
+            defaultDataTable = new CacheWrapper(wrapper, CHART_WRAPPERS_CACHE_EXPIRATION_TIME);
+        }
+        return defaultDataTable;
     }
 
     public EVersion getVersion() {
-        if(version == null){
-            version = systemHelper.getVersion();
+        if(versionCache != null && versionCache.getExpirationTime() <= System.currentTimeMillis()){
+            versionCache = null;
         }
-        return version;
+        if(versionCache == null){
+            versionCache = new CacheWrapper(systemHelper.getVersion(), VERSION_CACHE_EXPIRATION_TIME);
+        }
+        return (EVersion) versionCache.getObject();
     }
 
     public List<Language> getLanguages() {

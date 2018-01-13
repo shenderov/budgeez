@@ -24,6 +24,8 @@ import static org.testng.Assert.assertEquals;
 
 public class GeneralRestControllerTest extends BudgeezBootApplicationTests {
 
+    private static final ChartSelectionIdEnum DEFAULT_CHART_SELECTION = ChartSelectionIdEnum.CURRENT_MONTH_AVG;
+
     @Test
     public void testGetGeneralChartSelectionsList() throws Exception {
         List<ChartSelection> selectionsDB = chartSelectionRepository.findAllGeneralSelections();
@@ -45,7 +47,7 @@ public class GeneralRestControllerTest extends BudgeezBootApplicationTests {
     @Test
     public void testGetDefaultDataTable() {
         ChartWrapper wrapper = (ChartWrapper) generalRestControllerConnectorHelper.getDefaultDataTablePositive().getObject();
-        ChartSelection selection = chartSelectionRepository.findOne(GeneralRequestHandler.DEFAULT_CHART_SELECTION);
+        ChartSelection selection = chartSelectionRepository.findOne(DEFAULT_CHART_SELECTION);
         Assert.assertNotNull(wrapper);
         Assert.assertNotNull(wrapper.getDataTable());
         Assert.assertEquals(wrapper.getChartType(), selection.getChartType());

@@ -16,7 +16,7 @@ public interface CustomCategoryRepository extends CrudRepository<GeneralCategory
     List<GeneralCategory> findAllCustomCategories(Long userId);
 
     @Query(nativeQuery = true, value = "SELECT * FROM category WHERE category_id IN (SELECT record.category_id FROM record WHERE record.id=?1 AND record.date BETWEEN ?2 AND ?3 GROUP BY record.category_id)")
-    List<GeneralCategory> getAllActualUserCategoriesBetweenDates(long userId, long startDate, long endDate);
+    List<GeneralCategory> getAllActualUserCategories(long userId, long startDate, long endDate);
 
     @Query(nativeQuery = true, value = "SELECT * FROM category WHERE category_id IN (SELECT record.category_id FROM record WHERE record.id=?1 GROUP BY record.category_id)")
     List<GeneralCategory> getAllActualUserCategories(long userId);

@@ -8,7 +8,6 @@ import com.budgeez.model.enumerations.ChartType;
 import com.budgeez.model.interfaces.IDateHelper;
 import com.budgeez.model.interfaces.IGeneralStatisticsHandler;
 import com.budgeez.model.interfaces.IStatisticsHelper;
-import com.budgeez.model.repository.ChartSelectionRepository;
 import com.budgeez.model.repository.GeneralCategoryRepository;
 import com.budgeez.model.repository.RecordRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,9 +28,6 @@ public class GeneralStatisticsHandler implements IGeneralStatisticsHandler {
     private GeneralCategoryRepository generalCategoryRepository;
 
     @Autowired
-    private ChartSelectionRepository chartSelectionRepository;
-
-    @Autowired
     private RecordRepository recordRepository;
 
     private static final String[] AVG_LABELS = {"Category", "Amount"};
@@ -44,6 +40,20 @@ public class GeneralStatisticsHandler implements IGeneralStatisticsHandler {
         long startDate = dateHelper.getFirstDayOfCurrentMonth();
         long endDate = dateHelper.getLastDayOfCurrentMonth();
         DataTable data = new DataTable(AVG_LABELS, getGeneralAvgRows(startDate, endDate));
+        data = statisticsHelper.deleteNullOthers(data);
+        return new ChartWrapper(ChartType.PIECHART, data.getDataTableAsArray(), chartRequestWrapper.getChartSelection().getTitle());
+    }
+
+    public ChartWrapper getCurrentMonthAverageDummy(ChartRequestWrapper chartRequestWrapper) {
+        List<Object []> dummyDataTable = new ArrayList<>();
+        dummyDataTable.add(new Object[] {"Housing", 870});
+        dummyDataTable.add(new Object[] {"Communication", 94});
+        dummyDataTable.add(new Object[] {"Food", 364});
+        dummyDataTable.add(new Object[] {"Public Transportation", 78});
+        dummyDataTable.add(new Object[] {"Entertainment/Recreation", 236});
+        dummyDataTable.add(new Object[] {"Hobbies", 149});
+        dummyDataTable.add(new Object[] {"Other", 596});
+        DataTable data = new DataTable(AVG_LABELS, dummyDataTable);
         return new ChartWrapper(ChartType.PIECHART, data.getDataTableAsArray(), chartRequestWrapper.getChartSelection().getTitle());
     }
 
@@ -51,12 +61,14 @@ public class GeneralStatisticsHandler implements IGeneralStatisticsHandler {
         long startDate = dateHelper.getFirstDayOfNMonthAgo(monthAgo);
         long endDate = dateHelper.getLastDayOfPreviousMonth();
         DataTable data = new DataTable(AVG_LABELS, getGeneralAvgRows(startDate, endDate));
+        data = statisticsHelper.deleteNullOthers(data);
         return new ChartWrapper(ChartType.PIECHART, data.getDataTableAsArray(), chartRequestWrapper.getChartSelection().getTitle());
     }
 
-
     public ChartWrapper getLastNMonthsAverageDetailed(ChartRequestWrapper chartRequestWrapper, int monthAgo) {
-        List<GeneralCategory> categories = generalCategoryRepository.getAllActualGeneralCategories();
+        long startDate = dateHelper.getFirstDayOfNMonthAgo(monthAgo);
+        long endDate = dateHelper.getLastDayOfPreviousMonth();
+        List<GeneralCategory> categories = generalCategoryRepository.getAllActualGeneralCategories(startDate, endDate);
         boolean isCustomRecordsExist = recordRepository.averageOfCustomRecords(dateHelper.getFirstDayOfNMonthAgo(monthAgo), dateHelper.getLastDayOfPreviousMonth()) != null;
         DataTable data = new DataTable(statisticsHelper.setLabelsForCategories(categories, isCustomRecordsExist), getGeneralAvgDetailedRowsNMonthAgo(categories, monthAgo, isCustomRecordsExist));
         return new ChartWrapper(ChartType.COLUMNCHART, data.getDataTableAsArray(), chartRequestWrapper.getChartSelection().getTitle());

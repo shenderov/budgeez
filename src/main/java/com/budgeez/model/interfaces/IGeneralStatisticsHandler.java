@@ -6,6 +6,8 @@ import com.budgeez.model.entities.external.ChartWrapper;
 public interface IGeneralStatisticsHandler {
     ChartWrapper getCurrentMonthAverage(ChartRequestWrapper chartRequestWrapper);
 
+    ChartWrapper getCurrentMonthAverageDummy(ChartRequestWrapper chartRequestWrapper);
+
     ChartWrapper getNMonthAgoAverage(ChartRequestWrapper chartRequestWrapper, int monthAgo);
 
     ChartWrapper getLastNMonthsAverageDetailed(ChartRequestWrapper chartRequestWrapper, int monthAgo);

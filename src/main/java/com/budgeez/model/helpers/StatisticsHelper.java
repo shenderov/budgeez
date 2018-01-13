@@ -1,7 +1,9 @@
 package com.budgeez.model.helpers;
 
+import com.budgeez.model.entities.DataTable;
 import com.budgeez.model.entities.dao.GeneralCategory;
 import com.budgeez.model.interfaces.IStatisticsHelper;
+import org.springframework.security.access.method.P;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -28,5 +30,14 @@ public class StatisticsHelper implements IStatisticsHelper {
 
     public String[] setLabels() {
         return AVG_LABELS;
+    }
+
+    public DataTable deleteNullOthers(DataTable dataTable){
+        List<Object []> data = dataTable.getRowsAsList();
+        if(data.size() == 1 && data.get(0)[1] == null){
+            data.remove(0);
+            dataTable.setRows(data);
+        }
+        return dataTable;
     }
 }

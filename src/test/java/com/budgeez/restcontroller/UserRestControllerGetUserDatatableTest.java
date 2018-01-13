@@ -30,6 +30,7 @@ public class UserRestControllerGetUserDatatableTest extends BudgeezBootApplicati
     private String email1 = "userdatatable1@budgeez.com";
     private String password = "Password";
     private String token1;
+    private static final ChartSelectionIdEnum DEFAULT_CHART_SELECTION = ChartSelectionIdEnum.CURRENT_MONTH_AVG;
 
     @BeforeClass
     public void setup() {
@@ -171,7 +172,7 @@ public class UserRestControllerGetUserDatatableTest extends BudgeezBootApplicati
 
     @Test
     public void testGetUserDataTableWithGeneralSelection() {
-        ChartSelection selection = chartSelectionRepository.findOne(GeneralRequestHandler.DEFAULT_CHART_SELECTION);
+        ChartSelection selection = chartSelectionRepository.findOne(DEFAULT_CHART_SELECTION);
         ChartRequestWrapper requestWrapper = new ChartRequestWrapper();
         requestWrapper.setChartSelection(selection);
         HttpResponseJson response = userRestControllerConnectorHelper.getGeneralDataTableNegative(testTools.objectToJson(requestWrapper), token1).convertToHttpResponseJson();
