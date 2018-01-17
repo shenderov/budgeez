@@ -6,15 +6,15 @@
         </div>
         <div class="form-group"
              ng-class="{ 'has-error has-feedback': loginForm.inputEmail.$touched && loginForm.inputEmail.$invalid, 'has-success has-feedback' : loginForm.inputEmail.$touched && loginForm.inputEmail.$valid}">
-            <label for="inputEmail">Email:</label>
-            <input type="email" id="inputEmail" class="form-control" placeholder="Enter email" required
+            <label for="inputEmailLogin">Email:</label>
+            <input type="email" id="inputEmailLogin" class="form-control" placeholder="Enter email" required
                    ng-model="credentials.username" maxlength="254" minlength="4" name="inputEmail">
             <span ng-class="{ 'glyphicon glyphicon-remove form-control-feedback': loginForm.inputEmail.$touched && loginForm.inputEmail.$invalid, 'glyphicon glyphicon-ok form-control-feedback' : loginForm.inputEmail.$touched && loginForm.inputEmail.$valid}"></span>
         </div>
         <div class="form-group"
              ng-class="{ 'has-error has-feedback': loginForm.inputPassword.$touched && loginForm.inputPassword.$invalid, 'has-success has-feedback' : loginForm.inputPassword.$touched && loginForm.inputPassword.$valid}">
-            <label for="inputPassword">Password:</label>
-            <input type="password" id="inputPassword" class="form-control" placeholder="Enter password" required
+            <label for="inputPasswordLogin">Password:</label>
+            <input type="password" id="inputPasswordLogin" class="form-control" placeholder="Enter password" required
                    ng-model="credentials.password" maxlength="128" minlength="6" name="inputPassword">
             <span ng-class="{ 'glyphicon glyphicon-remove form-control-feedback': loginForm.inputPassword.$touched && loginForm.inputPassword.$invalid, 'glyphicon glyphicon-ok form-control-feedback' : loginForm.inputPassword.$touched && loginForm.inputPassword.$valid}"></span>
         </div>
