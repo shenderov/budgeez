@@ -7,7 +7,9 @@ import com.budgeez.model.handlers.UserStatisticsHandler;
 import com.budgeez.model.helpers.*;
 import com.budgeez.model.interfaces.*;
 import com.budgeez.model.services.MailingService;
+import com.budgeez.security.interfaces.IPasswordResetService;
 import com.budgeez.security.interfaces.IVerificationService;
+import com.budgeez.security.service.PasswordResetService;
 import com.budgeez.security.service.VerificationService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -57,6 +59,11 @@ public class BudgeezApplicationConfig {
     @Bean
     public IValidationHelper validationHelper() {
         return new ValidationHelper();
+    }
+
+    @Bean
+    public IPasswordResetService passwordResetService() {
+        return new PasswordResetService();
     }
 
     @Bean

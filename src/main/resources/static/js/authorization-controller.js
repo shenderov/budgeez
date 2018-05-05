@@ -23,7 +23,7 @@ function createAuthorizationTokenHeader() {
     }
 }
 
-app.controller('AuthorizationController', function($scope, $rootScope, $location, Connector, AlertsService){
+app.controller('AuthorizationController', function($scope, $rootScope, $uibModal, $location, Connector, AlertsService){
     $scope.isAutorized = false;
     $scope.formats = ['dd/MM/yyyy', 'dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'];
     $rootScope.format = $scope.formats[0];
@@ -105,6 +105,22 @@ app.controller('AuthorizationController', function($scope, $rootScope, $location
                     console.error('Error while fetching dataTable');
                 }
             );
+    };
+
+    $scope.openForgotPasswordModal = function () {
+        var modalInstance = $uibModal.open({
+            animation: true,
+            ariaLabelledBy: 'modal-title',
+            ariaDescribedBy: 'modal-body',
+            templateUrl: 'pages/framework/modals/auth/forgot-password-modal.html',
+            controller: 'ForgotPasswordCtrl',
+            size: 'sm'
+        });
+        modalInstance.result.then(function (result) {
+            AlertsService.createConfirmationPage(result);
+        }, function (result) {
+            console.log(JSON.stringify("error: " + result));
+        });
     };
 
     $scope.reviveUser = function(credentials){

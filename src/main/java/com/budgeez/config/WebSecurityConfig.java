@@ -86,6 +86,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/confirm").permitAll()
                 .antMatchers("/verify").permitAll()
                 .antMatchers("/reviveUser").permitAll()
+                .antMatchers("/forgotPassword").permitAll()
+                .antMatchers("/resetPassword").permitAll()
                 .anyRequest().authenticated();
 
         httpSecurity

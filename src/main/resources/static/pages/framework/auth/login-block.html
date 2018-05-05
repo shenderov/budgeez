@@ -18,6 +18,7 @@
                    ng-model="credentials.password" maxlength="128" minlength="6" name="inputPassword">
             <span ng-class="{ 'glyphicon glyphicon-remove form-control-feedback': loginForm.inputPassword.$touched && loginForm.inputPassword.$invalid, 'glyphicon glyphicon-ok form-control-feedback' : loginForm.inputPassword.$touched && loginForm.inputPassword.$valid}"></span>
         </div>
+        <div><button class="btn btn-link " ng-click="openForgotPasswordModal()">Forgot password?</button></div>
         <button class="btn btn-lg btn-default btn-block" type="submit" ng-click="loginForm.$valid && login(credentials)"
                 ng-disabled="(loginForm.$invalid && (loginForm.inputEmail.$touched || loginForm.inputPassword.$touched)) || loginSubmitButtomDisabled">
             Log In

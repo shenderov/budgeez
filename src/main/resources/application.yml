@@ -28,6 +28,8 @@ security:
     account:
       deleteAccount: deleteAccount
       reviveUser: reviveUser
+      forgotPassword: forgotPassword
+      resetPassword: resetPassword
 
 general:
   path: general

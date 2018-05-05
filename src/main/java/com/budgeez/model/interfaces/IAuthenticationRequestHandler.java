@@ -2,10 +2,7 @@ package com.budgeez.model.interfaces;
 
 import com.budgeez.model.entities.external.EGeneralResponse;
 import com.budgeez.model.entities.external.EUserDetails;
-import com.budgeez.security.entities.ChangeEmailWrapper;
-import com.budgeez.security.entities.ChangePasswordWrapper;
-import com.budgeez.security.entities.JwtAuthenticationRequest;
-import com.budgeez.security.entities.SignUpWrapper;
+import com.budgeez.security.entities.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mobile.device.Device;
 
@@ -16,6 +13,10 @@ public interface IAuthenticationRequestHandler {
     ResponseEntity<?> createAuthenticationToken(JwtAuthenticationRequest authenticationRequest, Device device);
 
     ResponseEntity<?> createUser(SignUpWrapper wrapper, Device device);
+
+    EGeneralResponse forgotPassword(String email);
+
+    EGeneralResponse resetPassword(ResetPasswordWrapper wrapper);
 
     ResponseEntity<?> reviveUser(JwtAuthenticationRequest authenticationRequest, Device device);
 

@@ -60,7 +60,7 @@ public class ValidationHelper implements IValidationHelper {
                 throw new IllegalArgumentException();
             UUID.fromString(token.getUserUuid());
             UUID.fromString(token.getTokenUuid());
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException | ArrayIndexOutOfBoundsException e) {
             throw new InvalidParameterException(DataIntegrityErrorCode.INVALID_PARAMETER, exceptionMessagesHelper.getLocalizedMessage("error.token.cantberead"));
         }
     }

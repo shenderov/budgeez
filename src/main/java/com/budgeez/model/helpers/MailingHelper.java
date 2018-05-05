@@ -43,6 +43,17 @@ public class MailingHelper implements IMailingHelper {
         return new MessageWrapper(email, "Please verify your email address in order to complete operation", template);
     }
 
+    @Override
+    public MessageWrapper generatePasswordResetPassword(Token token, User user) {
+        String template = getTemplateByName("reset_password_template.html");
+        template = template.replace("_#_TITLE_#_", "Password reset instructions");
+        String tokenLink = getTokenLink(getHomepage(), "/#/resetPassword", token);
+        template = template.replace("_#_HOMEPAGE_#_", getHomepage());
+        template = template.replace("_#_NAME_#_", user.getName());
+        template = template.replace("_#_LINK_#_", tokenLink);
+        return new MessageWrapper(user.getUsername(), "Please, reset your password", template);
+    }
+
     private String getTemplateByName(String templateName) {
         String template = null;
         try {

@@ -230,6 +230,30 @@ app.factory('Connector', ['$http', '$q', function ($http, $q) {
                 );
         },
 
+        forgotPassword: function (email) {
+            return $http.post(serverPath + 'forgotPassword', email)
+                .then(
+                    function (result) {
+                        return result.data;
+                    },
+                    function (errResponse) {
+                        return $q.reject(errResponse.data);
+                    }
+                );
+        },
+
+        resetPassword: function (resetPasswordWrapper) {
+            return $http.post(serverPath + 'resetPassword', resetPasswordWrapper)
+                .then(
+                    function (result) {
+                        return result.data;
+                    },
+                    function (errResponse) {
+                        return $q.reject(errResponse.data);
+                    }
+                );
+        },
+
         reviveUser: function (credentials) {
             return $http.post(serverPath + 'reviveUser', credentials)
                 .then(
