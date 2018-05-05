@@ -9,4 +9,6 @@ public interface IMailingHelper {
     MessageWrapper generateAccountActivationMessage(Token token, User user);
 
     MessageWrapper generateEmailVerificationMessage(Token token, User user, String email);
+
+    MessageWrapper generatePasswordResetPassword(Token token, User user);
 }

@@ -40,6 +40,11 @@ app.config(function ($stateProvider, $urlRouterProvider) {
             url: '/verify?token',
             controller: 'VerifyEmailController'
         })
+        .state('resetPassword', {
+            url: '/resetPassword?token',
+            templateUrl: 'pages/auth/reset-password-tab.html',
+            controller: 'ResetPasswordController'
+        })
         .state('confirmation-page', {
             url: '/confirmation-page',
             templateUrl: 'pages/system/confirmation-tab.html',

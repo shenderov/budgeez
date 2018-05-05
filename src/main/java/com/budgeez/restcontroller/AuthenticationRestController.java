@@ -5,10 +5,7 @@ import com.budgeez.model.entities.external.EUserDetails;
 import com.budgeez.model.exceptions.UserRegistrationException;
 import com.budgeez.model.interfaces.IAuthenticationRequestHandler;
 import com.budgeez.model.interfaces.IAuthenticationRestController;
-import com.budgeez.security.entities.ChangeEmailWrapper;
-import com.budgeez.security.entities.ChangePasswordWrapper;
-import com.budgeez.security.entities.JwtAuthenticationRequest;
-import com.budgeez.security.entities.SignUpWrapper;
+import com.budgeez.security.entities.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mobile.device.Device;
@@ -33,6 +30,18 @@ public class AuthenticationRestController implements IAuthenticationRestControll
     @RequestMapping(value = "${security.route.authentication.signup}", method = RequestMethod.POST)
     public ResponseEntity<?> createUser(@RequestBody @Valid SignUpWrapper wrapper, Device device) throws UserRegistrationException {
         return handler.createUser(wrapper, device);
+    }
+
+    @CrossOrigin(origins = "*")
+    @RequestMapping(value = "${security.route.account.forgotPassword}", method = RequestMethod.POST)
+    public EGeneralResponse forgotPassword(@RequestBody String email) {
+        return  handler.forgotPassword(email);
+    }
+
+    @CrossOrigin(origins = "*")
+    @RequestMapping(value = "${security.route.account.resetPassword}", method = RequestMethod.POST)
+    public EGeneralResponse resetPassword(@RequestBody ResetPasswordWrapper wrapper) {
+        return handler.resetPassword(wrapper);
     }
 
     @CrossOrigin(origins = "*")

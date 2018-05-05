@@ -5,6 +5,7 @@ import com.budgeez.model.entities.external.EGeneralResponse;
 import com.budgeez.model.entities.external.EUserDetails;
 import com.budgeez.model.entities.internal.MessageWrapper;
 import com.budgeez.model.enumerations.ResponseStatus;
+import com.budgeez.model.exceptions.InvalidParameterException;
 import com.budgeez.model.exceptions.UserRegistrationException;
 import com.budgeez.model.exceptions.codes.UserRegistrationErrorCode;
 import com.budgeez.model.interfaces.*;
@@ -12,6 +13,7 @@ import com.budgeez.model.repository.CurrencyRepository;
 import com.budgeez.model.repository.LanguageRepository;
 import com.budgeez.security.JwtTokenUtil;
 import com.budgeez.security.entities.*;
+import com.budgeez.security.interfaces.IPasswordResetService;
 import com.budgeez.security.interfaces.IVerificationService;
 import com.budgeez.security.repository.AuthorityRepository;
 import com.budgeez.security.repository.UserRepository;
@@ -66,6 +68,9 @@ public class AuthenticationRequestHandler implements IAuthenticationRequestHandl
     private IVerificationService verificationService;
 
     @Autowired
+    private IPasswordResetService passwordResetService;
+
+    @Autowired
     private IMailingService mailingService;
 
     @Autowired
@@ -107,6 +112,26 @@ public class AuthenticationRequestHandler implements IAuthenticationRequestHandl
             verificationService.createAccountActivationToken(userRepository.save(user));
         }
         return createAuthenticationToken(new JwtAuthenticationRequest(wrapper.getEmail(), wrapper.getPassword()), device);
+    }
+
+    public EGeneralResponse forgotPassword(String email) {
+        EGeneralResponse response;
+        if(!isEmailRegistered(email)){
+            response = new EGeneralResponse(ResponseStatus.ERROR, "Error", "Email is not registered");
+        }else {
+            response = passwordResetService.createPasswordResetToken(userRepository.findByUsername(email));
+       }
+        return response;
+    }
+
+    public EGeneralResponse resetPassword(ResetPasswordWrapper wrapper) {
+        try {
+            validationHelper.validateTokenString(wrapper.getToken());
+        }catch (InvalidParameterException e){
+            return new EGeneralResponse(ResponseStatus.ERROR, "Error", "Invalid Reset Password token");
+        }
+        Token token = textHelper.stringToToken(wrapper.getToken());
+        return passwordResetService.resetPassword(wrapper.getNewPassword(), token);
     }
 
     public ResponseEntity<?> reviveUser(JwtAuthenticationRequest authenticationRequest, Device device) {
