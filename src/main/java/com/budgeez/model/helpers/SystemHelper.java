@@ -25,7 +25,8 @@ public class SystemHelper implements ISystemHelper {
             version = new EVersion();
             version.setName(properties.getProperty("build.name"));
             version.setDescription(properties.getProperty("build.description"));
-            version.setVersion(properties.getProperty("build.version") + "." + properties.getProperty("build.number"));
+            version.setVersion(properties.getProperty("build.version"));
+            version.setBuild_number(properties.getProperty("build.number"));
             version.setTimestamp(properties.getProperty("build.timestamp"));
             version.setCopyrights(properties.getProperty("build.author") + " © " + copyRightYears);
         }

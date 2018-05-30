@@ -12,13 +12,13 @@ application_webapp_path=$WEBAPP_PATH
 application_target_filename=$TARGET_FILE_NAME
 tomcat_manager_username=$TOMCAT_MANAGER_USERNAME
 tomcat_manager_password=$TOMCAT_MANAGER_PASSWORD
-tomcat_context="/"
+tomcat_context=$TOMCAT_CONTEXT
 is_upgrade=$UPGRADE_TEST
 load_test_data=$LOAD_TEST_DATA
-workspace=$WORKSPACE
 config_file=$CONFIG_FILE
+workspace=$WORKSPACE
 build_properties=$WORKSPACE/build.properties
-build_package_name="budgeez-1.1.war"
+build_package_name="budgeez-1.x-SNAPSHOT.war"
 names_database="/home/kamabizbazti/tools/names_database.csv"
 users_count=10
 custom_categories_count=3
@@ -61,7 +61,7 @@ function clean_db {
     fi
 }
 
-function drop_db {
+function drop_tables {
     echo "Drop database"
     mysql -h "${database_host}" -u "${database_username}" -p"${database_password}" "${database}" -v -v -v -e "SET FOREIGN_KEY_CHECKS = 0;
     DROP TABLE IF EXISTS "${database}".record;
@@ -374,7 +374,7 @@ echo "Clear database"
 if [ "${is_upgrade}" = true ]
     then
         echo "Database upgrade"
-        drop_db
+        drop_tables
         echo "Restart application"
         restart_container
         sleep 5
@@ -383,7 +383,7 @@ if [ "${is_upgrade}" = true ]
         echo "Load demo data"
         load_data
 else
-    drop_db
+    drop_tables
 fi
 
 # Undeploy build

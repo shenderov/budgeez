@@ -5,6 +5,7 @@ public class EVersion {
     private String name;
     private String description;
     private String version;
+    private String build_number;
     private String timestamp;
     private String copyrights;
 
@@ -30,6 +31,14 @@ public class EVersion {
 
     public void setVersion(String version) {
         this.version = version;
+    }
+
+    public String getBuild_number() {
+        return build_number;
+    }
+
+    public void setBuild_number(String build_number) {
+        this.build_number = build_number;
     }
 
     public String getTimestamp() {
