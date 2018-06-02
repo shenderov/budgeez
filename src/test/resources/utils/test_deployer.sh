@@ -4,6 +4,8 @@ database=$DB_NAME
 database_host=$DB_HOST
 database_username=$DB_USERNAME
 database_password=$DB_PASSWORD
+database_root_username=$DB_ROOT_USERNAME
+database_root_password=$DB_ROOT_PASSWORD
 application_server_host=$SERVER_HOST
 application_server_username=$SERVER_USERNAME
 application_server_password=$SERVER_PASSWORD
@@ -16,7 +18,6 @@ tomcat_context=$TOMCAT_CONTEXT
 is_upgrade=$UPGRADE_TEST
 load_test_data=$LOAD_TEST_DATA
 config_file=$CONFIG_FILE
-workspace=$WORKSPACE
 build_properties=$WORKSPACE/build.properties
 build_package_name="budgeez-1.x-SNAPSHOT.war"
 names_database="/home/kamabizbazti/tools/names_database.csv"
@@ -32,6 +33,64 @@ version_validated=false
 
 function set_context {
     tomcat_context=/${application_target_filename%.*}
+}
+
+function check_db_credentials {
+    echo "Checking connection to database"
+    mysql -h "${database_host}" -u $1 -p$2 $3 -e ""
+    if [ $? -eq 0 ]
+        then
+        echo "Successful connection to $3 with user $1"
+        return 0
+    else
+        echo "Connection to $3 with user $1 is failed. Check user credentials and permissions to $3"
+        return 1
+    fi
+}
+
+function check_db_super_access {
+    echo "Checking super access to database"
+    res=$(mysql -h "${database_host}" -u $1 -p$2 $3 -N -e "SELECT PRIVILEGE_TYPE FROM information_schema.USER_PRIVILEGES")
+    echo "Result: ${res}"
+    if [ ${res} = "SUPER" ]
+        then
+        echo "User $1 has super access to $3"
+        return 0
+    else
+        echo "User $1 doesn't have super access to $3"
+        return 1
+    fi
+}
+
+function create_db_user {
+    echo "Creating user and database"
+    mysql -h "${database_host}" -u "${database_root_username}" -p"${database_root_password}" -v -v -v -e "CREATE USER '$1'@'%' IDENTIFIED BY '$2';
+        GRANT SUPER ON $3.* TO '$1'@'%' REQUIRE NONE WITH MAX_QUERIES_PER_HOUR 0 MAX_CONNECTIONS_PER_HOUR 0 MAX_UPDATES_PER_HOUR 0 MAX_USER_CONNECTIONS 0;
+        CREATE DATABASE IF NOT EXISTS $3 DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;
+        GRANT ALL PRIVILEGES ON `$3`.* TO '$1'@'%';"
+    if [ $? -eq 0 ]
+        then
+        echo "User $1 and db $3 are successfully created"
+        return 0
+    else
+        echo "Fail to create user or database"
+        return 1
+    fi
+}
+
+function grant_super_access {
+    echo "Granting super access on $2 to user $1"
+    mysql -h "${database_host}" -u "${database_root_username}" -p"${database_root_password}" -v -v -v -e "GRANT SUPER ON $2.* TO '$1'@'%' REQUIRE NONE WITH MAX_QUERIES_PER_HOUR 0 MAX_CONNECTIONS_PER_HOUR 0 MAX_UPDATES_PER_HOUR 0 MAX_USER_CONNECTIONS 0;
+        GRANT ALL PRIVILEGES ON `$2`.* TO '$1'@'%';
+        FLUSH PRIVILEGES"
+    if [ $? -eq 0 ]
+        then
+        echo "Success to grant super privileges on $2 to user $1"
+        return 0
+    else
+        echo "Fail to grant super privileges on $2 to user $1"
+        return 1
+    fi
 }
 
 function clean_db {
@@ -74,6 +133,7 @@ function drop_tables {
     DROP TABLE IF EXISTS "${database}".authority;
     DROP TABLE IF EXISTS "${database}".activation_token;
     DROP TABLE IF EXISTS "${database}".verification_token;
+    DROP TABLE IF EXISTS "${database}".password_reset_token;
     SET FOREIGN_KEY_CHECKS = 1"
     tables_count=$(mysql -h "${database_host}" -u "${database_username}" -p"${database_password}" "${database}" -se "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema='"${database}"'")
     if [ "${tables_count}" -ne 0 ];
@@ -159,7 +219,7 @@ function load_data {
           SET cat_count = 1;
           SET rec_days_ago_count = 1;
           SET time_stamp = (SELECT UNIX_TIMESTAMP()) * 1000;
-          INSERT INTO "${database}".user (id, creation_date, enabled, is_activated, status, last_password_reset_date, name, password, start_day, username, uuid, currency_code, language_code) VALUES (NULL, CURRENT_TIME(), b'1', b'1', 'ACTIVE', CURRENT_TIME(),CONCAT(f_name, ' ', l_name), '$2a$10$hDxjZ8W1R/al7Pik07ilt.Nvxvs6C7kDG7vtobmUDH5n/etxr587C', '1',e_mail, e_mail, '3', '1');
+          INSERT INTO "${database}".user (id, creation_date, enabled, is_activated, status, last_password_reset_date, name, password, start_day, username, uuid, currency_code, language_code) VALUES (NULL, CURRENT_TIME(), b'1', b'1', 'ACTIVE', CURRENT_TIME(),CONCAT(f_name, ' ', l_name), '\$2a\$10\$BqdZLdqiVEio9ns3fNuKwOL.zEJZOhnue5dJC4kD2w3RaD1jtA0ji', '1',e_mail, UUID(), '3', '1');
           SET uid = (SELECT LAST_INSERT_ID());
           INSERT INTO "${database}".user_authorities (users_id, authorities_id) VALUES (uid, 2);
           WHILE cat_count <= customCategoriesCount DO
@@ -227,7 +287,7 @@ echo $1
 if [ $1 = true ]
     then
         echo "Deploy from artifacts"
-        cd "${workspace}"
+        cd "${WORKSPACE}"
         jar -xvf "${build_package_name}"
         rm -f WEB-INF/classes/application.properties
         cp "${config_file}" WEB-INF/classes/application.properties
@@ -273,14 +333,14 @@ echo 'curl --user '"${tomcat_manager_username}"':'"${tomcat_manager_password}"' 
 function validate_version {
     source <(grep -v '^ *#' "${build_properties}" | grep '[^ ] *=' | awk '{split($0,a,"="); print gensub(/\./, "_", "g", a[1]) "=" a[2]}')
     war_version="${build_version}"."${build_number}"."${build_timestamp}"
-    installed_version=$(curl -s "${get_version_url}" | jq -r '.version').$(curl -s "${get_version_url}" | jq -r '.timestamp')
+    installed_version=$(curl -s "${get_version_url}" | jq -r '.version').$(curl -s "${get_version_url}" | jq -r '.build_number').$(curl -s "${get_version_url}" | jq -r '.timestamp')
+    echo Buld version: "${war_version}"
+    echo Installed version: "${installed_version}"
     if [ "${war_version}" == "${installed_version}" ];
         then
         echo Installed successfully
         version_validated=true
     fi
-    echo Buld version: "${war_version}"
-    echo Installed version: "${installed_version}"
 }
 
 function roll_back {
@@ -348,6 +408,59 @@ else
 fi
 }
 
+#DB connection test
+check_db_credentials "${database_username}" "${database_password}" "${database}"
+if [ $? -eq 0 ]
+    then
+    echo "DB connection okay for user: "${database_username}""
+else
+    echo "DB connection fail. Trying to connect with root credentials"
+    check_db_credentials "${database_root_username}" "${database_root_password}"
+    if [ $? -eq 0 ]
+        then
+        echo "DB connection okay for user: ${database_root_username}"
+        create_db_user "${database_username}" "${database_password}" "${database}"
+        check_db_credentials "${database_username}" "${database_password}" "${database}"
+            if [ $? -eq 0 ]
+                then
+                echo "DB connection okay for user: "${database_username}""
+            else
+                echo "Failed to create user or database. Exiting build"
+                exit 1
+            fi
+        else
+        echo "Connection is failed for root user: ${database_root_username}. Exiting build"
+        exit 1
+    fi
+fi
+
+
+if [ "${load_test_data}" = true ]
+    then
+    check_db_super_access "${database_username}" "${database_password}" "${database}"
+    if [ $? -ne 0 ]
+        then
+        echo "Load test data is selected bu user ${database_username} doesn't have super access to ${database}. Trying to grant"
+        check_db_credentials "${database_root_username}" "${database_root_password}"
+            if [ $? -eq 0 ]
+                then
+                echo "DB connection okay for user: ${database_root_username}"
+                grant_super_access "${database_username}" "${database}"
+                check_db_super_access "${database_username}" "${database_password}" "${database}"
+                    if [ $? -eq 0 ]
+                        then
+                        echo "User ${database_username} has super access on ${database_username}"
+                    else
+                        echo "Failed to grant super access on ${database_username} to ${database_username}. Exiting build"
+                        exit 1
+                    fi
+                else
+                echo "Connection is failed for root user: ${database_root_username}. Exiting build"
+                exit 1
+            fi
+    fi
+fi
+
 set_context
 
 #Is running
@@ -400,13 +513,6 @@ waiting
 echo "Validate new version"
 validate_version
 
-# Load test data
-if [ "${load_test_data}" = true ] && [ "${is_upgrade}" = false ]
-    then
-    echo "Load test data without upgrade test"
-    load_data
-fi
-
 # Roll back if failed
 if [ "${version_validated}" = false ]
     then
@@ -414,3 +520,11 @@ if [ "${version_validated}" = false ]
     roll_back
     exit 1
 fi
+
+# Load test data
+if [ "${load_test_data}" = true ] && [ "${is_upgrade}" = false ]
+    then
+    echo "Load test data without upgrade test"
+    load_data
+fi
+

@@ -10,6 +10,8 @@ import org.springframework.core.env.Environment;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Base64;
 import java.util.Scanner;
 
@@ -66,14 +68,21 @@ public class MailingHelper implements IMailingHelper {
     }
 
     private String getHomepage (){
-        if (homepage == null)
-            homepage= "http://" + env.getProperty("budgeez.settings.general.hostname");
+        if (homepage == null){
+            if (env.getProperty("budgeez.settings.mailer.app-hostname") != null){
+                homepage = env.getProperty("budgeez.settings.mailer.app-hostname");
+            }else{
+                try {
+                    homepage = "http://" + InetAddress.getLocalHost().getHostAddress() + ":" + env.getProperty("local.server.port");
+                } catch (UnknownHostException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
         return homepage;
     }
 
     private String getTokenLink (String homepage, String api, Token token){
         return homepage + api + "?token=" + Base64.getEncoder().encodeToString((token.getTokenUuid() + "##" + token.getUserUuid()).getBytes());
     }
-
-
 }
